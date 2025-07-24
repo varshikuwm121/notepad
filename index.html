@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notepad++ Web - Text Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: #2d3748;
+            color: #e2e8f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Menu Bar */
+        .menu-bar {
+            background: #1a202c;
+            padding: 8px 12px;
+            border-bottom: 1px solid #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .menu-item {
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: background 0.2s;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: #4a5568;
+        }
+
+        .menu-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: #2d3748;
+            min-width: 180px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.3);
+            z-index: 1000;
+            border: 1px solid #4a5568;
+            border-radius: 4px;
+            top: 100%;
+            left: 0;
+        }
+
+        .dropdown-content a {
+            color: #e2e8f0;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background: #4a5568;
+        }
+
+        .menu-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: #2d3748;
+            padding: 8px 12px;
+            border-bottom: 1px solid #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar button {
+            background: #4a5568;
+            color: #e2e8f0;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .toolbar button:hover {
+            background: #718096;
+        }
+
+        .toolbar select {
+            background: #4a5568;
+            color: #e2e8f0;
+            border: 1px solid #718096;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .toolbar input[type="number"] {
+            background: #4a5568;
+            color: #e2e8f0;
+            border: 1px solid #718096;
+            padding: 4px 8px;
+            border-radius: 4px;
+            width: 60px;
+            font-size: 12px;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* File Explorer */
+        .file-explorer {
+            width: 250px;
+            background: #1a202c;
+            border-right: 1px solid #4a5568;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s;
+        }
+
+        .file-explorer.collapsed {
+            width: 0;
+            overflow: hidden;
+        }
+
+        .explorer-header {
+            padding: 12px;
+            background: #2d3748;
+            border-bottom: 1px solid #4a5568;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .file-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .file-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 2px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-item:hover {
+            background: #4a5568;
+        }
+
+        .file-item.active {
+            background: #3182ce;
+        }
+
+        .file-icon {
+            width: 16px;
+            height: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        /* Editor Area */
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tabs {
+            display: flex;
+            background: #2d3748;
+            border-bottom: 1px solid #4a5568;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: #1a202c;
+            border-right: 1px solid #4a5568;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            position: relative;
+        }
+
+        .tab.active {
+            background: #2d3748;
+        }
+
+        .tab:hover {
+            background: #4a5568;
+        }
+
+        .tab-close {
+            background: none;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 2px;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .tab-close:hover {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .editor-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .editor {
+            width: 100%;
+            height: 100%;
+            background: #1a202c;
+            color: #e2e8f0;
+            border: none;
+            outline: none;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 16px;
+            resize: none;
+            tab-size: 4;
+        }
+
+        .editor:focus {
+            outline: none;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: #1a202c;
+            padding: 6px 12px;
+            border-top: 1px solid #4a5568;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .status-left, .status-right {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* Find/Replace Dialog */
+        .find-dialog {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 6px;
+            padding: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            z-index: 1000;
+            min-width: 300px;
+            display: none;
+        }
+
+        .find-dialog h3 {
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .find-input-group {
+            margin-bottom: 8px;
+        }
+
+        .find-input-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .find-input-group input {
+            width: 100%;
+            padding: 6px 8px;
+            background: #1a202c;
+            border: 1px solid #4a5568;
+            border-radius: 4px;
+            color: #e2e8f0;
+            font-size: 12px;
+        }
+
+        .find-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .find-buttons button {
+            padding: 6px 12px;
+            background: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .find-buttons button:hover {
+            background: #2c5aa0;
+        }
+
+        .find-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Hidden file input */
+        .hidden-input {
+            display: none;
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a202c;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .file-explorer {
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+                z-index: 999;
+                width: 0;
+            }
+
+            .file-explorer.show {
+                width: 250px;
+            }
+
+            .toolbar {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Menu Bar -->
+        <div class="menu-bar">
+            <div class="menu-dropdown">
+                <span class="menu-item">File</span>
+                <div class="dropdown-content">
+                    <a href="#" onclick="createNewFile()">New (Ctrl+N)</a>
+                    <a href="#" onclick="openFile()">Open (Ctrl+O)</a>
+                    <a href="#" onclick="saveFile()">Save (Ctrl+S)</a>
+                    <a href="#" onclick="saveFileAs()">Save As (Ctrl+Shift+S)</a>
+                    <a href="#" onclick="exportFile()">Export</a>
+                </div>
+            </div>
+            <div class="menu-dropdown">
+                <span class="menu-item">Edit</span>
+                <div class="dropdown-content">
+                    <a href="#" onclick="undo()">Undo (Ctrl+Z)</a>
+                    <a href="#" onclick="redo()">Redo (Ctrl+Y)</a>
+                    <a href="#" onclick="showFindDialog()">Find (Ctrl+F)</a>
+                    <a href="#" onclick="showReplaceDialog()">Replace (Ctrl+H)</a>
+                    <a href="#" onclick="selectAll()">Select All (Ctrl+A)</a>
+                </div>
+            </div>
+            <div class="menu-dropdown">
+                <span class="menu-item">View</span>
+                <div class="dropdown-content">
+                    <a href="#" onclick="toggleFileExplorer()">Toggle File Explorer</a>
+                    <a href="#" onclick="toggleWordWrap()">Word Wrap</a>
+                    <a href="#" onclick="toggleLineNumbers()">Line Numbers</a>
+                    <a href="#" onclick="zoomIn()">Zoom In (Ctrl++)</a>
+                    <a href="#" onclick="zoomOut()">Zoom Out (Ctrl+-)</a>
+                </div>
+            </div>
+            <div class="menu-dropdown">
+                <span class="menu-item">Language</span>
+                <div class="dropdown-content">
+                    <a href="#" onclick="setLanguage('text')">Plain Text</a>
+                    <a href="#" onclick="setLanguage('javascript')">JavaScript</a>
+                    <a href="#" onclick="setLanguage('html')">HTML</a>
+                    <a href="#" onclick="setLanguage('css')">CSS</a>
+                    <a href="#" onclick="setLanguage('python')">Python</a>
+                    <a href="#" onclick="setLanguage('json')">JSON</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <button onclick="createNewFile()" title="New File">📄 New</button>
+            <button onclick="openFile()" title="Open File">📁 Open</button>
+            <button onclick="saveFile()" title="Save File">💾 Save</button>
+            <button onclick="saveFileAs()" title="Save As">💾 Save As</button>
+            <span>|</span>
+            <button onclick="undo()" title="Undo">↶ Undo</button>
+            <button onclick="redo()" title="Redo">↷ Redo</button>
+            <span>|</span>
+            <button onclick="showFindDialog()" title="Find">🔍 Find</button>
+            <button onclick="showReplaceDialog()" title="Replace">🔄 Replace</button>
+            <span>|</span>
+            <select id="languageSelect" onchange="changeLanguage()" title="Language">
+                <option value="text">Plain Text</option>
+                <option value="javascript">JavaScript</option>
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
+                <option value="python">Python</option>
+                <option value="json">JSON</option>
+                <option value="markdown">Markdown</option>
+            </select>
+            <span>|</span>
+            <label>Font Size:</label>
+            <input type="number" id="fontSize" value="14" min="8" max="32" onchange="changeFontSize()">
+            <button onclick="zoomIn()" title="Zoom In">🔍+</button>
+            <button onclick="zoomOut()" title="Zoom Out">🔍-</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- File Explorer -->
+            <div class="file-explorer" id="fileExplorer">
+                <div class="explorer-header">
+                    Files
+                </div>
+                <div class="file-list" id="fileList">
+                    <!-- Files will be populated here -->
+                </div>
+            </div>
+
+            <!-- Editor Area -->
+            <div class="editor-area">
+                <div class="tabs" id="tabs">
+                    <!-- Tabs will be populated here -->
+                </div>
+                <div class="editor-container">
+                    <textarea class="editor" id="editor" placeholder="Start typing your text here..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span id="fileStatus">Untitled</span>
+                <span id="languageStatus">Plain Text</span>
+            </div>
+            <div class="status-right">
+                <span id="cursorPosition">Line 1, Column 1</span>
+                <span id="characterCount">0 characters</span>
+                <span id="wordCount">0 words</span>
+            </div>
+        </div>
+
+        <!-- Find/Replace Dialog -->
+        <div class="find-dialog" id="findDialog">
+            <button class="find-close" onclick="closeFindDialog()">×</button>
+            <h3 id="dialogTitle">Find</h3>
+            <div class="find-input-group">
+                <label>Find:</label>
+                <input type="text" id="findInput" placeholder="Enter text to find">
+            </div>
+            <div class="find-input-group" id="replaceGroup" style="display: none;">
+                <label>Replace with:</label>
+                <input type="text" id="replaceInput" placeholder="Enter replacement text">
+            </div>
+            <div class="find-buttons">
+                <button onclick="findNext()">Find Next</button>
+                <button onclick="findPrevious()">Find Previous</button>
+                <button id="replaceBtn" onclick="replaceText()" style="display: none;">Replace</button>
+                <button id="replaceAllBtn" onclick="replaceAll()" style="display: none;">Replace All</button>
+            </div>
+        </div>
+
+        <!-- Hidden file input -->
+        <input type="file" id="fileInput" class="hidden-input" accept=".txt,.js,.html,.css,.json,.md,.py,.xml,.csv" multiple>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+    <script>
+        // Global variables
+        let files = [];
+        let currentFileIndex = 0;
+        let isModified = false;
+        let findIndex = -1;
+        let findMatches = [];
+
+        // File structure
+        class FileTab {
+            constructor(name, content = '', language = 'text') {
+                this.name = name;
+                this.content = content;
+                this.language = language;
+                this.modified = false;
+                this.cursorPosition = 0;
+            }
+        }
+
+        // Initialize the application
+        function init() {
+            createNewFile();
+            setupEventListeners();
+            updateStatusBar();
+            loadFromLocalStorage();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            const editor = document.getElementById('editor');
+            const fileInput = document.getElementById('fileInput');
+
+            // Editor events
+            editor.addEventListener('input', handleEditorChange);
+            editor.addEventListener('keydown', handleKeyDown);
+            editor.addEventListener('click', updateCursorPosition);
+            editor.addEventListener('keyup', updateCursorPosition);
+            editor.addEventListener('scroll', updateCursorPosition);
+
+            // File input event
+            fileInput.addEventListener('change', handleFileLoad);
+
+            // Window events
+            window.addEventListener('beforeunload', handleBeforeUnload);
+            window.addEventListener('resize', handleResize);
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleGlobalKeyDown);
+        }
+
+        // Handle global keyboard shortcuts
+        function handleGlobalKeyDown(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'n':
+                        e.preventDefault();
+                        createNewFile();
+                        break;
+                    case 'o':
+                        e.preventDefault();
+                        openFile();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        if (e.shiftKey) {
+                            saveFileAs();
+                        } else {
+                            saveFile();
+                        }
+                        break;
+                    case 'f':
+                        e.preventDefault();
+                        showFindDialog();
+                        break;
+                    case 'h':
+                        e.preventDefault();
+                        showReplaceDialog();
+                        break;
+                    case 'z':
+                        e.preventDefault();
+                        if (e.shiftKey) {
+                            redo();
+                        } else {
+                            undo();
+                        }
+                        break;
+                    case 'y':
+                        e.preventDefault();
+                        redo();
+                        break;
+                    case 'a':
+                        e.preventDefault();
+                        selectAll();
+                        break;
+                    case '=':
+                    case '+':
+                        e.preventDefault();
+                        zoomIn();
+                        break;
+                    case '-':
+                        e.preventDefault();
+                        zoomOut();
+                        break;
+                }
+            }
+        }
+
+        // Handle editor changes
+        function handleEditorChange() {
+            const editor = document.getElementById('editor');
+            if (files[currentFileIndex]) {
+                files[currentFileIndex].content = editor.value;
+                files[currentFileIndex].modified = true;
+                updateTabs();
+                updateStatusBar();
+                saveToLocalStorage();
+            }
+        }
+
+        // Handle special key combinations in editor
+        function handleKeyDown(e) {
+            // Tab handling
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const editor = e.target;
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                
+                const selectedText = editor.value.substring(start, end);
+                const beforeSelection = editor.value.substring(0, start);
+                const afterSelection = editor.value.substring(end);
+                
+                if (e.shiftKey) {
+                    // Shift+Tab: Remove indentation
+                    const lines = selectedText.split('\n');
+                    const unindentedLines = lines.map(line => {
+                        if (line.startsWith('    ')) {
+                            return line.substring(4);
+                        } else if (line.startsWith('\t')) {
+                            return line.substring(1);
+                        }
+                        return line;
+                    });
+                    const newText = unindentedLines.join('\n');
+                    editor.value = beforeSelection + newText + afterSelection;
+                    editor.selectionStart = start;
+                    editor.selectionEnd = start + newText.length;
+                } else {
+                    // Tab: Add indentation
+                    if (selectedText.includes('\n')) {
+                        // Multiple lines selected
+                        const lines = selectedText.split('\n');
+                        const indentedLines = lines.map(line => '    ' + line);
+                        const newText = indentedLines.join('\n');
+                        editor.value = beforeSelection + newText + afterSelection;
+                        editor.selectionStart = start;
+                        editor.selectionEnd = start + newText.length;
+                    } else {
+                        // Single line or no selection
+                        editor.value = beforeSelection + '    ' + afterSelection;
+                        editor.selectionStart = editor.selectionEnd = start + 4;
+                    }
+                }
+                handleEditorChange();
+            }
+        }
+
+        // Update cursor position and status
+        function updateCursorPosition() {
+            const editor = document.getElementById('editor');
+            const cursorPos = editor.selectionStart;
+            const textBeforeCursor = editor.value.substring(0, cursorPos);
+            const lines = textBeforeCursor.split('\n');
+            const currentLine = lines.length;
+            const currentColumn = lines[lines.length - 1].length + 1;
+            
+            document.getElementById('cursorPosition').textContent = `Line ${currentLine}, Column ${currentColumn}`;
+        }
+
+        // Update status bar
+        function updateStatusBar() {
+            const editor = document.getElementById('editor');
+            const content = editor.value;
+            const characterCount = content.length;
+            const wordCount = content.trim() === '' ? 0 : content.trim().split(/\s+/).length;
+            
+            document.getElementById('characterCount').textContent = `${characterCount} characters`;
+            document.getElementById('wordCount').textContent = `${wordCount} words`;
+            
+            if (files[currentFileIndex]) {
+                const fileName = files[currentFileIndex].name;
+                const modified = files[currentFileIndex].modified ? ' (modified)' : '';
+                document.getElementById('fileStatus').textContent = fileName + modified;
+                document.getElementById('languageStatus').textContent = files[currentFileIndex].language;
+            }
+            
+            updateCursorPosition();
+        }
+
+        // Create new file
+        function createNewFile() {
+            const fileName = `Untitled-${files.length + 1}.txt`;
+            const newFile = new FileTab(fileName);
+            files.push(newFile);
+            currentFileIndex = files.length - 1;
+            
+            updateTabs();
+            updateFileList();
+            switchToFile(currentFileIndex);
+        }
+
+        // Open file
+        function openFile() {
+            document.getElementById('fileInput').click();
+        }
+
+        // Handle file loading
+        function handleFileLoad(e) {
+            const fileList = e.target.files;
+            
+            for (let i = 0; i < fileList.length; i++) {
+                const file = fileList[i];
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    const content = event.target.result;
+                    const language = getLanguageFromExtension(file.name);
+                    const newFile = new FileTab(file.name, content, language);
+                    
+                    files.push(newFile);
+                    currentFileIndex = files.length - 1;
+                    
+                    updateTabs();
+                    updateFileList();
+                    switchToFile(currentFileIndex);
+                };
+                
+                reader.readAsText(file);
+            }
+            
+            // Clear the input
+            e.target.value = '';
+        }
+
+        // Get language from file extension
+        function getLanguageFromExtension(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const languageMap = {
+                'js': 'javascript',
+                'html': 'html',
+                'css': 'css',
+                'py': 'python',
+                'json': 'json',
+                'md': 'markdown',
+                'xml': 'xml',
+                'txt': 'text'
+            };
+            return languageMap[ext] || 'text';
+        }
+
+        // Save current file
+        function saveFile() {
+            if (files.length === 0) return;
+            
+            const currentFile = files[currentFileIndex];
+            const blob = new Blob([currentFile.content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentFile.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            currentFile.modified = false;
+            updateTabs();
+            updateStatusBar();
+        }
+
+        // Save file as
+        function saveFileAs() {
+            if (files.length === 0) return;
+            
+            const newName = prompt('Enter filename:', files[currentFileIndex].name);
+            if (newName) {
+                files[currentFileIndex].name = newName;
+                files[currentFileIndex].language = getLanguageFromExtension(newName);
+                saveFile();
+                updateTabs();
+                updateFileList();
+                updateStatusBar();
+            }
+        }
+
+        // Export file (with more format options)
+        function exportFile() {
+            if (files.length === 0) return;
+            
+            const currentFile = files[currentFileIndex];
+            const formats = {
+                'Text (.txt)': 'text/plain',
+                'HTML (.html)': 'text/html',
+                'JSON (.json)': 'application/json'
+            };
+            
+            const format = prompt('Choose format:\n' + Object.keys(formats).join('\n'), 'Text (.txt)');
+            if (!format || !formats[format]) return;
+            
+            const blob = new Blob([currentFile.content], { type: formats[format] });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentFile.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Update tabs display
+        function updateTabs() {
+            const tabsContainer = document.getElementById('tabs');
+            tabsContainer.innerHTML = '';
+            
+            files.forEach((file, index) => {
+                const tab = document.createElement('div');
+                tab.className = `tab ${index === currentFileIndex ? 'active' : ''}`;
+                tab.innerHTML = `
+                    <span class="file-icon">${getFileIcon(file.language)}</span>
+                    <span>${file.name}${file.modified ? ' •' : ''}</span>
+                    <button class="tab-close" onclick="closeFile(${index})" title="Close">×</button>
+                `;
+                tab.onclick = (e) => {
+                    if (e.target.classList.contains('tab-close')) return;
+                    switchToFile(index);
+                };
+                tabsContainer.appendChild(tab);
+            });
+        }
+
+        // Get file icon based on language
+        function getFileIcon(language) {
+            const icons = {
+                'javascript': '📜',
+                'html': '🌐',
+                'css': '🎨',
+                'python': '🐍',
+                'json': '📋',
+                'markdown': '📝',
+                'text': '📄'
+            };
+            return icons[language] || '📄';
+        }
+
+        // Switch to file
+        function switchToFile(index) {
+            if (index < 0 || index >= files.length) return;
+            
+            // Save current cursor position
+            if (files[currentFileIndex]) {
+                files[currentFileIndex].cursorPosition = document.getElementById('editor').selectionStart;
+            }
+            
+            currentFileIndex = index;
+            const editor = document.getElementById('editor');
+            editor.value = files[index].content;
+            
+            // Restore cursor position
+            setTimeout(() => {
+                editor.selectionStart = editor.selectionEnd = files[index].cursorPosition;
+                editor.focus();
+            }, 0);
+            
+            // Update language select
+            document.getElementById('languageSelect').value = files[index].language;
+            
+            updateTabs();
+            updateFileList();
+            updateStatusBar();
+        }
+
+        // Close file
+        function closeFile(index) {
+            if (files.length === 0) return;
+            
+            const file = files[index];
+            if (file.modified) {
+                const confirm = window.confirm(`"${file.name}" has unsaved changes. Close anyway?`);
+                if (!confirm) return;
+            }
+            
+            files.splice(index, 1);
+            
+            if (files.length === 0) {
+                createNewFile();
+            } else {
+                if (currentFileIndex >= files.length) {
+                    currentFileIndex = files.length - 1;
+                }
+                switchToFile(currentFileIndex);
+            }
+            
+            updateTabs();
+            updateFileList();
+        }
+
+        // Update file list in explorer
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            files.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = `file-item ${index === currentFileIndex ? 'active' : ''}`;
+                fileItem.innerHTML = `
+                    <span class="file-icon">${getFileIcon(file.language)}</span>
+                    <span>${file.name}${file.modified ? ' •' : ''}</span>
+                `;
+                fileItem.onclick = () => switchToFile(index);
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        // Undo functionality
+        function undo() {
+            document.execCommand('undo');
+            handleEditorChange();
+        }
+
+        // Redo functionality
+        function redo() {
+            document.execCommand('redo');
+            handleEditorChange();
+        }
+
+        // Select all text
+        function selectAll() {
+            const editor = document.getElementById('editor');
+            editor.select();
+        }
+
+        // Show find dialog
+        function showFindDialog() {
+            const dialog = document.getElementById('findDialog');
+            const replaceGroup = document.getElementById('replaceGroup');
+            const replaceBtn = document.getElementById('replaceBtn');
+            const replaceAllBtn = document.getElementById('replaceAllBtn');
+            const dialogTitle = document.getElementById('dialogTitle');
+            
+            dialogTitle.textContent = 'Find';
+            replaceGroup.style.display = 'none';
+            replaceBtn.style.display = 'none';
+            replaceAllBtn.style.display = 'none';
+            
+            dialog.style.display = 'block';
+            document.getElementById('findInput').focus();
+        }
+
+        // Show replace dialog
+        function showReplaceDialog() {
+            const dialog = document.getElementById('findDialog');
+            const replaceGroup = document.getElementById('replaceGroup');
+            const replaceBtn = document.getElementById('replaceBtn');
+            const replaceAllBtn = document.getElementById('replaceAllBtn');
+            const dialogTitle = document.getElementById('dialogTitle');
+            
+            dialogTitle.textContent = 'Find & Replace';
+            replaceGroup.style.display = 'block';
+            replaceBtn.style.display = 'inline-block';
+            replaceAllBtn.style.display = 'inline-block';
+            
+            dialog.style.display = 'block';
+            document.getElementById('findInput').focus();
+        }
+
+        // Close find dialog
+        function closeFindDialog() {
+            document.getElementById('findDialog').style.display = 'none';
+            clearHighlights();
+        }
+
+        // Find next occurrence
+        function findNext() {
+            const editor = document.getElementById('editor');
+            const findText = document.getElementById('findInput').value;
+            
+            if (!findText) return;
+            
+            const content = editor.value;
+            const startPos = editor.selectionEnd;
+            const foundIndex = content.indexOf(findText, startPos);
+            
+            if (foundIndex !== -1) {
+                editor.setSelectionRange(foundIndex, foundIndex + findText.length);
+                editor.focus();
+                highlightMatches(findText);
+            } else {
+                // Search from beginning
+                const foundFromStart = content.indexOf(findText, 0);
+                if (foundFromStart !== -1) {
+                    editor.setSelectionRange(foundFromStart, foundFromStart + findText.length);
+                    editor.focus();
+                    highlightMatches(findText);
+                } else {
+                    alert('Text not found');
+                }
+            }
+        }
+
+        // Find previous occurrence
+        function findPrevious() {
+            const editor = document.getElementById('editor');
+            const findText = document.getElementById('findInput').value;
+            
+            if (!findText) return;
+            
+            const content = editor.value;
+            const startPos = editor.selectionStart - 1;
+            const foundIndex = content.lastIndexOf(findText, startPos);
+            
+            if (foundIndex !== -1) {
+                editor.setSelectionRange(foundIndex, foundIndex + findText.length);
+                editor.focus();
+                highlightMatches(findText);
+            } else {
+                // Search from end
+                const foundFromEnd = content.lastIndexOf(findText);
+                if (foundFromEnd !== -1) {
+                    editor.setSelectionRange(foundFromEnd, foundFromEnd + findText.length);
+                    editor.focus();
+                    highlightMatches(findText);
+                } else {
+                    alert('Text not found');
+                }
+            }
+        }
+
+        // Replace current selection
+        function replaceText() {
+            const editor = document.getElementById('editor');
+            const findText = document.getElementById('findInput').value;
+            const replaceText = document.getElementById('replaceInput').value;
+            
+            if (!findText) return;
+            
+            const selectedText = editor.value.substring(editor.selectionStart, editor.selectionEnd);
+            if (selectedText === findText) {
+                const beforeSelection = editor.value.substring(0, editor.selectionStart);
+                const afterSelection = editor.value.substring(editor.selectionEnd);
+                
+                editor.value = beforeSelection + replaceText + afterSelection;
+                editor.setSelectionRange(
+                    beforeSelection.length,
+                    beforeSelection.length + replaceText.length
+                );
+                
+                handleEditorChange();
+                findNext(); // Find next occurrence
+            } else {
+                findNext(); // Find first occurrence
+            }
+        }
+
+        // Replace all occurrences
+        function replaceAll() {
+            const editor = document.getElementById('editor');
+            const findText = document.getElementById('findInput').value;
+            const replaceText = document.getElementById('replaceInput').value;
+            
+            if (!findText) return;
+            
+            const originalContent = editor.value;
+            const newContent = originalContent.split(findText).join(replaceText);
+            const replacements = (originalContent.length - newContent.length) / (findText.length - replaceText.length);
+            
+            if (replacements > 0) {
+                editor.value = newContent;
+                handleEditorChange();
+                alert(`Replaced ${replacements} occurrences`);
+            } else {
+                alert('Text not found');
+            }
+        }
+
+        // Highlight matches (visual feedback)
+        function highlightMatches(searchText) {
+            // This is a simple implementation
+            // In a real editor, you'd use a more sophisticated highlighting system
+        }
+
+        // Clear highlights
+        function clearHighlights() {
+            // Clear any highlighting
+        }
+
+        // Toggle file explorer
+        function toggleFileExplorer() {
+            const explorer = document.getElementById('fileExplorer');
+            explorer.classList.toggle('collapsed');
+        }
+
+        // Toggle word wrap
+        function toggleWordWrap() {
+            const editor = document.getElementById('editor');
+            const currentWrap = editor.style.whiteSpace;
+            editor.style.whiteSpace = currentWrap === 'pre-wrap' ? 'pre' : 'pre-wrap';
+        }
+
+        // Toggle line numbers (placeholder)
+        function toggleLineNumbers() {
+            alert('Line numbers feature coming soon!');
+        }
+
+        // Change language
+        function changeLanguage() {
+            const select = document.getElementById('languageSelect');
+            const language = select.value;
+            
+            if (files[currentFileIndex]) {
+                files[currentFileIndex].language = language;
+                updateTabs();
+                updateFileList();
+                updateStatusBar();
+            }
+        }
+
+        // Set language
+        function setLanguage(language) {
+            document.getElementById('languageSelect').value = language;
+            changeLanguage();
+        }
+
+        // Change font size
+        function changeFontSize() {
+            const fontSize = document.getElementById('fontSize').value;
+            const editor = document.getElementById('editor');
+            editor.style.fontSize = fontSize + 'px';
+        }
+
+        // Zoom in
+        function zoomIn() {
+            const fontSizeInput = document.getElementById('fontSize');
+            const currentSize = parseInt(fontSizeInput.value);
+            if (currentSize < 32) {
+                fontSizeInput.value = currentSize + 1;
+                changeFontSize();
+            }
+        }
+
+        // Zoom out
+        function zoomOut() {
+            const fontSizeInput = document.getElementById('fontSize');
+            const currentSize = parseInt(fontSizeInput.value);
+            if (currentSize > 8) {
+                fontSizeInput.value = currentSize - 1;
+                changeFontSize();
+            }
+        }
+
+        // Handle before unload
+        function handleBeforeUnload(e) {
+            const hasUnsavedChanges = files.some(file => file.modified);
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+            }
+        }
+
+        // Handle window resize
+        function handleResize() {
+            // Handle responsive behavior
+            const width = window.innerWidth;
+            const explorer = document.getElementById('fileExplorer');
+            
+            if (width < 768) {
+                explorer.classList.add('collapsed');
+            }
+        }
+
+        // Save to localStorage
+        function saveToLocalStorage() {
+            try {
+                const data = {
+                    files: files,
+                    currentFileIndex: currentFileIndex
+                };
+                localStorage.setItem('notepadpp-web-data', JSON.stringify(data));
+            } catch (e) {
+                console.warn('Could not save to localStorage:', e);
+            }
+        }
+
+        // Load from localStorage
+        function loadFromLocalStorage() {
+            try {
+                const data = localStorage.getItem('notepadpp-web-data');
+                if (data) {
+                    const parsed = JSON.parse(data);
+                    if (parsed.files && parsed.files.length > 0) {
+                        files = parsed.files.map(f => {
+                            const file = new FileTab(f.name, f.content, f.language);
+                            file.modified = f.modified;
+                            file.cursorPosition = f.cursorPosition || 0;
+                            return file;
+                        });
+                        currentFileIndex = parsed.currentFileIndex || 0;
+                        
+                        updateTabs();
+                        updateFileList();
+                        switchToFile(currentFileIndex);
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not load from localStorage:', e);
+            }
+        }
+
+        // Auto-save functionality
+        function startAutoSave() {
+            setInterval(() => {
+                saveToLocalStorage();
+            }, 30000); // Auto-save every 30 seconds
+        }
+
+        // Advanced text operations
+        function transformText(operation) {
+            const editor = document.getElementById('editor');
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selectedText = editor.value.substring(start, end);
+            
+            if (selectedText) {
+                let transformedText = '';
+                
+                switch (operation) {
+                    case 'uppercase':
+                        transformedText = selectedText.toUpperCase();
+                        break;
+                    case 'lowercase':
+                        transformedText = selectedText.toLowerCase();
+                        break;
+                    case 'capitalize':
+                        transformedText = selectedText.replace(/\b\w/g, l => l.toUpperCase());
+                        break;
+                    case 'reverse':
+                        transformedText = selectedText.split('').reverse().join('');
+                        break;
+                }
+                
+                const beforeSelection = editor.value.substring(0, start);
+                const afterSelection = editor.value.substring(end);
+                
+                editor.value = beforeSelection + transformedText + afterSelection;
+                editor.setSelectionRange(start, start + transformedText.length);
+                
+                handleEditorChange();
+            }
+        }
+
+        // Text statistics
+        function getTextStatistics() {
+            const editor = document.getElementById('editor');
+            const content = editor.value;
+            
+            const stats = {
+                characters: content.length,
+                charactersNoSpaces: content.replace(/\s/g, '').length,
+                words: content.trim() === '' ? 0 : content.trim().split(/\s+/).length,
+                lines: content.split('\n').length,
+                paragraphs: content.split(/\n\s*\n/).filter(p => p.trim()).length
+            };
+            
+            const message = `Text Statistics:
+Characters: ${stats.characters}
+Characters (no spaces): ${stats.charactersNoSpaces}
+Words: ${stats.words}
+Lines: ${stats.lines}
+Paragraphs: ${stats.paragraphs}`;
+            
+            alert(message);
+        }
+
+        // Duplicate line
+        function duplicateLine() {
+            const editor = document.getElementById('editor');
+            const lines = editor.value.split('\n');
+            const cursorPos = editor.selectionStart;
+            const textBeforeCursor = editor.value.substring(0, cursorPos);
+            const currentLineNumber = textBeforeCursor.split('\n').length - 1;
+            const currentLine = lines[currentLineNumber];
+            
+            lines.splice(currentLineNumber + 1, 0, currentLine);
+            editor.value = lines.join('\n');
+            
+            // Move cursor to the end of the duplicated line
+            const newCursorPos = cursorPos + currentLine.length + 1;
+            editor.setSelectionRange(newCursorPos, newCursorPos);
+            
+            handleEditorChange();
+        }
+
+        // Delete line
+        function deleteLine() {
+            const editor = document.getElementById('editor');
+            const lines = editor.value.split('\n');
+            const cursorPos = editor.selectionStart;
+            const textBeforeCursor = editor.value.substring(0, cursorPos);
+            const currentLineNumber = textBeforeCursor.split('\n').length - 1;
+            
+            if (lines.length > 1) {
+                lines.splice(currentLineNumber, 1);
+                editor.value = lines.join('\n');
+                
+                // Adjust cursor position
+                const linesBefore = lines.slice(0, currentLineNumber).join('\n');
+                const newCursorPos = linesBefore.length + (linesBefore.length > 0 ? 1 : 0);
+                editor.setSelectionRange(newCursorPos, newCursorPos);
+                
+                handleEditorChange();
+            }
+        }
+
+        // Sort lines
+        function sortLines(ascending = true) {
+            const editor = document.getElementById('editor');
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            
+            let textToSort;
+            let beforeText = '';
+            let afterText = '';
+            
+            if (start === end) {
+                // No selection, sort entire document
+                textToSort = editor.value;
+            } else {
+                // Sort selected text
+                beforeText = editor.value.substring(0, start);
+                textToSort = editor.value.substring(start, end);
+                afterText = editor.value.substring(end);
+            }
+            
+            const lines = textToSort.split('\n');
+            lines.sort((a, b) => {
+                if (ascending) {
+                    return a.localeCompare(b);
+                } else {
+                    return b.localeCompare(a);
+                }
+            });
+            
+            const sortedText = lines.join('\n');
+            editor.value = beforeText + sortedText + afterText;
+            
+            if (start !== end) {
+                editor.setSelectionRange(start, start + sortedText.length);
+            }
+            
+            handleEditorChange();
+        }
+
+        // Add more menu items for advanced features
+        function addAdvancedMenuItems() {
+            // This could be expanded to add more sophisticated menu items
+            // For now, we'll add keyboard shortcuts for advanced features
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case 'd':
+                            if (e.shiftKey) {
+                                e.preventDefault();
+                                duplicateLine();
+                            }
+                            break;
+                        case 'l':
+                            if (e.shiftKey) {
+                                e.preventDefault();
+                                deleteLine();
+                            }
+                            break;
+                        case 'u':
+                            if (e.shiftKey) {
+                                e.preventDefault();
+                                transformText('uppercase');
+                            }
+                            break;
+                        case 'i':
+                            if (e.shiftKey && e.altKey) {
+                                e.preventDefault();
+                                getTextStatistics();
+                            }
+                            break;
+                    }
+                }
+            });
+        }
+
+        // Initialize the application when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            startAutoSave();
+            addAdvancedMenuItems();
+            
+            // Add some helpful shortcuts info
+            console.log('Notepad++ Web Clone - Keyboard Shortcuts:');
+            console.log('Ctrl+N: New File');
+            console.log('Ctrl+O: Open File');
+            console.log('Ctrl+S: Save File');
+            console.log('Ctrl+Shift+S: Save As');
+            console.log('Ctrl+F: Find');
+            console.log('Ctrl+H: Find & Replace');
+            console.log('Ctrl+Z: Undo');
+            console.log('Ctrl+Y: Redo');
+            console.log('Ctrl+A: Select All');
+            console.log('Ctrl+Shift+D: Duplicate Line');
+            console.log('Ctrl+Shift+L: Delete Line');
+            console.log('Ctrl+Shift+U: Transform to Uppercase');
+            console.log('Ctrl+Shift+Alt+I: Text Statistics');
+            console.log('Tab: Indent');
+            console.log('Shift+Tab: Unindent');
+        });
+    </script>
+</body>
+</html>
