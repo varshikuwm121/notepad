@@ -49,8 +49,6 @@
         .editor, .highlighted-content {
             width: 100%;
             height: 100%;
-            background: #1a202c;
-            color: #e2e8f0;
             border: none;
             outline: none;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
@@ -70,11 +68,14 @@
             z-index: 20; /* Editor on top */
             caret-color: #e2e8f0; /* Ensure caret is visible */
             color: transparent; /* Hide text in editor to show highlighted content */
+            background: transparent; /* Make the textarea background transparent to see the layer below */
         }
 
         .highlighted-content {
             z-index: 10; /* Highlighted content below editor */
             pointer-events: none; /* Allow clicks to pass through to editor */
+            background: #1a202c; /* Background color for the text area is actually here */
+            color: #e2e8f0; /* Default text color */
         }
 
         /* Scrollbar styles */
@@ -574,7 +575,6 @@
             // Local storage is now secondary to Firestore for persistence
             // loadFromLocalStorage(); // Commented out as Firestore is primary
             startAutoSave();
-            addAdvancedMenuItems();
         }
 
         // Setup event listeners
@@ -1420,31 +1420,8 @@
             if (!searchText) return;
 
             const flags = caseSensitive ? 'g' : 'gi';
-            const regex = new RegExp(searchText, flags);
-            let match;
-            let offset = 0;
-            let tempContent = content;
-
-            // Simple highlighting for the editor overlay
-            // This is a basic approach; a more robust solution would involve modifying the Prism output
-            while ((match = regex.exec(tempContent)) !== null) {
-                const startIndex = match.index + offset;
-                const endIndex = startIndex + match[0].length;
-
-                // Create a span for highlighting
-                const span = document.createElement('span');
-                span.className = 'bg-yellow-500 bg-opacity-50 rounded'; // Tailwind classes for highlighting
-                span.textContent = content.substring(startIndex, endIndex);
-
-                // Replace the matched text in the highlightedContent's innerHTML
-                // This is a crude way; a proper solution would rebuild the highlighted HTML
-                const originalText = highlightedContent.innerHTML;
-                const before = originalText.substring(0, startIndex);
-                const after = originalText.substring(endIndex);
-                highlightedContent.innerHTML = before + span.outerHTML + after;
-
-                offset += (span.outerHTML.length - match[0].length); // Adjust offset for added HTML
-            }
+            const regex = new RegExp(`(${searchText})`, flags);
+            highlightedContent.innerHTML = highlightedContent.innerHTML.replace(regex, `<span class="bg-yellow-500 bg-opacity-50 rounded">$1</span>`);
         }
 
         // Clear highlights
