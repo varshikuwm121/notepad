@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangChain Components - Hierarchical Learning Structure</title>
+    <style>
+        /* Color Variables */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --header-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            --card-border: #3498db;
+            --card-hover-border: #e74c3c;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --level-number: #e74c3c;
+            --background-light: #f8f9fa;
+            --background-white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            --card-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Global Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+        }
+
+        /* Container Styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--background-white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: var(--header-gradient);
+            color: var(--background-white);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        /* Content Styles */
+        .content {
+            padding: 30px;
+        }
+
+        /* Grid Layout */
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* Card Styles */
+        .level-card {
+            background: var(--background-light);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid var(--card-border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .level-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow);
+            border-left-color: var(--card-hover-border);
+        }
+
+        /* Card Content Styles */
+        .level-number {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--level-number);
+            margin-bottom: 10px;
+        }
+
+        .level-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .level-description {
+            color: var(--text-secondary);
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        /* Link Styles */
+        .level-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        /* Navigation Hint */
+        .navigation-hint {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 30px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>LangChain Components</h1>
+            <p>Hierarchical Learning Structure</p>
+        </div>
+        
+        <div class="content">
+            <div class="level-grid">
+                <div class="level-card">
+                    <a href="level_1.html" class="level-link">
+                        <div class="level-number">Level 1</div>
+                        <div class="level-title">Foundation Concepts</div>
+                        <div class="level-description">Learn these first - they're building blocks for everything else</div>
+                    </a>
+                </div>
+                
+                <div class="level-card">
+                    <a href="level_2.html" class="level-link">
+                        <div class="level-number">Level 2</div>
+                        <div class="level-title">Core Language Models</div>
+                        <div class="level-description">Build on Level 1 - these are your main AI interfaces</div>
+                    </a>
+                </div>
+                
+                <div class="level-card">
+                    <a href="level_3.html" class="level-link">
+                        <div class="level-number">Level 3</div>
+                        <div class="level-title">Input/Output Management</div>
+                        <div class="level-description">Build on Level 2 - control what goes in and comes out</div>
+                    </a>
+                </div>
+                
+                <div class="level-card">
+                    <a href="level_4.html" class="level-link">
+                        <div class="level-number">Level 4</div>
+                        <div class="level-title">Data Management & Processing</div>
+                        <div class="level-description">Build on Level 1-3 - handle and prepare your data</div>
+                    </a>
+                </div>
+                
+                <div class="level-card">
+                    <a href="level_5.html" class="level-link">
+                        <div class="level-number">Level 5</div>
+                        <div class="level-title">Knowledge & Retrieval Systems</div>
+                        <div class="level-description">Build on Level 4 - store and retrieve information</div>
+                    </a>
+                </div>
+                
+                <div class="level-card">
+                    <a href="level_6.html" class="level-link">
+                        <div class="level-number">Level 6</div>
+                        <div class="level-title">Tool Integration & Actions</div>
+                        <div class="level-description">Build on Level 3 - extend model capabilities</div>
+                    </a>
+                </div>
+                
+                <div class="level-card">
+                    <a href="level_7.html" class="level-link">
+                        <div class="level-number">Level 7</div>
+                        <div class="level-title">Memory & State Management</div>
+                        <div class="level-description">Build on previous levels - add persistence and context</div>
+                    </a>
+                </div>
+                
+                <div class="level-card">
+                    <a href="level_8.html" class="level-link">
+                        <div class="level-number">Level 8</div>
+                        <div class="level-title">Orchestration & Workflows</div>
+                        <div class="level-description">Build on all previous - create complex applications</div>
+                    </a>
+                </div>
+                
+                <div class="level-card">
+                    <a href="level_9.html" class="level-link">
+                        <div class="level-number">Level 9</div>
+                        <div class="level-title">Specialized Use Cases</div>
+                        <div class="level-description">Build on Level 8 - domain-specific applications</div>
+                    </a>
+                </div>
+                
+                <div class="level-card">
+                    <a href="level_10.html" class="level-link">
+                        <div class="level-number">Level 10</div>
+                        <div class="level-title">Production & Optimization</div>
+                        <div class="level-description">Build on all previous - deploy and maintain systems</div>
+                    </a>
+                </div>
+                
+                <div class="level-card">
+                    <a href="level_11.html" class="level-link">
+                        <div class="level-number">Level 11</div>
+                        <div class="level-title">Advanced Customization</div>
+                        <div class="level-description">Build on all previous - create custom components</div>
+                    </a>
+                </div>
+                
+                <div class="level-card">
+                    <a href="level_12.html" class="level-link">
+                        <div class="level-number">Level 12</div>
+                        <div class="level-title">Legacy & Migration</div>
+                        <div class="level-description">Reference material for existing systems</div>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="navigation-hint">
+                Click on any level card to navigate to its detailed content page
+            </div>
+        </div>
+    </div>
+</body>
+</html>
