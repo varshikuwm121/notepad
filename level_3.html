@@ -1,1 +1,1343 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input/Output Management - Healthcare AI Solutions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-bg: #ecf0f1;
+            --dark-bg: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-section h1 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .section-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .component-header {
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .component-header h2 {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .badge-custom {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            display: inline-block;
+            margin: 0.25rem;
+        }
+        
+        .business-context {
+            background-color: #e8f4fc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .impact-box {
+            background-color: #fdf2f2;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .code-container {
+            position: relative;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .code-header {
+            background-color: #2d2d2d;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .code-header .file-name {
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        
+        .code-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .code-actions button {
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .code-actions button:hover {
+            color: white;
+        }
+        
+        pre[class*="language-"] {
+            margin: 0;
+            border-radius: 0;
+            background-color: #1e1e1e;
+        }
+        
+        .relationship-tag {
+            display: inline-block;
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 0.25rem;
+        }
+        
+        .element-type {
+            display: inline-block;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin: 0.25rem;
+        }
+        
+        .predefined {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .custom {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .tab-custom {
+            border: none;
+            background: none;
+            color: var(--primary-color);
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            margin-right: 0.25rem;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-custom:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .tab-custom.active {
+            border-bottom: 3px solid var(--secondary-color);
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .use-case-item {
+            padding: 1rem;
+            border-left: 3px solid var(--success-color);
+            margin-bottom: 1rem;
+            background-color: #f8fff9;
+        }
+        
+        footer {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1>Level 3: Input/Output Management</h1>
+                    <p class="lead">Building on Level 2 - Control what goes in and comes out in Healthcare AI Systems</p>
+                    <div class="mt-4">
+                        <span class="badge badge-custom"><i class="fas fa-hospital"></i> Healthcare Industry</span>
+                        <span class="badge badge-custom"><i class="fas fa-brain"></i> AI Integration</span>
+                        <span class="badge badge-custom"><i class="fas fa-code"></i> Technical Implementation</span>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="fas fa-exchange-alt" style="font-size: 8rem; opacity: 0.7;"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- Section 3.1: Prompt Engineering -->
+        <div class="section-card">
+            <div class="component-header">
+                <h2><i class="fas fa-edit"></i> 3.1 Prompt Engineering</h2>
+                <p class="text-muted">Optimizing how healthcare professionals interact with AI systems</p>
+            </div>
+            
+            <ul class="nav nav-tabs mb-4" id="promptTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link tab-custom active" id="templates-tab" data-bs-toggle="tab" data-bs-target="#templates" type="button" role="tab" aria-controls="templates" aria-selected="true">Prompt Templates</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link tab-custom" id="fewshot-tab" data-bs-toggle="tab" data-bs-target="#fewshot" type="button" role="tab" aria-controls="fewshot" aria-selected="false">Few-Shot Prompting</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link tab-custom" id="selectors-tab" data-bs-toggle="tab" data-bs-target="#selectors" type="button" role="tab" aria-controls="selectors" aria-selected="false">Example Selectors</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link tab-custom" id="multimodal-tab" data-bs-toggle="tab" data-bs-target="#multimodal" type="button" role="tab" aria-controls="multimodal" aria-selected="false">Multimodal Prompts</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link tab-custom" id="composition-tab" data-bs-toggle="tab" data-bs-target="#composition" type="button" role="tab" aria-controls="composition" aria-selected="false">Prompt Composition</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="promptTabContent">
+                <!-- Prompt Templates Tab -->
+                <div class="tab-pane fade show active" id="templates" role="tabpanel" aria-labelledby="templates-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-file-medical"></i> Healthcare Applications</h3>
+                            <div class="business-context">
+                                <h5>Business Use Cases</h5>
+                                <ul>
+                                    <li><strong>Standardized Patient Data Analysis:</strong> Templates ensure consistent formatting when inputting patient symptoms for AI diagnosis</li>
+                                    <li><strong>Patient Communication:</strong> Generate standardized responses to common inquiries about appointments, medications, and post-treatment care</li>
+                                    <li><strong>Clinical Documentation:</strong> Streamline creation of medical records with consistent structure and terminology</li>
+                                </ul>
+                            </div>
+                            
+                            <h3><i class="fas fa-check-circle"></i> Problems Solved</h3>
+                            <ul>
+                                <li>Ensures consistency in AI interactions across healthcare providers</li>
+                                <li>Reduces variability in outputs that could lead to medical errors</li>
+                                <li>Saves time by providing pre-formatted interaction patterns</li>
+                                <li>Ensures compliance with healthcare documentation standards</li>
+                            </ul>
+                            
+                            <div class="impact-box">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Impact of Absence</h5>
+                                <p>Without prompt templates, healthcare providers would need to manually craft each interaction, leading to inconsistent inputs, potentially unreliable outputs, increased risk of medical errors, and compliance issues with documentation standards.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-cogs"></i> Technical Implementation</h3>
+                            
+                            <h4>Predefined vs Custom Elements</h4>
+                            <div>
+                                <span class="element-type predefined">Predefined:</span> Basic template structure, standard medical terminology fields
+                            </div>
+                            <div>
+                                <span class="element-type custom">Custom:</span> Specialty-specific fields, institution protocols, patient demographics
+                            </div>
+                            
+                            <h4 class="mt-4">Relationship Keywords</h4>
+                            <div>
+                                <span class="relationship-tag">Foundation</span>
+                                <span class="relationship-tag">Interface</span>
+                            </div>
+                            
+                            <div class="code-container">
+                                <div class="code-header">
+                                    <span class="file-name">diagnosis_template.py</span>
+                                    <div class="code-actions">
+                                        <button title="Copy"><i class="fas fa-copy"></i></button>
+                                        <button title="Download"><i class="fas fa-download"></i></button>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python">from langchain.prompts import PromptTemplate
+
+# Healthcare-specific prompt template for patient diagnosis
+diagnosis_template = PromptTemplate(
+    input_variables=["patient_id", "symptoms", "duration", "medical_history"],
+    template="""
+    Patient ID: {patient_id}
+    Symptoms: {symptoms}
+    Duration: {duration}
+    Relevant Medical History: {medical_history}
+    
+    Based on the information provided, please provide:
+    1. Potential diagnoses (with likelihood percentages)
+    2. Recommended diagnostic tests
+    3. Immediate treatment considerations
+    4. Red flag symptoms that require urgent attention
+    """
+)
+
+# Using the template with patient data
+patient_data = {
+    "patient_id": "PT-2023-0456",
+    "symptoms": "Chest pain, shortness of breath, fatigue",
+    "duration": "3 days",
+    "medical_history": "Hypertension, family history of heart disease"
+}
+
+formatted_prompt = diagnosis_template.format(**patient_data)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Few-Shot Prompting Tab -->
+                <div class="tab-pane fade" id="fewshot" role="tabpanel" aria-labelledby="fewshot-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-microscope"></i> Healthcare Applications</h3>
+                            <div class="business-context">
+                                <h5>Business Use Cases</h5>
+                                <ul>
+                                    <li><strong>Rare Disease Diagnosis:</strong> Helps AI identify rare conditions by providing a few verified examples</li>
+                                    <li><strong>Medical Imaging Analysis:</strong> Guides AI to identify specific conditions in X-rays, MRIs, or CT scans using annotated examples</li>
+                                    <li><strong>Clinical Trial Matching:</strong> Enables AI to match patients with appropriate trials using limited example cases</li>
+                                </ul>
+                            </div>
+                            
+                            <h3><i class="fas fa-check-circle"></i> Problems Solved</h3>
+                            <ul>
+                                <li>Enables AI systems to learn from limited examples (crucial for rare conditions)</li>
+                                <li>Reduces need for large datasets of sensitive patient information</li>
+                                <li>Allows rapid adaptation to new medical procedures or emerging diseases</li>
+                                <li>Improves diagnostic accuracy for conditions with limited training data</li>
+                            </ul>
+                            
+                            <div class="impact-box">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Impact of Absence</h5>
+                                <p>Without few-shot prompting, AI systems would require extensive training data for every condition, leading to slower response to emerging health threats, lower accuracy for rare conditions, and increased need for large volumes of patient data.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-cogs"></i> Technical Implementation</h3>
+                            
+                            <h4>Predefined vs Custom Elements</h4>
+                            <div>
+                                <span class="element-type predefined">Predefined:</span> Basic few-shot methodology, example selection criteria
+                            </div>
+                            <div>
+                                <span class="element-type custom">Custom:</span> Specialty-specific examples, institution-specific cases, rare conditions
+                            </div>
+                            
+                            <h4 class="mt-4">Relationship Keywords</h4>
+                            <div>
+                                <span class="relationship-tag">Execution</span>
+                                <span class="relationship-tag">Control</span>
+                            </div>
+                            
+                            <div class="code-container">
+                                <div class="code-header">
+                                    <span class="file-name">few_shot_prompting.py</span>
+                                    <div class="code-actions">
+                                        <button title="Copy"><i class="fas fa-copy"></i></button>
+                                        <button title="Download"><i class="fas fa-download"></i></button>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python">from langchain.prompts import FewShotPromptTemplate
+from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
+from langchain.vectorstores import Chroma
+from langchain.embeddings import OpenAIEmbeddings
+
+# Example cases for rare disease diagnosis
+examples = [
+    {
+        "symptoms": "Recurrent fever, joint pain, rash, fatigue",
+        "diagnosis": "Systemic Lupus Erythematosus",
+        "reasoning": "Combination of symptoms suggests autoimmune condition"
+    },
+    {
+        "symptoms": "Muscle weakness, double vision, difficulty swallowing",
+        "diagnosis": "Myasthenia Gravis",
+        "reasoning": "Fluctuating muscle weakness affecting ocular muscles"
+    }
+]
+
+# Create a prompt template for few-shot learning
+example_prompt = PromptTemplate(
+    input_variables=["symptoms", "diagnosis", "reasoning"],
+    template="Symptoms: {symptoms}\nDiagnosis: {diagnosis}\nReasoning: {reasoning}\n\n"
+)
+
+# Create a few-shot prompt template
+few_shot_prompt = FewShotPromptTemplate(
+    examples=examples,
+    example_prompt=example_prompt,
+    suffix="Symptoms: {input}\nDiagnosis:",
+    input_variables=["input"]
+)
+
+# Use with a new case
+new_case = "Intermittent fever, abdominal pain, joint swelling, chest pain"
+formatted_prompt = few_shot_prompt.format(input=new_case)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Example Selectors Tab -->
+                <div class="tab-pane fade" id="selectors" role="tabpanel" aria-labelledby="selectors-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-filter"></i> Healthcare Applications</h3>
+                            <div class="business-context">
+                                <h5>Business Use Cases</h5>
+                                <ul>
+                                    <li><strong>Clinical Decision Support:</strong> Selects most relevant previous cases for physician reference during diagnosis</li>
+                                    <li><strong>Medical Training Systems:</strong> Identifies most educational cases for students based on learning objectives</li>
+                                    <li><strong>Research Data Analysis:</strong> Filters relevant patient records for clinical studies based on specific criteria</li>
+                                </ul>
+                            </div>
+                            
+                            <h3><i class="fas fa-check-circle"></i> Problems Solved</h3>
+                            <ul>
+                                <li>Optimizes selection of reference cases for medical decision-making</li>
+                                <li>Reduces information overload by presenting only relevant examples</li>
+                                <li>Enhances medical education with targeted case studies</li>
+                                <li>Improves diagnostic accuracy by focusing on similar previous cases</li>
+                            </ul>
+                            
+                            <div class="impact-box">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Impact of Absence</h5>
+                                <p>Without example selectors, healthcare AI systems would present random or exhaustive sets of examples, increasing time spent searching through irrelevant cases, potentially leading to missed diagnoses and less efficient medical training.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-cogs"></i> Technical Implementation</h3>
+                            
+                            <h4>Predefined vs Custom Elements</h4>
+                            <div>
+                                <span class="element-type predefined">Predefined:</span> Selection algorithms, similarity metrics
+                            </div>
+                            <div>
+                                <span class="element-type custom">Custom:</span> Specialty-specific criteria, institution databases, personalized learning
+                            </div>
+                            
+                            <h4 class="mt-4">Relationship Keywords</h4>
+                            <div>
+                                <span class="relationship-tag">Control</span>
+                                <span class="relationship-tag">Interface</span>
+                            </div>
+                            
+                            <div class="code-container">
+                                <div class="code-header">
+                                    <span class="file-name">example_selectors.py</span>
+                                    <div class="code-actions">
+                                        <button title="Copy"><i class="fas fa-copy"></i></button>
+                                        <button title="Download"><i class="fas fa-download"></i></button>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python">from langchain.prompts.example_selector import (
+    LengthBasedExampleSelector,
+    SemanticSimilarityExampleSelector,
+    MaxMarginalRelevanceExampleSelector
+)
+from langchain.vectorstores import Chroma
+from langchain.embeddings import OpenAIEmbeddings
+
+# Medical case examples
+cases = [
+    {"case": "65-year-old male with chest pain radiating to left arm", "diagnosis": "Myocardial Infarction"},
+    {"case": "42-year-old female with sharp chest pain worsened by breathing", "diagnosis": "Pleurisy"},
+    {"case": "58-year-old male with crushing substernal chest pain after meal", "diagnosis": "Esophageal Spasm"},
+    {"case": "71-year-old female with tearing chest pain radiating to back", "diagnosis": "Aortic Dissection"},
+    {"case": "36-year-old female with chest pain and anxiety", "diagnosis": "Panic Attack"}
+]
+
+# Semantic similarity selector
+embeddings = OpenAIEmbeddings()
+vectorstore = Chroma.from_texts(
+    [case["case"] for case in cases], embeddings, metadatas=cases
+)
+similarity_selector = SemanticSimilarityExampleSelector(
+    vectorstore=vectorstore,
+    k=2  # number of examples to select
+)
+
+# Using with a new case
+new_case = "60-year-old male with severe chest pain, sweating, nausea"
+selected_cases = similarity_selector.select_examples({"case": new_case})</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Multimodal Prompts Tab -->
+                <div class="tab-pane fade" id="multimodal" role="tabpanel" aria-labelledby="multimodal-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-images"></i> Healthcare Applications</h3>
+                            <div class="business-context">
+                                <h5>Business Use Cases</h5>
+                                <ul>
+                                    <li><strong>Diagnostic Imaging:</strong> Combines text descriptions with medical images (X-rays, MRIs) for accurate AI-assisted diagnosis</li>
+                                    <li><strong>Telemedicine Platforms:</strong> Integrates patient-reported symptoms, visual indicators, and voice descriptions for remote assessments</li>
+                                    <li><strong>Surgical Planning:</strong> Combines patient data with 3D medical models for pre-operative planning</li>
+                                </ul>
+                            </div>
+                            
+                            <h3><i class="fas fa-check-circle"></i> Problems Solved</h3>
+                            <ul>
+                                <li>Integrates different types of medical data for comprehensive analysis</li>
+                                <li>Enables more accurate remote diagnostics with multiple information sources</li>
+                                <li>Facilitates better communication between providers and AI systems</li>
+                                <li>Supports complex cases requiring multiple data types</li>
+                            </ul>
+                            
+                            <div class="impact-box">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Impact of Absence</h5>
+                                <p>Without multimodal prompts, healthcare AI systems would analyze single data types in isolation, missing crucial information, reducing diagnostic accuracy, limiting remote healthcare capabilities, and increasing need for in-person consultations.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-cogs"></i> Technical Implementation</h3>
+                            
+                            <h4>Predefined vs Custom Elements</h4>
+                            <div>
+                                <span class="element-type predefined">Predefined:</span> Multimodal frameworks, standard medical image formats
+                            </div>
+                            <div>
+                                <span class="element-type custom">Custom:</span> Specialty-specific combinations, institution protocols, patient-specific formats
+                            </div>
+                            
+                            <h4 class="mt-4">Relationship Keywords</h4>
+                            <div>
+                                <span class="relationship-tag">Interface</span>
+                                <span class="relationship-tag">Execution</span>
+                            </div>
+                            
+                            <div class="code-container">
+                                <div class="code-header">
+                                    <span class="file-name">multimodal_prompts.py</span>
+                                    <div class="code-actions">
+                                        <button title="Copy"><i class="fas fa-copy"></i></button>
+                                        <button title="Download"><i class="fas fa-download"></i></button>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python">from langchain.schema import HumanMessage
+from langchain.chat_models import ChatOpenAI
+import base64
+
+# Function to encode image for inclusion in prompt
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
+
+# Create a multimodal prompt for radiology analysis
+def create_multimodal_prompt(patient_history, image_path):
+    # Get the base64 string of the image
+    base64_image = encode_image(image_path)
+    
+    # Create a multimodal message
+    multimodal_message = HumanMessage(
+        content=[
+            {"type": "text", "text": f"Patient History: {patient_history}\n\nPlease analyze the provided chest X-ray:"},
+            {"type": "text", "text": "1. Describe findings\n2. Potential diagnoses\n3. Recommended follow-up"},
+            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+        ]
+    )
+    
+    return multimodal_message
+
+# Example usage
+patient_history = "65-year-old male with persistent cough, weight loss, smoking history."
+chest_xray_path = "patient_chest_xray.jpg"
+
+multimodal_prompt = create_multimodal_prompt(patient_history, chest_xray_path)
+
+# Send to model
+model = ChatOpenAI(model="gpt-4-vision-preview")
+response = model.invoke([multimodal_prompt])</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Prompt Composition Tab -->
+                <div class="tab-pane fade" id="composition" role="tabpanel" aria-labelledby="composition-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-object-group"></i> Healthcare Applications</h3>
+                            <div class="business-context">
+                                <h5>Business Use Cases</h5>
+                                <ul>
+                                    <li><strong>Clinical Trial Matching:</strong> Combines patient eligibility criteria, medical history, and trial requirements</li>
+                                    <li><strong>Personalized Treatment Planning:</strong> Integrates patient data, clinical guidelines, and latest research</li>
+                                    <li><strong>Drug Interaction Analysis:</strong> Combines patient medications, allergies, and pharmacological databases</li>
+                                </ul>
+                            </div>
+                            
+                            <h3><i class="fas fa-check-circle"></i> Problems Solved</h3>
+                            <ul>
+                                <li>Integrates multiple sources of medical information for comprehensive analysis</li>
+                                <li>Enables personalized healthcare by combining patient data with medical knowledge</li>
+                                <li>Streamlines complex medical decision-making processes</li>
+                                <li>Ensures all relevant factors are considered in recommendations</li>
+                            </ul>
+                            
+                            <div class="impact-box">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Impact of Absence</h5>
+                                <p>Without prompt composition, healthcare AI systems would process information in isolation, potentially missing important connections between data sources, leading to less personalized treatments and increased risk of overlooking critical factors.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-cogs"></i> Technical Implementation</h3>
+                            
+                            <h4>Predefined vs Custom Elements</h4>
+                            <div>
+                                <span class="element-type predefined">Predefined:</span> Composition frameworks, medical data integration standards
+                            </div>
+                            <div>
+                                <span class="element-type custom">Custom:</span> Specialty-specific rules, institution protocols, patient-specific factors
+                            </div>
+                            
+                            <h4 class="mt-4">Relationship Keywords</h4>
+                            <div>
+                                <span class="relationship-tag">Foundation</span>
+                                <span class="relationship-tag">Control</span>
+                            </div>
+                            
+                            <div class="code-container">
+                                <div class="code-header">
+                                    <span class="file-name">prompt_composition.py</span>
+                                    <div class="code-actions">
+                                        <button title="Copy"><i class="fas fa-copy"></i></button>
+                                        <button title="Download"><i class="fas fa-download"></i></button>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python">from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+from langchain.chat_models import ChatOpenAI
+
+# Define individual prompt components
+patient_data_component = PromptTemplate(
+    input_variables=["patient_data"],
+    template="Patient Information:\n{patient_data}\n\n"
+)
+
+clinical_guidelines_component = PromptTemplate(
+    input_variables=["guidelines"],
+    template="Relevant Clinical Guidelines:\n{guidelines}\n\n"
+)
+
+research_evidence_component = PromptTemplate(
+    input_variables=["evidence"],
+    template="Latest Research Evidence:\n{evidence}\n\n"
+)
+
+# Define the final composed prompt template
+composed_prompt = PromptTemplate(
+    input_variables=["patient_data", "guidelines", "evidence", "request"],
+    template="{patient_data}{guidelines}{evidence}{request}Based on the information provided, please generate a personalized treatment plan that:\n1. Addresses patient characteristics\n2. Aligns with clinical guidelines\n3. Incorporates research evidence\n4. Provides clear justification"
+)
+
+# Example usage
+patient_data = "72-year-old female with Stage 3 breast cancer, ER+, PR+, HER2-. Previous treatments: surgery, radiation. Comorbidities: hypertension, osteoporosis."
+guidelines = "NCCN Guidelines: For ER+/PR+, HER2- metastatic breast cancer, first-line endocrine therapy with CDK4/6 inhibitor is recommended."
+evidence = "Recent study (2023) shows improved progression-free survival with ribociclib plus letrozole in patients over 70."
+request = "Recommend first-line systemic therapy for this patient with newly diagnosed metastatic breast cancer."
+
+# Get treatment recommendation
+model = ChatOpenAI(model="gpt-4")
+treatment_chain = LLMChain(llm=model, prompt=composed_prompt)
+recommendation = treatment_chain.run({
+    "patient_data": patient_data,
+    "guidelines": guidelines,
+    "evidence": evidence,
+    "request": request
+})</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3.2: Output Processing -->
+        <div class="section-card">
+            <div class="component-header">
+                <h2><i class="fas fa-cogs"></i> 3.2 Output Processing</h2>
+                <p class="text-muted">Transforming AI responses into structured healthcare data</p>
+            </div>
+            
+            <ul class="nav nav-tabs mb-4" id="outputTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link tab-custom active" id="parsers-tab" data-bs-toggle="tab" data-bs-target="#parsers" type="button" role="tab" aria-controls="parsers" aria-selected="true">Output Parsers</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link tab-custom" id="structured-tab" data-bs-toggle="tab" data-bs-target="#structured" type="button" role="tab" aria-controls="structured" aria-selected="false">Structured Output</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link tab-custom" id="error-tab" data-bs-toggle="tab" data-bs-target="#error" type="button" role="tab" aria-controls="error" aria-selected="false">Error Handling</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link tab-custom" id="json-tab" data-bs-toggle="tab" data-bs-target="#json" type="button" role="tab" aria-controls="json" aria-selected="false">JSON Mode</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="outputTabContent">
+                <!-- Output Parsers Tab -->
+                <div class="tab-pane fade show active" id="parsers" role="tabpanel" aria-labelledby="parsers-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-code"></i> Healthcare Applications</h3>
+                            <div class="business-context">
+                                <h5>Business Use Cases</h5>
+                                <ul>
+                                    <li><strong>EHR Data Integration:</strong> JSON parsers extract structured patient information from AI-generated text for electronic health records</li>
+                                    <li><strong>Medical Billing Systems:</strong> XML parsers process AI-generated procedure descriptions to assign correct billing codes</li>
+                                    <li><strong>Clinical Trial Reporting:</strong> YAML parsers extract structured data from AI-generated trial progress reports</li>
+                                </ul>
+                            </div>
+                            
+                            <h3><i class="fas fa-check-circle"></i> Problems Solved</h3>
+                            <ul>
+                                <li>Converts unstructured AI text into structured data for healthcare systems</li>
+                                <li>Automates data entry into EHRs and medical databases</li>
+                                <li>Ensures consistency in medical information formatting</li>
+                                <li>Facilitates integration between AI and healthcare IT infrastructure</li>
+                            </ul>
+                            
+                            <div class="impact-box">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Impact of Absence</h5>
+                                <p>Without output parsers, healthcare organizations would manually extract and enter data from AI outputs, increasing administrative burden, risk of errors, slower integration of insights, and reduced interoperability between AI and healthcare systems.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-cogs"></i> Technical Implementation</h3>
+                            
+                            <h4>Predefined vs Custom Elements</h4>
+                            <div>
+                                <span class="element-type predefined">Predefined:</span> Standard formats (JSON, XML, YAML), common medical data structures
+                            </div>
+                            <div>
+                                <span class="element-type custom">Custom:</span> Organization-specific schemas, specialty terminologies, validation rules
+                            </div>
+                            
+                            <h4 class="mt-4">Relationship Keywords</h4>
+                            <div>
+                                <span class="relationship-tag">Interface</span>
+                                <span class="relationship-tag">Control</span>
+                            </div>
+                            
+                            <div class="code-container">
+                                <div class="code-header">
+                                    <span class="file-name">output_parsers.py</span>
+                                    <div class="code-actions">
+                                        <button title="Copy"><i class="fas fa-copy"></i></button>
+                                        <button title="Download"><i class="fas fa-download"></i></button>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python">from langchain.output_parsers import PydanticOutputParser, XMLOutputParser, YamlOutputParser
+from langchain.prompts import PromptTemplate
+from langchain.pydantic_v1 import BaseModel, Field
+from typing import List, Optional
+from langchain.chat_models import ChatOpenAI
+
+# Define structured output models for healthcare data
+class Medication(BaseModel):
+    name: str = Field(description="Name of the medication")
+    dosage: str = Field(description="Dosage and frequency")
+    indication: str = Field(description="Reason for medication")
+    side_effects: List[str] = Field(description="Potential side effects")
+
+class Diagnosis(BaseModel):
+    condition: str = Field(description="Diagnosed condition")
+    icd_code: str = Field(description="ICD-10 code for the condition")
+    confidence: float = Field(description="Confidence level in diagnosis (0-1)")
+    differential_diagnoses: List[str] = Field(description="Alternative diagnoses")
+
+class PatientReport(BaseModel):
+    patient_id: str = Field(description="Unique patient identifier")
+    diagnoses: List[Diagnosis] = Field(description="List of diagnoses")
+    medications: List[Medication] = Field(description="Prescribed medications")
+    recommendations: List[str] = Field(description="Treatment recommendations")
+
+# Create parser
+parser = PydanticOutputParser(pydantic_object=PatientReport)
+
+# Create prompt with format instructions
+prompt = PromptTemplate(
+    template="Analyze the following patient data and provide a structured report:\n{format_instructions}\n\nPatient Data: {patient_data}\n\n",
+    input_variables=["patient_data"],
+    partial_variables={"format_instructions": parser.get_format_instructions()},
+)
+
+# Example usage
+patient_data = "65-year-old male presenting with chest pain, shortness of breath, and fatigue. History of hypertension and smoking. ECG shows ST elevation. Diagnosed with acute myocardial infarction. Prescribed aspirin, metoprolol, and atorvastatin."
+
+model_input = prompt.format_prompt(patient_data=patient_data)
+model = ChatOpenAI(model="gpt-4")
+output = model(model_input.to_messages())
+
+# Parse the output
+parsed_report = parser.parse(output.content)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Structured Output Tab -->
+                <div class="tab-pane fade" id="structured" role="tabpanel" aria-labelledby="structured-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-sitemap"></i> Healthcare Applications</h3>
+                            <div class="business-context">
+                                <h5>Business Use Cases</h5>
+                                <ul>
+                                    <li><strong>Clinical Decision Support:</strong> Generates structured treatment plans with clear action items</li>
+                                    <li><strong>Automated Reporting:</strong> Creates structured medical reports with standardized sections</li>
+                                    <li><strong>Health Data Analytics:</strong> Produces structured datasets for population health analysis</li>
+                                </ul>
+                            </div>
+                            
+                            <h3><i class="fas fa-check-circle"></i> Problems Solved</h3>
+                            <ul>
+                                <li>Ensures AI outputs follow consistent, predictable structures</li>
+                                <li>Facilitates automated processing of AI-generated content</li>
+                                <li>Improves reliability of AI systems in critical healthcare applications</li>
+                                <li>Enables seamless integration with healthcare data pipelines</li>
+                            </ul>
+                            
+                            <div class="impact-box">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Impact of Absence</h5>
+                                <p>Without structured output, AI systems would produce inconsistent formats, requiring manual processing, increasing errors, limiting automation potential, and creating integration challenges with healthcare systems.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-cogs"></i> Technical Implementation</h3>
+                            
+                            <h4>Predefined vs Custom Elements</h4>
+                            <div>
+                                <span class="element-type predefined">Predefined:</span> Basic structure definitions, common healthcare data models
+                            </div>
+                            <div>
+                                <span class="element-type custom">Custom:</span> Specialty-specific schemas, organization requirements, validation rules
+                            </div>
+                            
+                            <h4 class="mt-4">Relationship Keywords</h4>
+                            <div>
+                                <span class="relationship-tag">Control</span>
+                                <span class="relationship-tag">Execution</span>
+                            </div>
+                            
+                            <div class="code-container">
+                                <div class="code-header">
+                                    <span class="file-name">structured_output.py</span>
+                                    <div class="code-actions">
+                                        <button title="Copy"><i class="fas fa-copy"></i></button>
+                                        <button title="Download"><i class="fas fa-download"></i></button>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python">from langchain.chat_models import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+from langchain_core.pydantic_v1 import BaseModel, Field
+from typing import List, Optional
+
+# Define structured output model for treatment plan
+class TreatmentPlan(BaseModel):
+    patient_id: str = Field(description="Patient identifier")
+    primary_diagnosis: str = Field(description="Main diagnosis")
+    treatment_goals: List[str] = Field(description="Treatment objectives")
+    interventions: List[str] = Field(description="Specific interventions")
+    medications: List[str] = Field(description="Prescribed medications")
+    follow_up: str = Field(description="Follow-up plan")
+    precautions: List[str] = Field(description="Important precautions")
+
+# Create model with structured output capability
+model = ChatOpenAI(model="gpt-4-turbo", temperature=0).with_structured_output(TreatmentPlan)
+
+# Create prompt
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a medical AI assistant. Generate a structured treatment plan based on the patient information."),
+    ("human", "Patient: {patient_data}")
+])
+
+# Create chain
+chain = prompt | model
+
+# Example usage
+patient_data = """
+72-year-old female with recently diagnosed Stage 2 breast cancer (ER+, PR+, HER2-).
+Comorbidities: hypertension, osteoporosis.
+ECOG performance status: 1.
+Patient preferences: wishes to avoid chemotherapy if possible.
+"""
+
+# Generate structured treatment plan
+treatment_plan = chain.invoke({"patient_data": patient_data})
+
+# Access structured data
+print(f"Patient ID: {treatment_plan.patient_id}")
+print(f"Diagnosis: {treatment_plan.primary_diagnosis}")
+print("Treatment Goals:")
+for goal in treatment_plan.treatment_goals:
+    print(f"- {goal}")
+print("Medications:")
+for med in treatment_plan.medications:
+    print(f"- {med}")</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Error Handling Tab -->
+                <div class="tab-pane fade" id="error" role="tabpanel" aria-labelledby="error-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-exclamation-triangle"></i> Healthcare Applications</h3>
+                            <div class="business-context">
+                                <h5>Business Use Cases</h5>
+                                <ul>
+                                    <li><strong>Clinical Safety Systems:</strong> Detects and handles errors in AI-generated treatment recommendations</li>
+                                    <li><strong>Medical Data Validation:</strong> Ensures AI outputs comply with medical standards and protocols</li>
+                                    <li><strong>Automated Quality Control:</strong> Validates AI-generated reports before clinical use</li>
+                                </ul>
+                            </div>
+                            
+                            <h3><i class="fas fa-check-circle"></i> Problems Solved</h3>
+                            <ul>
+                                <li>Prevents propagation of errors in critical healthcare applications</li>
+                                <li>Ensures compliance with medical standards and regulations</li>
+                                <li>Provides fallback mechanisms when AI outputs are unreliable</li>
+                                <li>Maintains patient safety in AI-assisted clinical workflows</li>
+                            </ul>
+                            
+                            <div class="impact-box">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Impact of Absence</h5>
+                                <p>Without error handling, healthcare AI systems could propagate incorrect information, leading to potential patient harm, compliance violations, loss of trust in AI systems, and increased liability for healthcare organizations.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-cogs"></i> Technical Implementation</h3>
+                            
+                            <h4>Predefined vs Custom Elements</h4>
+                            <div>
+                                <span class="element-type predefined">Predefined:</span> Basic error detection patterns, common validation rules
+                            </div>
+                            <div>
+                                <span class="element-type custom">Custom:</span> Specialty-specific error checks, organization protocols, patient safety rules
+                            </div>
+                            
+                            <h4 class="mt-4">Relationship Keywords</h4>
+                            <div>
+                                <span class="relationship-tag">Control</span>
+                                <span class="relationship-tag">Safety</span>
+                            </div>
+                            
+                            <div class="code-container">
+                                <div class="code-header">
+                                    <span class="file-name">error_handling.py</span>
+                                    <div class="code-actions">
+                                        <button title="Copy"><i class="fas fa-copy"></i></button>
+                                        <button title="Download"><i class="fas fa-download"></i></button>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python">from langchain.output_parsers import PydanticOutputParser
+from langchain.pydantic_v1 import BaseModel, Field, validator
+from langchain.prompts import PromptTemplate
+from langchain.chat_models import ChatOpenAI
+import re
+
+class MedicationRecommendation(BaseModel):
+    name: str = Field(description="Medication name")
+    dosage: str = Field(description="Dosage instructions")
+    frequency: str = Field(description="How often to take")
+    
+    @validator('dosage')
+    def validate_dosage(cls, v):
+        # Ensure dosage contains numbers and units
+        if not re.search(r'\d+', v):
+            raise ValueError("Dosage must contain numeric values")
+        if not any(unit in v.lower() for unit in ['mg', 'mcg', 'g', 'ml', 'units']):
+            raise ValueError("Dosage must include units (mg, mcg, g, ml, units)")
+        return v
+
+class TreatmentPlan(BaseModel):
+    patient_id: str = Field(description="Patient identifier")
+    diagnosis: str = Field(description="Diagnosis")
+    medications: List[MedicationRecommendation] = Field(description="Medication recommendations")
+    
+    @validator('medications')
+    def validate_medications(cls, v):
+        # Check for dangerous drug interactions (simplified example)
+        med_names = [med.name.lower() for med in v]
+        if 'warfarin' in med_names and 'ibuprofen' in med_names:
+            raise ValueError("Dangerous interaction: Warfarin and Ibuprofen should not be prescribed together")
+        return v
+
+# Create parser with error handling
+parser = PydanticOutputParser(pydantic_object=TreatmentPlan)
+
+# Create prompt
+prompt = PromptTemplate(
+    template="Generate a treatment plan for the patient. {format_instructions}\n\nPatient: {patient_data}",
+    input_variables=["patient_data"],
+    partial_variables={"format_instructions": parser.get_format_instructions()},
+)
+
+# Function with error handling
+def generate_treatment_plan(patient_data):
+    try:
+        model = ChatOpenAI(model="gpt-4")
+        formatted_prompt = prompt.format_prompt(patient_data=patient_data)
+        response = model(formatted_prompt.to_messages())
+        
+        # Parse with validation
+        treatment_plan = parser.parse(response.content)
+        return treatment_plan
+        
+    except Exception as e:
+        print(f"Error generating treatment plan: {str(e)}")
+        # Fallback to human review
+        return {
+            "status": "error",
+            "message": "Treatment plan requires human review due to validation issues",
+            "error": str(e),
+            "raw_output": response.content if 'response' in locals() else None
+        }
+
+# Example usage
+patient_data = "65-year-old male with atrial fibrillation and chronic pain. History of bleeding ulcers."
+result = generate_treatment_plan(patient_data)
+
+if isinstance(result, dict) and result.get("status") == "error":
+    print("⚠️ Error detected - Human review required")
+    print(f"Error details: {result['error']}")
+else:
+    print("✅ Valid treatment plan generated")
+    print(f"Medications: {[med.name for med in result.medications]}")</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- JSON Mode Tab -->
+                <div class="tab-pane fade" id="json" role="tabpanel" aria-labelledby="json-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-file-code"></i> Healthcare Applications</h3>
+                            <div class="business-context">
+                                <h5>Business Use Cases</h5>
+                                <ul>
+                                    <li><strong>EHR Integration:</strong> Generates JSON-formatted patient data for seamless EHR system integration</li>
+                                    <li><strong>Medical Device Communication:</strong> Produces JSON outputs compatible with medical device APIs</li>
+                                    <li><strong>Health Information Exchange:</strong> Creates standardized JSON formats for interoperability between healthcare systems</li>
+                                </ul>
+                            </div>
+                            
+                            <h3><i class="fas fa-check-circle"></i> Problems Solved</h3>
+                            <ul>
+                                <li>Ensures AI outputs are in machine-readable JSON format</li>
+                                <li>Simplifies integration with healthcare IT systems</li>
+                                <li>Reduces parsing errors and data transformation needs</li>
+                                <li>Improves reliability of automated healthcare workflows</li>
+                            </ul>
+                            
+                            <div class="impact-box">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Impact of Absence</h5>
+                                <p>Without JSON mode, healthcare systems would need complex parsing logic to handle varied AI output formats, increasing integration complexity, potential for errors, and maintenance overhead for healthcare IT teams.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h3><i class="fas fa-cogs"></i> Technical Implementation</h3>
+                            
+                            <h4>Predefined vs Custom Elements</h4>
+                            <div>
+                                <span class="element-type predefined">Predefined:</span> JSON format standards, basic schema definitions
+                            </div>
+                            <div>
+                                <span class="element-type custom">Custom:</span> Healthcare-specific schemas, organization requirements, validation rules
+                            </div>
+                            
+                            <h4 class="mt-4">Relationship Keywords</h4>
+                            <div>
+                                <span class="relationship-tag">Interface</span>
+                                <span class="relationship-tag">Standardization</span>
+                            </div>
+                            
+                            <div class="code-container">
+                                <div class="code-header">
+                                    <span class="file-name">json_mode.py</span>
+                                    <div class="code-actions">
+                                        <button title="Copy"><i class="fas fa-copy"></i></button>
+                                        <button title="Download"><i class="fas fa-download"></i></button>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python">from langchain.chat_models import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+from langchain_core.pydantic_v1 import BaseModel, Field
+import json
+
+# Define JSON schema for patient encounter
+class PatientEncounter(BaseModel):
+    patient_id: str = Field(description="Unique patient identifier")
+    encounter_date: str = Field(description="Date of encounter (YYYY-MM-DD)")
+    provider: str = Field(description="Healthcare provider name")
+    chief_complaint: str = Field(description="Primary reason for visit")
+    diagnoses: List[str] = Field(description="List of diagnoses with ICD-10 codes")
+    procedures: List[str] = Field(description="List of procedures with CPT codes")
+    medications: List[dict] = Field(description="List of prescribed medications")
+    follow_up: str = Field(description="Follow-up instructions")
+    
+    class Config:
+        schema_extra = {
+            "example": {
+                "patient_id": "PT-2023-0456",
+                "encounter_date": "2023-11-15",
+                "provider": "Dr. Sarah Johnson",
+                "chief_complaint": "Chest pain and shortness of breath",
+                "diagnoses": ["I25.10: Atherosclerotic heart disease", "I50.9: Heart failure"],
+                "procedures": ["93010: EKG", "99214: Office visit"],
+                "medications": [
+                    {"name": "Lisinopril", "dosage": "10mg", "frequency": "daily"},
+                    {"name": "Atorvastatin", "dosage": "20mg", "frequency": "daily"}
+                ],
+                "follow_up": "Return in 2 weeks for follow-up EKG and lab work"
+            }
+        }
+
+# Create model with JSON mode
+model = ChatOpenAI(model="gpt-4-turbo", temperature=0).bind(
+    response_format={"type": "json_object"}
+)
+
+# Create prompt
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a medical documentation assistant. Generate a JSON object representing the patient encounter based on the clinician's notes. Follow the provided schema exactly."),
+    ("human", "Clinician Notes: {notes}")
+])
+
+# Create chain
+chain = prompt | model
+
+# Example usage
+clinician_notes = """
+65-year-old male presents with chest pain and shortness of breath for 3 days.
+History of hypertension and hyperlipidemia. EKG shows ST depression in lateral leads.
+Diagnosed with stable angina. Started on Lisinopril 10mg daily and Atorvastatin 20mg daily.
+Ordered stress test. Follow up in 2 weeks.
+"""
+
+# Generate JSON output
+response = chain.invoke({"notes": clinician_notes})
+
+# Parse JSON response
+try:
+    encounter_data = json.loads(response.content)
+    print("✅ Valid JSON generated:")
+    print(json.dumps(encounter_data, indent=2))
+    
+    # Validate against schema
+    encounter = PatientEncounter(**encounter_data)
+    print("\n✅ Data validated against schema")
+    
+except json.JSONDecodeError as e:
+    print(f"❌ JSON parsing error: {e}")
+except Exception as e:
+    print(f"❌ Validation error: {e}")</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3.3: Advanced Model Features -->
+        <div class="section-card">
+            <div class="component-header">
+                <h2><i class="fas fa-microchip"></i> 3.3 Advanced Model Features</h2>
+                <p class="text-muted">Leveraging cutting-edge AI capabilities in healthcare</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="feature-icon text-center">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            <h4 class="card-title">Tool Calling</h4>
+                            <p class="card-text">Enables AI to interact with external healthcare systems and APIs for real-time data retrieval and action execution.</p>
+                            <div class="use-case-item">
+                                <strong>Healthcare Use:</strong> Retrieving patient lab results from EHR systems during AI consultations
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="feature-icon text-center">
+                                <i class="fas fa-code-branch"></i>
+                            </div>
+                            <h4 class="card-title">Function Calling</h4>
+                            <p class="card-text">Allows AI to execute specific healthcare functions like scheduling appointments or ordering tests.</p>
+                            <div class="use-case-item">
+                                <strong>Healthcare Use:</strong> Automated appointment scheduling based on AI-generated treatment plans
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="feature-icon text-center">
+                                <i class="fas fa-sitemap"></i>
+                            </div>
+                            <h4 class="card-title">Structured Output Generation</h4>
+                            <p class="card-text">Produces consistently formatted healthcare data for seamless integration with medical systems.</p>
+                            <div class="use-case-item">
+                                <strong>Healthcare Use:</strong> Generating standardized clinical reports with required sections
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="feature-icon text-center">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h4 class="card-title">Log Probabilities</h4>
+                            <p class="card-text">Provides confidence scores for AI-generated medical recommendations to support clinical decision-making.</p>
+                            <div class="use-case-item">
+                                <strong>Healthcare Use:</strong> Quantifying diagnostic confidence levels for different conditions
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Healthcare AI Input/Output Management</h5>
+                    <p>Optimizing AI interactions for clinical workflows and patient care</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>&copy; 2023 Healthcare AI Solutions. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script>
+        // Initialize Prism for code highlighting
+        Prism.highlightAll();
+        
+        // Add copy functionality to code blocks
+        document.querySelectorAll('.code-actions button[title="Copy"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const codeBlock = this.closest('.code-container').querySelector('code');
+                const textArea = document.createElement('textarea');
+                textArea.value = codeBlock.textContent;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // Visual feedback
+                const originalIcon = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    this.innerHTML = originalIcon;
+                }, 2000);
+            });
+        });
+        
+        // Add download functionality to code blocks
+        document.querySelectorAll('.code-actions button[title="Download"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const codeBlock = this.closest('.code-container');
+                const fileName = codeBlock.querySelector('.file-name').textContent;
+                const codeContent = codeBlock.querySelector('code').textContent;
+                
+                const blob = new Blob([codeContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        });
+    </script>
+</body>
+</html>
