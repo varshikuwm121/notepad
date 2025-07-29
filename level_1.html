@@ -1,1 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangChain Level 1: Foundation Concepts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --code-bg: #0d1117; /* Deep black background */
+            --code-text: #c9d1d9; /* Light text for contrast */
+            --code-keyword: #ff7b72; /* Keyword color */
+            --code-string: #a5d6ff; /* String color */
+            --code-comment: #8b949e; /* Comment color */
+            --code-function: #d2a8ff; /* Function color */
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 3rem;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .hero-section h1 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 2.8rem;
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .section-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .concept-box {
+            background-color: var(--light-bg);
+            border-left: 4px solid var(--secondary-color);
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .concept-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .concept-title i {
+            margin-right: 8px;
+            color: var(--secondary-color);
+        }
+        
+        .tag {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .problem-solution {
+            display: flex;
+            margin-top: 1rem;
+            gap: 1rem;
+        }
+        
+        .problem, .solution {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .problem {
+            background-color: #ffebee;
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        .solution {
+            background-color: #e8f5e9;
+            border-left: 3px solid #4caf50;
+        }
+        
+        .problem h5, .solution h5 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .problem h5 i, .solution h5 i {
+            margin-right: 8px;
+        }
+        
+        .code-snippet {
+            background-color: var(--code-bg);
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1.2rem;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            color: var(--code-text);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .code-snippet::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(to bottom, rgba(13, 17, 23, 0.8), transparent);
+            border-radius: 8px 8px 0 0;
+            pointer-events: none;
+        }
+        
+        .code-snippet .keyword {
+            color: var(--code-keyword);
+            font-weight: bold;
+        }
+        
+        .code-snippet .string {
+            color: var(--code-string);
+        }
+        
+        .code-snippet .comment {
+            color: var(--code-comment);
+            font-style: italic;
+        }
+        
+        .code-snippet .function {
+            color: var(--code-function);
+        }
+        
+        .key-point {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        .footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            text-align: center;
+        }
+        
+        .concept-diagram {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+        
+        .concept-diagram img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--secondary-color);
+            color: var(--secondary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Add syntax highlighting classes */
+        .code-snippet .import { color: #ff7b72; }
+        .code-snippet .from { color: #ff7b72; }
+        .code-snippet .class { color: #ff7b72; }
+        .code-snippet .def { color: #ff7b72; }
+        .code-snippet .return { color: #ff7b72; }
+        .code-snippet .async { color: #ff7b72; }
+        .code-snippet .await { color: #ff7b72; }
+        .code-snippet .for { color: #ff7b72; }
+        .code-snippet .in { color: #ff7b72; }
+        .code-snippet .if { color: #ff7b72; }
+        .code-snippet .else { color: #ff7b72; }
+        .code-snippet .try { color: #ff7b72; }
+        .code-snippet .except { color: #ff7b72; }
+        .code-snippet .finally { color: #ff7b72; }
+        .code-snippet .with { color: #ff7b72; }
+        .code-snippet .as { color: #ff7b72; }
+        .code-snippet .global { color: #ff7b72; }
+        .code-snippet .nonlocal { color: #ff7b72; }
+        .code-snippet .lambda { color: #ff7b72; }
+        .code-snippet .yield { color: #ff7b72; }
+        .code-snippet .raise { color: #ff7b72; }
+        .code-snippet .assert { color: #ff7b72; }
+        .code-snippet .del { color: #ff7b72; }
+        .code-snippet .pass { color: #ff7b72; }
+        .code-snippet .break { color: #ff7b72; }
+        .code-snippet .continue { color: #ff7b72; }
+        .code-snippet .and { color: #ff7b72; }
+        .code-snippet .or { color: #ff7b72; }
+        .code-snippet .not { color: #ff7b72; }
+        .code-snippet .is { color: #ff7b72; }
+        .code-snippet .None { color: #79c0ff; }
+        .code-snippet .True { color: #79c0ff; }
+        .code-snippet .False { color: #79c0ff; }
+        .code-snippet .self { color: #79c0ff; }
+        .code-snippet .number { color: #79c0ff; }
+        
+        /* Add copy button to code snippets */
+        .code-snippet-container {
+            position: relative;
+        }
+        
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #c9d1d9;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+        
+        .copy-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .copy-button.copied {
+            background-color: rgba(46, 160, 67, 0.2);
+            color: #56d364;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <h1>LangChain Level 1: Foundation Concepts</h1>
+            <p class="lead">Master the building blocks for powerful language model applications</p>
+        </div>
+    </div>
 
+    <div class="container">
+        <!-- Introduction -->
+        <div class="section-card">
+            <h2 class="section-title"><i class="fas fa-book-open"></i>Introduction</h2>
+            <p>LangChain is a framework for developing applications powered by language models. It enables applications that are <span class="key-point">context-aware</span> and <span class="key-point">agentic</span>, allowing them to connect to other sources of data and interact with their environment. This guide covers the foundational concepts you need to understand before building with LangChain.</p>
+            <p>These concepts form the essential building blocks for all LangChain applications. Without understanding these fundamentals, you'll struggle to create efficient, scalable, and maintainable language model applications.</p>
+        </div>
+
+        <!-- 1.1 Core Architecture -->
+        <div class="section-card">
+            <h2 class="section-title"><i class="fas fa-sitemap"></i>1.1 Core Architecture</h2>
+            
+            <!-- Installation & Setup -->
+            <div class="concept-box">
+                <h3 class="concept-title"><i class="fas fa-download"></i>Installation & Setup</h3>
+                <div class="tabs">
+                    <div class="tab active" onclick="openTab(event, 'install-basics')">Basics</div>
+                    <div class="tab" onclick="openTab(event, 'install-packages')">Packages</div>
+                    <div class="tab" onclick="openTab(event, 'install-env')">Environment</div>
+                </div>
+                
+                <div id="install-basics" class="tab-content active">
+                    <p>Installing LangChain is the first step to building language model applications. The installation process sets up the necessary dependencies and prepares your development environment.</p>
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="comment"># Install LangChain core package</span><br>
+                            pip install langchain
+                        </div>
+                    </div>
+                    <div class="problem-solution">
+                        <div class="problem">
+                            <h5><i class="fas fa-exclamation-triangle"></i>Problem Without</h5>
+                            <p>Without proper installation, developers face dependency conflicts, version incompatibilities, and environment setup issues that can lead to hours of debugging.</p>
+                        </div>
+                        <div class="solution">
+                            <h5><i class="fas fa-check-circle"></i>Solution With</h5>
+                            <p>LangChain's streamlined installation process ensures all dependencies are correctly configured, allowing developers to focus on building applications rather than environment setup.</p>
+                        </div>
+                    </div>
+                    <p><span class="key-point">Business Use Case:</span> A company needs to quickly onboard developers to build a customer support chatbot. Proper installation ensures all team members have consistent environments, reducing setup time and preventing "works on my machine" issues.</p>
+                </div>
+                
+                <div id="install-packages" class="tab-content">
+                    <p>LangChain offers multiple packages tailored for different needs. Understanding which packages to install is crucial for optimizing your application's functionality and size.</p>
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="comment"># Core package with base abstractions</span><br>
+                            pip install langchain-core<br><br>
+                            <span class="comment"># Main package with chains and agents</span><br>
+                            pip install langchain<br><br>
+                            <span class="comment"># Community integrations</span><br>
+                            pip install langchain-community
+                        </div>
+                    </div>
+                    <p><span class="key-point">Business Use Case:</span> A startup building a document analysis system can install only the necessary packages (langchain-core and specific integrations), reducing their application's footprint and improving deployment speed.</p>
+                </div>
+                
+                <div id="install-env" class="tab-content">
+                    <p>Setting up environment variables is essential for API keys and configuration. LangChain uses environment variables to securely manage credentials.</p>
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="comment"># Set API keys in your environment</span><br>
+                            <span class="keyword">export</span> OPENAI_API_KEY=<span class="string">"your-api-key"</span><br>
+                            <span class="keyword">export</span> LANGCHAIN_TRACING_V2=<span class="string">"true"</span><br>
+                            <span class="keyword">export</span> LANGCHAIN_API_KEY=<span class="string">"your-langchain-api-key"</span>
+                        </div>
+                    </div>
+                    <p><span class="key-point">Business Use Case:</span> An enterprise deploying LangChain across multiple environments (dev, staging, prod) can use environment variables to manage different API keys and configurations without changing code.</p>
+                </div>
+            </div>
+            
+            <!-- LangChain Packages Overview -->
+            <div class="concept-box">
+                <h3 class="concept-title"><i class="fas fa-box"></i>LangChain Packages Overview</h3>
+                <p>LangChain is organized into several packages, each serving a specific purpose in the ecosystem.</p>
+                
+                <div class="concept-diagram">
+                    <img src="https://miro.medium.com/v2/resize:fit:1400/1*3jQ4z5u4Y0o4J0J4O0J4OQ.png" alt="LangChain Packages Architecture">
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" onclick="openTab(event, 'package-core')">langchain-core</div>
+                    <div class="tab" onclick="openTab(event, 'package-main')">langchain</div>
+                    <div class="tab" onclick="openTab(event, 'package-community')">langchain-community</div>
+                    <div class="tab" onclick="openTab(event, 'package-partners')">langchain-*</div>
+                </div>
+                
+                <div id="package-core" class="tab-content active">
+                    <p><span class="tag">Core</span> <span class="tag">Base Abstractions</span></p>
+                    <p><span class="key-point">langchain-core</span> contains the base abstractions and core functionality that all other LangChain packages build upon. It defines the essential interfaces and primitives.</p>
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="keyword">from</span> langchain_core.runnables <span class="keyword">import</span> Runnable<br>
+                            <span class="keyword">from</span> langchain_core.messages <span class="keyword">import</span> BaseMessage<br>
+                            <span class="keyword">from</span> langchain_core.documents <span class="keyword">import</span> Document<br><br>
+                            <span class="comment"># Core abstractions for building LangChain apps</span><br>
+                            <span class="keyword">class</span> <span class="class">MyCustomRunnable</span>(Runnable):<br>
+                            &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">invoke</span>(self, input, config=None):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Custom implementation</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> f<span class="string">"Processed: {input}"</span>
+                        </div>
+                    </div>
+                    <div class="problem-solution">
+                        <div class="problem">
+                            <h5><i class="fas fa-exclamation-triangle"></i>Problem Without</h5>
+                            <p>Without a core package, developers would face inconsistent interfaces, duplicated code, and difficulty understanding the fundamental building blocks of LangChain.</p>
+                        </div>
+                        <div class="solution">
+                            <h5><i class="fas fa-check-circle"></i>Solution With</h5>
+                            <p>The core package provides a stable foundation with well-defined interfaces, ensuring consistency across the entire ecosystem and making it easier to understand and extend LangChain.</p>
+                        </div>
+                    </div>
+                    <p><span class="key-point">Business Use Case:</span> A company creating custom LangChain components can rely on the core package's stable interfaces, ensuring their integrations will continue to work even as other parts of the ecosystem evolve.</p>
+                </div>
+                
+                <div id="package-main" class="tab-content">
+                    <p><span class="tag">Chains</span> <span class="tag">Agents</span> <span class="tag">Composition</span></p>
+                    <p><span class="key-point">langchain</span> contains the main chains, agents, and retrieval strategies that constitute the cognitive architecture of your applications.</p>
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="keyword">from</span> langchain <span class="keyword">import</span> chains, agents<br><br>
+                            <span class="comment"># Create a simple chain</span><br>
+                            <span class="keyword">from</span> langchain.chains <span class="keyword">import</span> LLMChain<br>
+                            <span class="keyword">from</span> langchain.prompts <span class="keyword">import</span> PromptTemplate<br><br>
+                            prompt = PromptTemplate(<br>
+                            &nbsp;&nbsp;template=<span class="string">"What is a good name for a company that makes {product}?"</span>,<br>
+                            &nbsp;&nbsp;input_variables=[<span class="string">"product"</span>]<br>
+                            )<br><br>
+                            chain = LLMChain(llm=llm, prompt=prompt)
+                        </div>
+                    </div>
+                    <p>This package includes the essential building blocks for creating sophisticated language model applications, including chains for sequences of operations, agents for decision-making, and retrieval strategies for question-answering.</p>
+                    <p><span class="key-point">Business Use Case:</span> A financial services firm uses chains and agents from the main package to create an investment advisor that can analyze market data, retrieve relevant information, and provide personalized recommendations.</p>
+                </div>
+                
+                <div id="package-community" class="tab-content">
+                    <p><span class="tag">Integrations</span> <span class="tag">Third-party</span> <span class="tag">Open Source</span></p>
+                    <p><span class="key-point">langchain-community</span> contains integrations with third-party packages maintained by the open-source community.</p>
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="keyword">from</span> langchain_community <span class="keyword">import</span> document_loaders, embeddings<br><br>
+                            <span class="comment"># Load documents from various sources</span><br>
+                            <span class="keyword">from</span> langchain_community.document_loaders <span class="keyword">import</span> WebBaseLoader<br><br>
+                            loader = WebBaseLoader([<span class="string">"https://example.com"</span>])<br>
+                            documents = loader.load()<br><br>
+                            <span class="comment"># Use community-provided embeddings</span><br>
+                            <span class="keyword">from</span> langchain_community.embeddings <span class="keyword">import</span> HuggingFaceEmbeddings<br>
+                            embeddings = HuggingFaceEmbeddings()
+                        </div>
+                    </div>
+                    <p>This package includes integrations with various services, databases, and tools that extend LangChain's capabilities, such as document loaders, text embedding models, vector stores, and tool integrations.</p>
+                    <p><span class="key-point">Business Use Case:</span> An e-commerce company uses community integrations to connect their product database, customer reviews, and support tickets with LangChain, creating a comprehensive shopping assistant.</p>
+                </div>
+                
+                <div id="package-partners" class="tab-content">
+                    <p><span class="tag">Partner</span> <span class="tag">First-party</span> <span class="tag">Commercial</span></p>
+                    <p><span class="key-point">langchain-*</span> packages are first-party integrations with partner services, each in their own package (e.g., langchain-openai, langchain-anthropic).</p>
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="comment"># Install partner packages</span><br>
+                            pip install langchain-openai langchain-anthropic<br><br>
+                            <span class="comment"># Use partner integrations</span><br>
+                            <span class="keyword">from</span> langchain_openai <span class="keyword">import</span> ChatOpenAI, OpenAIEmbeddings<br>
+                            <span class="keyword">from</span> langchain_anthropic <span class="keyword">import</span> ChatAnthropic<br><br>
+                            <span class="comment"># Initialize models with partner-specific features</span><br>
+                            openai_model = ChatOpenAI(model=<span class="string">"gpt-4-turbo"</span>, temperature=0.7)<br>
+                            anthropic_model = ChatAnthropic(model=<span class="string">"claude-3-opus"</span>)
+                        </div>
+                    </div>
+                    <p>These packages provide optimized, officially supported integrations with commercial services, offering better performance, reliability, timely updates for new features, and official support from service providers.</p>
+                    <p><span class="key-point">Business Use Case:</span> A healthcare application uses langchain-openai and langchain-anthropic packages to ensure HIPAA compliance and access the latest model features for their medical diagnosis assistance system.</p>
+                </div>
+            </div>
+            
+            <!-- Architecture & Ecosystem -->
+            <div class="concept-box">
+                <h3 class="concept-title"><i class="fas fa-project-diagram"></i>Architecture & Ecosystem</h3>
+                <p>LangChain's architecture is designed to be modular, extensible, and composable, allowing developers to build complex applications from simple components.</p>
+                
+                <div class="concept-diagram">
+                    <img src="https://python.langchain.com/assets/images/langchain_architecture-8f9df0ab6330a8c2c7c5e7d0a5e6e6e0.png" alt="LangChain Architecture">
+                </div>
+                
+                <p>The architecture consists of several key components:</p>
+                <ul>
+                    <li><span class="key-point">Components</span>: Modular building blocks that can be combined in various ways</li>
+                    <li><span class="key-point">Chains</span>: Sequences of components that process inputs and produce outputs</li>
+                    <li><span class="key-point">Agents</span>: Systems that use language models to decide which actions to take</li>
+                    <li><span class="key-point">Tools</span>: Functions that agents can use to interact with the external world</li>
+                    <li><span class="key-point">Retrieval</span>: Systems that find and return relevant documents</li>
+                </ul>
+                
+                <div class="code-snippet-container">
+                    <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                    <div class="code-snippet">
+                        <span class="comment"># Example of LangChain's compositional architecture</span><br>
+                        <span class="keyword">from</span> langchain_core.runnables <span class="keyword">import</span> RunnablePassthrough<br>
+                        <span class="keyword">from</span> langchain_core.output_parsers <span class="keyword">import</span> StrOutputParser<br>
+                        <span class="keyword">from</span> langchain_core.prompts <span class="keyword">import</span> ChatPromptTemplate<br><br>
+                        <span class="comment"># Create components</span><br>
+                        prompt = ChatPromptTemplate.from_template(<span class="string">"Tell me a joke about {topic}"</span>)<br>
+                        model = ChatOpenAI()<br>
+                        output_parser = StrOutputParser()<br><br>
+                        <span class="comment"># Compose components into a chain</span><br>
+                        chain = (<br>
+                            &nbsp;&nbsp;{<span class="string">"topic"</span>: RunnablePassthrough()} <br>
+                            &nbsp;&nbsp;| prompt <br>
+                            &nbsp;&nbsp;| model <br>
+                            &nbsp;&nbsp;| output_parser<br>
+                        )<br><br>
+                        <span class="comment"># Execute the chain</span><br>
+                        result = chain.invoke(<span class="string">"programming"</span>)
+                    </div>
+                </div>
+                
+                <div class="problem-solution">
+                    <div class="problem">
+                        <h5><i class="fas fa-exclamation-triangle"></i>Problem Without</h5>
+                        <p>Without a structured architecture, developers would need to build everything from scratch, leading to inconsistent implementations, duplicated efforts, and difficulty maintaining and scaling applications.</p>
+                    </div>
+                    <div class="solution">
+                        <h5><i class="fas fa-check-circle"></i>Solution With</h5>
+                        <p>LangChain's architecture provides a standardized approach to building language model applications, enabling developers to leverage pre-built components, compose them in flexible ways, and focus on their specific use case rather than infrastructure.</p>
+                    </div>
+                </div>
+                
+                <p><span class="key-point">Business Use Case:</span> A media company uses LangChain's architecture to build a content creation pipeline that combines document retrieval, summarization, and generation components, allowing journalists to research and draft articles more efficiently.</p>
+            </div>
+        </div>
+
+        <!-- 1.2 Basic Data Types -->
+        <div class="section-card">
+            <h2 class="section-title"><i class="fas fa-database"></i>1.2 Basic Data Types</h2>
+            
+            <!-- Messages -->
+            <div class="concept-box">
+                <h3 class="concept-title"><i class="fas fa-comments"></i>Messages</h3>
+                <p>Messages are the fundamental units of communication in LangChain, representing different types of content in a conversation.</p>
+                
+                <div class="tabs">
+                    <div class="tab active" onclick="openTab(event, 'msg-overview')">Overview</div>
+                    <div class="tab" onclick="openTab(event, 'msg-human')">HumanMessage</div>
+                    <div class="tab" onclick="openTab(event, 'msg-ai')">AIMessage</div>
+                    <div class="tab" onclick="openTab(event, 'msg-chunk')">AIMessageChunk</div>
+                    <div class="tab" onclick="openTab(event, 'msg-tool')">ToolMessage</div>
+                </div>
+                
+                <div id="msg-overview" class="tab-content active">
+                    <p>Messages represent different types of content in a conversation between humans, AI, and tools. They are the primary way information flows through a LangChain application.</p>
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="keyword">from</span> langchain_core.messages <span class="keyword">import</span> (<br>
+                            &nbsp;&nbsp;HumanMessage,<br>
+                            &nbsp;&nbsp;AIMessage,<br>
+                            &nbsp;&nbsp;AIMessageChunk,<br>
+                            &nbsp;&nbsp;ToolMessage<br>
+                            )<br><br>
+                            <span class="comment"># Create different message types</span><br>
+                            human_msg = HumanMessage(content=<span class="string">"Hello, how are you?"</span>)<br>
+                            ai_msg = AIMessage(content=<span class="string">"I'm doing well, thank you for asking!"</span>)<br>
+                            tool_msg = ToolMessage(<br>
+                            &nbsp;&nbsp;content=<span class="string">"Weather in New York is 72°F"</span>,<br>
+                            &nbsp;&nbsp;tool_call_id=<span class="string">"12345"</span><br>
+                            )
+                        </div>
+                    </div>
+                    <div class="problem-solution">
+                        <div class="problem">
+                            <h5><i class="fas fa-exclamation-triangle"></i>Problem Without</h5>
+                            <p>Without standardized message types, developers would need to create custom formats for different communication scenarios, leading to inconsistent implementations and difficulty integrating components.</p>
+                        </div>
+                        <div class="solution">
+                            <h5><i class="fas fa-check-circle"></i>Solution With</h5>
+                            <p>LangChain's message types provide a consistent way to represent different kinds of communication, enabling seamless integration between components and making it easier to build complex conversational applications.</p>
+                        </div>
+                    </div>
+                    <p><span class="key-point">Business Use Case:</span> A customer service platform uses message types to standardize communication between customers, agents, and automated systems, ensuring consistent handling of inquiries across all channels.</p>
+                </div>
+                
+                <div id="msg-human" class="tab-content">
+                    <p><span class="tag">Input</span> <span class="tag">User</span> <span class="tag">Query</span></p>
+                    <p><span class="key-point">HumanMessage</span> represents input from a human user. It's the starting point for most conversational chains.</p>
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="keyword">from</span> langchain_core.messages <span class="keyword">import</span> HumanMessage<br><br>
+                            <span class="comment"># Create a human message</span><br>
+                            message = HumanMessage(<br>
+                            &nbsp;&nbsp;content=<span class="string">"Hello, how can I help you today?"</span>,<br>
+                            &nbsp;&nbsp;additional_kwargs={<span class="string">"sender"</span>: <span class="string">"user@example.com"</span>}<br>
+                            )<br><br>
+                            <span class="comment"># Access message properties</span><br>
+                            print(message.content)  <span class="comment"># "Hello, how can I help you today?"</span><br>
+                            print(message.type)     <span class="comment"># "human"</span>
+                        </div>
+                    </div>
+                    <p>HumanMessages contain the user's input, which can be text, images, or other multimodal content depending on the model's capabilities.</p>
+                    <p><span class="key-point">Business Use Case:</span> A banking app uses HumanMessage to capture customer inquiries, which are then processed by a chain that provides personalized financial advice or account information.</p>
+                </div>
+                
+                <div id="msg-ai" class="tab-content">
+                    <p><span class="tag">Response</span> <span class="tag">Output</span> <span class="tag">Answer</span></p>
+                    <p><span class="key-point">AIMessage</span> represents a response from an AI model. It contains the model's output and may include additional information like function calls.</p>
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="keyword">from</span> langchain_core.messages <span class="keyword">import</span> AIMessage<br><br>
+                            <span class="comment"># Create an AI message with tool calls</span><br>
+                            message = AIMessage(<br>
+                            &nbsp;&nbsp;content=<span class="string">"I can help you with that. Let me check the weather for you."</span>,<br>
+                            &nbsp;&nbsp;additional_kwargs={<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"tool_calls"</span>: [<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"id"</span>: <span class="string">"call_123"</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"type"</span>: <span class="string">"function"</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"function"</span>: {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"name"</span>: <span class="string">"get_weather"</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"arguments"</span>: <span class="string">'{"location": "New York"}'</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;]<br>
+                            &nbsp;&nbsp;}<br>
+                            )
+                        </div>
+                    </div>
+                    <p>AIMessages can contain not just text responses but also instructions for tool usage or other actions the model wants to take.</p>
+                    <p><span class="key-point">Business Use Case:</span> An educational platform uses AIMessage to deliver personalized learning content, adapting explanations based on the student's questions and performance.</p>
+                </div>
+                
+                <div id="msg-chunk" class="tab-content">
+                    <p><span class="tag">Streaming</span> <span class="tag">Partial</span> <span class="tag">Real-time</span></p>
+                    <p><span class="key-point">AIMessageChunk</span> represents a partial response from an AI model, used for streaming outputs in real-time.</p>
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="keyword">from</span> langchain_core.messages <span class="keyword">import</span> AIMessageChunk<br><br>
+                            <span class="comment"># Create message chunks for streaming</span><br>
+                            chunk1 = AIMessageChunk(content=<span class="string">"I can help"</span>)<br>
+                            chunk2 = AIMessageChunk(content=<span class="string">" you with"</span>)<br>
+                            chunk3 = AIMessageChunk(content=<span class="string">" that problem."</span>)<br><br>
+                            <span class="comment"># Combine chunks</span><br>
+                            full_message = chunk1 + chunk2 + chunk3<br>
+                            print(full_message.content)  <span class="comment"># "I can help you with that problem."</span>
+                        </div>
+                    </div>
+                    <p>AIMessageChunks enable streaming responses, improving user experience by showing content as it's generated rather than waiting for the complete response.</p>
+                    <p><span class="key-point">Business Use Case:</span> A content generation platform uses AIMessageChunk to provide real-time feedback as articles are being written, allowing writers to see and adjust the AI's output as it's generated.</p>
+                </div>
+                
+                <div id="msg-tool" class="tab-content">
+                    <p><span class="tag">Function</span> <span class="tag">Execution</span> <span class="tag">Result</span></p>
+                    <p><span class="key-point">ToolMessage</span> represents the result of a tool execution, used when an AI model calls a function or external API.</p>
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="keyword">from</span> langchain_core.messages <span class="keyword">import</span> ToolMessage<br><br>
+                            <span class="comment"># Create a tool message with execution result</span><br>
+                            message = ToolMessage(<br>
+                            &nbsp;&nbsp;content=<span class="string">"Weather in New York is 72°F and sunny"</span>,<br>
+                            &nbsp;&nbsp;tool_call_id=<span class="string">"call_123"</span>,<br>
+                            &nbsp;&nbsp;name=<span class="string">"get_weather"</span>,<br>
+                            &nbsp;&nbsp;additional_kwargs={<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"status_code"</span>: <span class="number">200</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"response_time"</span>: <span class="number">0.45</span><br>
+                            &nbsp;&nbsp;}<br>
+                            )<br><br>
+                            <span class="comment"># Access message properties</span><br>
+                            print(message.content)      <span class="comment"># "Weather in New York is 72°F and sunny"</span><br>
+                            print(message.tool_call_id) <span class="comment"># "call_123"</span><br>
+                            print(message.name)         <span class="comment"># "get_weather"</span>
+                        </div>
+                    </div>
+                    <p>ToolMessages contain the output of function calls made by the model, enabling it to interact with external systems and retrieve real-time information.</p>
+                    <p><span class="key-point">Business Use Case:</span> A travel booking system uses ToolMessage to process flight searches, hotel availability checks, and reservation confirmations, providing users with real-time booking capabilities.</p>
+                </div>
+            </div>
+            
+            <!-- Documents -->
+            <div class="concept-box">
+                <h3 class="concept-title"><i class="fas fa-file-alt"></i>Documents</h3>
+                <p>Documents represent units of text that can be processed, retrieved, and used as context for language models.</p>
+                
+                <div class="code-snippet-container">
+                    <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                    <div class="code-snippet">
+                        <span class="keyword">from</span> langchain_core.documents <span class="keyword">import</span> Document<br><br>
+                        <span class="comment"># Create a document with content and metadata</span><br>
+                        document = Document(<br>
+                            &nbsp;&nbsp;page_content=<span class="string">"LangChain is a framework for developing applications powered by language models. It enables applications that are context-aware and agentic."</span>,<br>
+                            &nbsp;&nbsp;metadata={<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"source"</span>: <span class="string">"https://python.langchain.com"</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"author"</span>: <span class="string">"LangChain Team"</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"date"</span>: <span class="string">"2023-06-15"</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"category"</span>: <span class="string">"documentation"</span><br>
+                            &nbsp;&nbsp;}<br>
+                        )<br><br>
+                        <span class="comment"># Access document properties</span><br>
+                        print(document.page_content)<br>
+                        print(document.metadata[<span class="string">"author"</span>])  <span class="comment"># "LangChain Team"</span>
+                    </div>
+                </div>
+                
+                <p>Documents consist of two main parts:</p>
+                <ul>
+                    <li><span class="key-point">page_content</span>: The actual text content of the document</li>
+                    <li><span class="key-point">metadata</span>: Additional information about the document, such as source, author, date, etc.</li>
+                </ul>
+                
+                <div class="problem-solution">
+                    <div class="problem">
+                        <h5><i class="fas fa-exclamation-triangle"></i>Problem Without</h5>
+                        <p>Without a standardized Document representation, developers would need to create custom structures for different types of content, making it difficult to build reusable components for processing and retrieving text.</p>
+                    </div>
+                    <div class="solution">
+                        <h5><i class="fas fa-check-circle"></i>Solution With</h5>
+                        <p>LangChain's Document class provides a consistent way to represent text content and its associated metadata, enabling the creation of reusable components for loading, processing, and retrieving documents from various sources.</p>
+                    </div>
+                </div>
+                
+                <p><span class="key-point">Business Use Case:</span> A legal research platform uses Documents to represent case law, statutes, and legal articles, with metadata containing jurisdiction, date, and relevance scores, enabling lawyers to efficiently find and reference relevant legal information.</p>
+            </div>
+            
+            <!-- Tokens & Tokenization -->
+            <div class="concept-box">
+                <h3 class="concept-title"><i class="fas fa-puzzle-piece"></i>Tokens & Tokenization</h3>
+                <p>Tokens are the smallest units of text that language models process. Tokenization is the process of breaking text into these units.</p>
+                
+                <div class="concept-diagram">
+                    <img src="https://miro.medium.com/v2/resize:fit:1400/1*Z4J4a8hJ7y5Q4o5J6O7Q8A.png" alt="Tokenization Process">
+                </div>
+                
+                <div class="code-snippet-container">
+                    <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                    <div class="code-snippet">
+                        <span class="keyword">from</span> langchain_core.callbacks <span class="keyword">import</span> get_tokenizer<br><br>
+                        <span class="comment"># Get a tokenizer for a specific model</span><br>
+                        tokenizer = get_tokenizer(<span class="string">"openai"</span>)<br><br>
+                        <span class="comment"># Tokenize text</span><br>
+                        text = <span class="string">"LangChain is a framework for LLM applications."</span><br>
+                        tokens = tokenizer.tokenize(text)<br>
+                        print(f<span class="string">"Tokens: {tokens}"</span>)<br>
+                        print(f<span class="string">"Number of tokens: {len(tokens)}"</span>)<br><br>
+                        <span class="comment"># Count tokens in a document</span><br>
+                        <span class="keyword">from</span> langchain_core.documents <span class="keyword">import</span> Document<br>
+                        doc = Document(page_content=<span class="string">"This is a longer document that we want to tokenize..."</span>)<br>
+                        token_count = tokenizer.count_tokens(doc.page_content)<br>
+                        print(f<span class="string">"Document token count: {token_count}"</span>)
+                    </div>
+                </div>
+                
+                <p>Understanding tokens is crucial because:</p>
+                <ul>
+                    <li>Language models have token limits for inputs and outputs</li>
+                    <li>API costs are often calculated based on token usage</li>
+                    <li>Different tokenizers may split text differently</li>
+                </ul>
+                
+                <div class="problem-solution">
+                    <div class="problem">
+                        <h5><i class="fas fa-exclamation-triangle"></i>Problem Without</h5>
+                        <p>Without understanding tokenization, developers may encounter unexpected errors when inputs exceed model limits, face unpredictable costs, and struggle to optimize their applications for efficiency.</p>
+                    </div>
+                    <div class="solution">
+                        <h5><i class="fas fa-check-circle"></i>Solution With</h5>
+                        <p>LangChain provides tools for tokenization and token counting, enabling developers to manage context windows effectively, optimize costs, and ensure their applications work within model constraints.</p>
+                    </div>
+                </div>
+                
+                <p><span class="key-point">Business Use Case:</span> A content summarization service uses tokenization to ensure that input documents are properly chunked to fit within model limits, and to accurately estimate processing costs for customers based on token usage.</p>
+            </div>
+        </div>
+
+        <!-- 1.3 Fundamental Interfaces -->
+        <div class="section-card">
+            <h2 class="section-title"><i class="fas fa-plug"></i>1.3 Fundamental Interfaces</h2>
+            
+            <!-- Runnable Interface -->
+            <div class="concept-box">
+                <h3 class="concept-title"><i class="fas fa-cogs"></i>Runnable Interface</h3>
+                <p>The Runnable interface is the base abstraction for all LangChain components, providing a consistent way to execute and compose them.</p>
+                
+                <div class="code-snippet-container">
+                    <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                    <div class="code-snippet">
+                        <span class="keyword">from</span> langchain_core.runnables <span class="keyword">import</span> Runnable, RunnableConfig<br><br>
+                        <span class="comment"># All LangChain components implement the Runnable interface</span><br>
+                        <span class="comment"># They can be invoked with the .invoke() method</span><br><br>
+                        <span class="comment"># Example of a custom runnable</span><br>
+                        <span class="keyword">class</span> <span class="class">CustomRunnable</span>(Runnable):<br>
+                            &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">invoke</span>(<span class="keyword">self</span>, input: <span class="keyword">str</span>, config: RunnableConfig = None) -> <span class="keyword">str</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Process the input</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> f<span class="string">"Processed: {input}"</span><br><br>
+                            &nbsp;&nbsp;<span class="keyword">async</span> <span class="keyword">def</span> <span class="function">ainvoke</span>(<span class="keyword">self</span>, input: <span class="keyword">str</span>, config: RunnableConfig = None) -> <span class="keyword">str</span>:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Asynchronous version</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> f<span class="string">"Async processed: {input}"</span><br><br>
+                        <span class="comment"># Using the runnable</span><br>
+                        runnable = CustomRunnable()<br>
+                        result = runnable.invoke(<span class="string">"Hello"</span>)<br>
+                        print(result)  <span class="comment"># "Processed: Hello"</span>
+                    </div>
+                </div>
+                
+                <p>The Runnable interface provides several key methods:</p>
+                <ul>
+                    <li><span class="key-point">invoke()</span>: Execute the runnable with a single input</li>
+                    <li><span class="key-point">batch()</span>: Execute the runnable with multiple inputs</li>
+                    <li><span class="key-point">stream()</span>: Stream outputs from the runnable</li>
+                    <li><span class="key-point">ainvoke()</span>: Asynchronous version of invoke()</li>
+                </ul>
+                
+                <div class="problem-solution">
+                    <div class="problem">
+                        <h5><i class="fas fa-exclamation-triangle"></i>Problem Without</h5>
+                        <p>Without a common interface, components would have inconsistent execution patterns, making it difficult to compose them into complex chains and requiring developers to learn different APIs for each component.</p>
+                    </div>
+                    <div class="solution">
+                        <h5><i class="fas fa-check-circle"></i>Solution With</h5>
+                        <p>The Runnable interface provides a consistent execution model for all LangChain components, enabling seamless composition, parallel execution, and streaming while maintaining a simple, uniform API.</p>
+                    </div>
+                </div>
+                
+                <p><span class="key-point">Business Use Case:</span> A data analysis platform uses the Runnable interface to create flexible pipelines that can be easily reconfigured for different analysis tasks, allowing data scientists to combine preprocessing, analysis, and visualization components without worrying about implementation details.</p>
+            </div>
+            
+            <!-- Input/Output Types -->
+            <div class="concept-box">
+                <h3 class="concept-title"><i class="fas fa-exchange-alt"></i>Input/Output Types</h3>
+                <p>LangChain components have well-defined input and output types, enabling predictable composition and type-safe operations.</p>
+                
+                <div class="tabs">
+                    <div class="tab active" onclick="openTab(event, 'io-overview')">Overview</div>
+                    <div class="tab" onclick="openTab(event, 'io-dict')">Dictionary</div>
+                    <div class="tab" onclick="openTab(event, 'io-typed')">Typed</div>
+                    <div class="tab" onclick="openTab(event, 'io-stream')">Streaming</div>
+                </div>
+                
+                <div id="io-overview" class="tab-content active">
+                    <p>LangChain components specify their input and output types, which can be:</p>
+                    <ul>
+                        <li>Dictionaries with string keys</li>
+                        <li>Specific data types (strings, messages, documents)</li>
+                        <li>Streams of data for real-time processing</li>
+                    </ul>
+                    
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="keyword">from</span> langchain_core.runnables <span class="keyword">import</span> RunnablePassthrough<br><br>
+                            <span class="comment"># A runnable that passes through its input</span><br>
+                            passthrough = RunnablePassthrough()<br><br>
+                            <span class="comment"># Input and output types are both dictionaries</span><br>
+                            input_dict = {<span class="string">"key"</span>: <span class="string">"value"</span>, <span class="string">"number"</span>: <span class="number">42</span>}<br>
+                            result = passthrough.invoke(input_dict)<br>
+                            print(result)  <span class="comment"># {"key": "value", "number": 42}</span><br><br>
+                            <span class="comment"># Example of type transformation</span><br>
+                            <span class="keyword">from</span> langchain_core.runnables <span class="keyword">import</span> RunnableLambda<br><br>
+                            <span class="keyword">def</span> <span class="function">extract_value</span>(x):<br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> x[<span class="string">"key"</span>]<br><br>
+                            extractor = RunnableLambda(extract_value)<br>
+                            result = extractor.invoke(input_dict)<br>
+                            print(result)  <span class="comment"># "value"</span>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-solution">
+                        <div class="problem">
+                            <h5><i class="fas fa-exclamation-triangle"></i>Problem Without</h5>
+                            <p>Without well-defined input/output types, developers would need to constantly check and convert data between components, leading to runtime errors and difficult-to-debug issues.</p>
+                        </div>
+                        <div class="solution">
+                            <h5><i class="fas fa-check-circle"></i>Solution With</h5>
+                            <p>LangChain's type system enables predictable composition of components, automatic type conversion where appropriate, and clear documentation of expected data formats.</p>
+                        </div>
+                    </div>
+                    
+                    <p><span class="key-point">Business Use Case:</span> An e-commerce recommendation system uses well-defined input/output types to ensure that product data flows correctly through filtering, ranking, and personalization components, resulting in accurate and relevant recommendations for customers.</p>
+                </div>
+                
+                <div id="io-dict" class="tab-content">
+                    <p><span class="tag">Flexible</span> <span class="tag">Dynamic</span> <span class="tag">Common</span></p>
+                    <p><span class="key-point">Dictionary-based</span> inputs and outputs are the most common type in LangChain, using string keys to identify different pieces of data.</p>
+                    
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="comment"># Input dictionary with multiple keys</span><br>
+                            input_dict = {<br>
+                            &nbsp;&nbsp;<span class="string">"query"</span>: <span class="string">"What's the weather like?"</span>,<br>
+                            &nbsp;&nbsp;<span class="string">"context"</span>: <span class="string">"The user is in New York"</span>,<br>
+                            &nbsp;&nbsp;<span class="string">"history"</span>: [<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"User: Hello"</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"AI: How can I help you today?"</span><br>
+                            &nbsp;&nbsp;]<br>
+                            }<br><br>
+                            <span class="comment"># Process the input</span><br>
+                            <span class="keyword">def</span> <span class="function">process_weather_query</span>(inputs):<br>
+                            &nbsp;&nbsp;query = inputs[<span class="string">"query"</span>]<br>
+                            &nbsp;&nbsp;context = inputs[<span class="string">"context"</span>]<br>
+                            &nbsp;&nbsp;<span class="comment"># Process the query with context</span><br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"response"</span>: <span class="string">"It's sunny and 75°F in New York."</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"sources"</span>: [<span class="string">"weather_api"</span>]<br>
+                            &nbsp;&nbsp;}<br><br>
+                            <span class="comment"># Output dictionary with results</span><br>
+                            output_dict = process_weather_query(input_dict)<br>
+                            print(output_dict[<span class="string">"response"</span>])  <span class="comment"># "It's sunny and 75°F in New York."</span>
+                        </div>
+                    </div>
+                    
+                    <p>Dictionary-based types provide flexibility for complex data flows, allowing components to pass multiple pieces of information without rigid schemas.</p>
+                    
+                    <p><span class="key-point">Business Use Case:</span> A customer support system uses dictionary inputs to pass customer information, inquiry details, and conversation history through multiple processing stages, enabling comprehensive and context-aware responses.</p>
+                </div>
+                
+                <div id="io-typed" class="tab-content">
+                    <p><span class="tag">Specific</span> <span class="tag">Structured</span> <span class="tag">Validated</span></p>
+                    <p><span class="key-point">Typed inputs and outputs</span> use specific data types like strings, messages, or documents, providing more structure and validation.</p>
+                    
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="keyword">from</span> langchain_core.messages <span class="keyword">import</span> HumanMessage<br>
+                            <span class="keyword">from</span> langchain_core.documents <span class="keyword">import</span> Document<br>
+                            <span class="keyword">from</span> typing <span class="keyword">import</span> List<br><br>
+                            <span class="comment"># Component that expects a HumanMessage</span><br>
+                            <span class="keyword">def</span> <span class="function">process_message</span>(message: HumanMessage) -> <span class="keyword">str</span>:<br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> f<span class="string">"Processed: {message.content}"</span><br><br>
+                            <span class="comment"># Component that processes a list of documents</span><br>
+                            <span class="keyword">def</span> <span class="function">summarize_documents</span>(documents: List[Document]) -> <span class="keyword">str</span>:<br>
+                            &nbsp;&nbsp;combined_content = <span class="string">"\n"</span>.join([doc.page_content <span class="keyword">for</span> doc <span class="keyword">in</span> documents])<br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> f<span class="string">"Summary of {len(documents)} documents: {combined_content[:100]}..."</span><br><br>
+                            <span class="comment"># Using the typed functions</span><br>
+                            result = process_message(HumanMessage(content=<span class="string">"Hello"</span>))<br>
+                            print(result)  <span class="comment"># "Processed: Hello"</span><br><br>
+                            docs = [<br>
+                            &nbsp;&nbsp;Document(page_content=<span class="string">"Document 1 content"</span>),<br>
+                            &nbsp;&nbsp;Document(page_content=<span class="string">"Document 2 content"</span>)<br>
+                            ]<br>
+                            summary = summarize_documents(docs)<br>
+                            print(summary)
+                        </div>
+                    </div>
+                    
+                    <p>Typed inputs and outputs enable more precise control over data flow and can catch type mismatches early in the development process.</p>
+                    
+                    <p><span class="key-point">Business Use Case:</span> A content moderation system uses typed inputs to ensure that only properly formatted messages are processed, with strict validation to prevent security issues and ensure consistent handling of user-generated content.</p>
+                </div>
+                
+                <div id="io-stream" class="tab-content">
+                    <p><span class="tag">Real-time</span> <span class="tag">Chunked</span> <span class="tag">Responsive</span></p>
+                    <p><span class="key-point">Streaming inputs and outputs</span> enable real-time processing of data as it becomes available, improving responsiveness for applications that need to handle large volumes of data or provide immediate feedback.</p>
+                    
+                    <div class="code-snippet-container">
+                        <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                        <div class="code-snippet">
+                            <span class="keyword">from</span> langchain_core.runnables <span class="keyword">import</span> RunnableLambda<br>
+                            <span class="keyword">import</span> asyncio<br><br>
+                            <span class="comment"># Create a streaming runnable</span><br>
+                            <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">streaming_generator</span>(input_text):<br>
+                            &nbsp;&nbsp;<span class="comment"># Split input into chunks and yield them</span><br>
+                            &nbsp;&nbsp;words = input_text.split(<span class="string">" "</span>)<br>
+                            &nbsp;&nbsp;<span class="keyword">for</span> word <span class="keyword">in</span> words:<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">await</span> asyncio.sleep(0.1)  <span class="comment"># Simulate processing time</span><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">yield</span> word + <span class="string">" "</span><br><br>
+                            streaming_runnable = RunnableLambda(streaming_generator)<br><br>
+                            <span class="comment"># Stream output from the runnable</span><br>
+                            <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">process_stream</span>():<br>
+                            &nbsp;&nbsp;<span class="keyword">async</span> <span class="keyword">for</span> chunk <span class="keyword">in</span> streaming_runnable.astream(<span class="string">"Tell me a story about a brave knight"</span>):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;print(chunk, end=<span class="string">""</span>, flush=<span class="keyword">True</span>)<br><br>
+                            <span class="comment"># Run the streaming process</span><br>
+                            asyncio.run(process_stream())
+                        </div>
+                    </div>
+                    
+                    <p>Streaming allows applications to begin processing and displaying results before the entire input is available or the complete output is generated.</p>
+                    
+                    <p><span class="key-point">Business Use Case:</span> A real-time translation service uses streaming inputs and outputs to provide immediate translation of spoken language, allowing for natural conversation flows without noticeable delays.</p>
+                </div>
+            </div>
+            
+            <!-- Async Programming Basics -->
+            <div class="concept-box">
+                <h3 class="concept-title"><i class="fas fa-bolt"></i>Async Programming Basics</h3>
+                <p>LangChain supports asynchronous programming, enabling efficient handling of I/O-bound operations and improving application responsiveness.</p>
+                
+                <div class="code-snippet-container">
+                    <div class="copy-button" onclick="copyCode(this)">Copy</div>
+                    <div class="code-snippet">
+                        <span class="keyword">import</span> asyncio<br>
+                        <span class="keyword">from</span> langchain_core.runnables <span class="keyword">import</span> Runnable<br>
+                        <span class="keyword">from</span> langchain_openai <span class="keyword">import</span> ChatOpenAI<br><br>
+                        <span class="comment"># Create an async-compatible runnable</span><br>
+                        llm = ChatOpenAI()<br><br>
+                        <span class="comment"># Async function to process multiple inputs concurrently</span><br>
+                        <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">process_async</span>(runnable: Runnable, inputs):<br>
+                            &nbsp;&nbsp;<span class="comment"># Process multiple inputs concurrently</span><br>
+                            &nbsp;&nbsp;tasks = [runnable.ainvoke(input) <span class="keyword">for</span> input <span class="keyword">in</span> inputs]<br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> <span class="keyword">await</span> asyncio.gather(*tasks)<br><br>
+                        <span class="comment"># Example usage</span><br>
+                        <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">main</span>():<br>
+                            &nbsp;&nbsp;queries = [<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"What is LangChain?"</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"How do I use chains?"</span>,<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"What are agents?"</span><br>
+                            &nbsp;&nbsp;]<br>
+                            &nbsp;&nbsp;results = <span class="keyword">await</span> process_async(llm, queries)<br>
+                            &nbsp;&nbsp;<span class="keyword">for</span> i, result <span class="keyword">in</span> enumerate(results):<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;print(f<span class="string">"Query {i+1}: {queries[i]}"</span>)<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;print(f<span class="string">"Response: {result.content}\n"</span>)<br><br>
+                        <span class="comment"># Run the async main function</span><br>
+                        asyncio.run(main())
+                    </div>
+                </div>
+                
+                <p>Key aspects of async programming in LangChain:</p>
+                <ul>
+                    <li><span class="key-point">ainvoke()</span>: Asynchronous version of invoke()</li>
+                    <li><span class="key-point">abatch()</span>: Asynchronous version of batch()</li>
+                    <li><span class="key-point">astream()</span>: Asynchronous version of stream()</li>
+                    <li><span class="key-point">Concurrency</span>: Process multiple operations simultaneously</li>
+                </ul>
+                
+                <div class="problem-solution">
+                    <div class="problem">
+                        <h5><i class="fas fa-exclamation-triangle"></i>Problem Without</h5>
+                        <p>Without async support, applications would block on I/O operations (like API calls), leading to poor performance, unresponsive interfaces, and inefficient resource utilization when handling multiple concurrent requests.</p>
+                    </div>
+                    <div class="solution">
+                        <h5><i class="fas fa-check-circle"></i>Solution With</h5>
+                        <p>LangChain's async programming support enables non-blocking operations, allowing applications to handle many concurrent requests efficiently, improve responsiveness, and make better use of system resources.</p>
+                    </div>
+                </div>
+                
+                <p><span class="key-point">Business Use Case:</span> A high-traffic customer service chatbot uses async programming to handle thousands of concurrent conversations simultaneously, ensuring that customers receive timely responses even during peak usage periods.</p>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="section-card">
+            <h2 class="section-title"><i class="fas fa-flag-checkered"></i>Summary & Next Steps</h2>
+            <p>Understanding these foundational concepts is essential for building effective applications with LangChain:</p>
+            <ul>
+                <li><span class="key-point">Core Architecture</span> provides the structural foundation and ecosystem for LangChain applications</li>
+                <li><span class="key-point">Basic Data Types</span> represent the fundamental units of information that flow through your applications</li>
+                <li><span class="key-point">Fundamental Interfaces</span> enable consistent execution and composition of components</li>
+            </ul>
+            <p>With these concepts mastered, you're ready to explore more advanced LangChain features like chains, agents, and retrieval strategies. Each builds upon these foundations to create more sophisticated and powerful language model applications.</p>
+            <div class="alert alert-info mt-4">
+                <i class="fas fa-lightbulb"></i> <strong>Pro Tip:</strong> Experiment with each concept in isolation before combining them. This approach will help you understand how each piece works individually and how they fit together in more complex applications.
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container">
+            <p>LangChain Level 1: Foundation Concepts | Created with <i class="fas fa-heart"></i> for the developer community</p>
+            <p>Continue your journey with <a href="#" style="color: #3498db;">Level 2: Intermediate Concepts</a></p>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            // Hide all tab content
+            var tabContents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            // Remove active class from all tabs
+            var tabs = document.getElementsByClassName("tab");
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            
+            // Show the specific tab content
+            document.getElementById(tabName).classList.add("active");
+            
+            // Add active class to the button that opened the tab
+            evt.currentTarget.classList.add("active");
+        }
+        
+        function copyCode(button) {
+            // Find the code snippet container
+            const container = button.parentElement;
+            const codeSnippet = container.querySelector('.code-snippet');
+            
+            // Get the text content
+            const text = codeSnippet.innerText;
+            
+            // Create a temporary textarea to copy the text
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            // Update button text and style
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            
+            // Reset button after 2 seconds
+            setTimeout(() => {
+                button.textContent = 'Copy';
+                button.classList.remove('copied');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
