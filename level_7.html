@@ -1,1 +1,1858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangChain Documentation: Level 7 - Memory & State Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --dark-bg: #1e293b;
+            --darker-bg: #0f172a;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --code-bg: #1e1e1e;
+            --code-text: #d4d4d4;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: var(--darker-bg);
+            color: white;
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo i {
+            color: var(--primary-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            opacity: 0.9;
+            max-width: 800px;
+        }
+
+        .level-indicator {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .component-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 16px 20px;
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header i {
+            color: var(--primary-color);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-section {
+            margin-bottom: 16px;
+        }
+
+        .card-section-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-section-title i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .card-section-content {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .tag-predefined {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .tag-custom {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .tag-foundation {
+            background-color: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .tag-execution {
+            background-color: #ffedd5;
+            color: #c2410c;
+        }
+
+        .tag-control {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .tag-interface {
+            background-color: #e0f2fe;
+            color: #0c4a6e;
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 16px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .code-comment {
+            color: #6a9955;
+        }
+
+        .code-keyword {
+            color: #569cd6;
+        }
+
+        .code-string {
+            color: #ce9178;
+        }
+
+        .code-function {
+            color: #dcdcaa;
+        }
+
+        .code-number {
+            color: #b5cea8;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .business-example {
+            background-color: #f0f9ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .business-example-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        footer {
+            background-color: var(--darker-bg);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 8px;
+        }
+
+        .footer-column a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 16px;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-code"></i>
+                    <span>LangChain Documentation</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">API Reference</a></li>
+                        <li><a href="#">Community</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="level-indicator">Level 7</div>
+            <h1>Memory & State Management</h1>
+            <p>Building on previous levels to add persistence and context to your LangChain applications. Learn how to manage conversation history, implement memory systems, and handle state persistence effectively.</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="section">
+            <h2 class="section-title">7.1 Conversation Management</h2>
+            
+            <div class="component-grid">
+                <div class="component-card">
+                    <div class="card-header">
+                        <i class="fas fa-history"></i>
+                        <span>Chat History</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-check-circle" style="color: var(--success-color)"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <div class="card-section-content">
+                                <div class="business-example">
+                                    <div class="business-example-title">Healthcare Example</div>
+                                    <p>In a telemedicine application, chat history allows doctors to review the entire conversation with a patient, including symptoms mentioned earlier, medications discussed, and treatment recommendations provided over multiple sessions.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-times-circle" style="color: var(--danger-color)"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Enables context-aware conversations by maintaining a record of previous interactions. Without chat history, each user interaction would be isolated, forcing users to repeat information and creating a disjointed experience.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-exclamation-triangle" style="color: var(--warning-color)"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Applications would lose all conversational context between interactions, severely degrading user experience. In customer service scenarios, agents would need to repeatedly ask for the same information, increasing frustration and resolution time.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-cog"></i>
+                                <span>Predefined or Custom</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-predefined">Predefined</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-link"></i>
+                                <span>Relationship Keyword</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-foundation">Foundation</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-brain"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Chat History in LangChain is implemented as a sequence of messages that represent the conversation flow. These messages are stored in specialized data structures that maintain the order and context of the conversation.</p>
+                                
+                                <div class="code-block">
+<span class="code-keyword">from</span> langchain.memory <span class="code-keyword">import</span> ConversationBufferMemory
+<span class="code-keyword">from</span> langchain.chains <span class="code-keyword">import</span> LLMChain
+<span class="code-keyword">from</span> langchain.prompts <span class="code-keyword">import</span> PromptTemplate
+<span class="code-keyword">from</span> langchain.llms <span class="code-keyword">import</span> OpenAI
+
+<span class="code-comment"># Initialize a conversation buffer memory</span>
+memory = ConversationBufferMemory()
+
+<span class="code-comment"># Create a prompt template that includes conversation history</span>
+template = <span class="code-string">"""
+The following is a friendly conversation between a human and an AI. 
+The AI is talkative and provides lots of specific details from its context. 
+If the AI does not know the answer to a question, it truthfully says it does not know.
+
+Current conversation:
+{history}
+Human: {input}
+AI:
+"""</span>
+
+prompt = PromptTemplate(
+    input_variables=[<span class="code-string">"history"</span>, <span class="code-string">"input"</span>], 
+    template=template
+)
+
+<span class="code-comment"># Initialize the language model</span>
+llm = OpenAI(temperature=<span class="code-number">0.9</span>)
+
+<span class="code-comment"># Create a chain with memory</span>
+conversation = LLMChain(
+    llm=llm,
+    prompt=prompt,
+    verbose=<span class="code-keyword">True</span>,
+    memory=memory
+)
+
+<span class="code-comment"># First interaction</span>
+conversation.predict(input=<span class="code-string">"Hi, I'm looking for information about LangChain memory systems."</span>)
+
+<span class="code-comment"># Second interaction (memory maintains context)</span>
+conversation.predict(input=<span class="code-string">"Can you give me an example of how to use it in a banking application?"</span>)
+
+<span class="code-comment"># Access the conversation history</span>
+print(memory.buffer)
+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-card">
+                    <div class="card-header">
+                        <i class="fas fa-memory"></i>
+                        <span>Memory Systems</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-check-circle" style="color: var(--success-color)"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <div class="card-section-content">
+                                <div class="business-example">
+                                    <div class="business-example-title">Banking Example</div>
+                                    <p>A banking chatbot uses memory systems to remember customer preferences, previous transactions, and account details across multiple sessions. This enables personalized financial advice and seamless transaction processing without requiring customers to repeat information.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-times-circle" style="color: var(--danger-color)"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Addresses the challenge of maintaining stateful interactions in stateless environments. Memory systems provide different strategies for storing, retrieving, and managing conversational context, allowing applications to remember important information across user sessions.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-exclamation-triangle" style="color: var(--warning-color)"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Applications would be unable to maintain any form of conversational state, resulting in disjointed user experiences. In e-commerce, this would mean shopping carts being forgotten, user preferences ignored, and customer service agents having no context of previous interactions.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-cog"></i>
+                                <span>Predefined or Custom</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-custom">Custom</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-link"></i>
+                                <span>Relationship Keyword</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-execution">Execution</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-brain"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>LangChain provides various memory system implementations, each with different strategies for managing conversation history. These include buffer memory, summary memory, knowledge graph memory, and more, each suited for different use cases.</p>
+                                
+                                <div class="code-block">
+<span class="code-keyword">from</span> langchain.memory <span class="code-keyword">import</span> (
+    ConversationBufferMemory,
+    ConversationSummaryMemory,
+    ConversationKGMemory,
+    ConversationBufferWindowMemory
+)
+<span class="code-keyword">from</span> langchain.llms <span class="code-keyword">import</span> OpenAI
+<span class="code-keyword">from</span> langchain.chains <span class="code-keyword">import</span> ConversationChain
+
+<span class="code-comment"># Different types of memory systems</span>
+
+<span class="code-comment"># 1. Buffer Memory - Stores the entire conversation</span>
+buffer_memory = ConversationBufferMemory()
+
+<span class="code-comment"># 2. Summary Memory - Summarizes the conversation</span>
+summary_memory = ConversationSummaryMemory(
+    llm=OpenAI(temperature=<span class="code-number">0</span>)
+)
+
+<span class="code-comment"># 3. Knowledge Graph Memory - Extracts entities and relationships</span>
+kg_memory = ConversationKGMemory(
+    llm=OpenAI(temperature=<span class="code-number">0</span>)
+)
+
+<span class="code-comment"># 4. Buffer Window Memory - Keeps only the most recent K messages</span>
+window_memory = ConversationBufferWindowMemory(k=<span class="code-number">3</span>)
+
+<span class="code-comment"># Using memory with a conversation chain</span>
+llm = OpenAI(temperature=<span class="code-number">0</span>)
+
+<span class="code-comment"># Example with summary memory for a logistics application</span>
+logistics_chain = ConversationChain(
+    llm=llm,
+    memory=summary_memory,
+    verbose=<span class="code-keyword">True</span>
+)
+
+<span class="code-comment"># Simulate a conversation about shipment tracking</span>
+logistics_chain.predict(input=<span class="code-string">"I need to track my shipment with tracking number SH123456789."</span>)
+logistics_chain.predict(input=<span class="code-string">"When is it expected to arrive?"</span>)
+logistics_chain.predict(input=<span class="code-string">"Can you notify me when it's delivered?"</span>)
+
+<span class="code-comment"># View the generated summary</span>
+print(<span class="code-string">"Conversation Summary:"</span>)
+print(summary_memory.buffer)
+
+<span class="code-comment"># Example with knowledge graph memory for retail</span>
+retail_chain = ConversationChain(
+    llm=llm,
+    memory=kg_memory,
+    verbose=<span class="code-keyword">True</span>
+)
+
+<span class="code-comment"># Simulate a conversation about product recommendations</span>
+retail_chain.predict(input=<span class="code-string">"I'm looking for a gift for my wife who likes gardening."</span>)
+retail_chain.predict(input=<span class="code-string">"She already has a set of basic tools."</span>)
+retail_chain.predict(input=<span class="code-string">"What about some rare plant seeds?"</span>)
+
+<span class="code-comment"># View the knowledge graph</span>
+print(<span class="code-string">"\nKnowledge Graph:"</span>)
+print(kg_memory.kg.get_triples())
+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-card">
+                    <div class="card-header">
+                        <i class="fas fa-link"></i>
+                        <span>Message History in Chains</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-check-circle" style="color: var(--success-color)"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <div class="card-section-content">
+                                <div class="business-example">
+                                    <div class="business-example-title">Logistics Example</div>
+                                    <p>A supply chain management system uses message history in chains to track the entire lifecycle of a shipment, from order placement to final delivery. Each step in the process is recorded, allowing for complete traceability and enabling quick resolution of any issues that arise during transit.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-times-circle" style="color: var(--danger-color)"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Integrates conversation history into complex chains of operations, ensuring that context is maintained throughout multi-step processes. This solves the problem of information loss between different stages of a workflow or conversation.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-exclamation-triangle" style="color: var(--warning-color)"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Complex workflows would lose context between steps, leading to errors, repetition, and inefficiency. In a logistics context, this could result in incorrect routing, lost shipments, and inability to track the status of goods through the supply chain.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-cog"></i>
+                                <span>Predefined or Custom</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-predefined">Predefined</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-link"></i>
+                                <span>Relationship Keyword</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-execution">Execution</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-brain"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Message history in chains allows for the integration of conversational context into multi-step processes. This is particularly important when building applications that need to maintain state across multiple interactions or when implementing complex workflows.</p>
+                                
+                                <div class="code-block">
+<span class="code-keyword">from</span> langchain.chains <span class="code-keyword">import</span> LLMChain, SimpleSequentialChain
+<span class="code-keyword">from</span> langchain.prompts <span class="code-keyword">import</span> PromptTemplate
+<span class="code-keyword">from</span> langchain.memory <span class="code-keyword">import</span> ConversationBufferMemory
+<span class="code-keyword">from</span> langchain.llms <span class="code-keyword">import</span> OpenAI
+<span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage, AIMessage
+
+<span class="code-comment"># Initialize language model</span>
+llm = OpenAI(temperature=<span class="code-number">0.7</span>)
+
+<span class="code-comment"># Create a memory to store conversation history</span>
+memory = ConversationBufferMemory()
+
+<span class="code-comment"># Create the first chain in the sequence</span>
+first_prompt = PromptTemplate(
+    input_variables=[<span class="code-string">"product"</span>],
+    template=<span class="code-string">"What are the main features of {product}? Return only the features as a comma-separated list."</span>
+)
+chain_one = LLMChain(llm=llm, prompt=first_prompt)
+
+<span class="code-comment"># Create the second chain that uses the output of the first</span>
+second_prompt = PromptTemplate(
+    input_variables=[<span class="code-string">"features"</span>],
+    template=<span class="code-string">"Given these features: {features}, which one is the most important for a business customer and why?"</span>
+)
+chain_two = LLMChain(llm=llm, prompt=second_prompt)
+
+<span class="code-comment"># Create a sequential chain</span>
+overall_chain = SimpleSequentialChain(
+    chains=[chain_one, chain_two],
+    verbose=<span class="code-keyword">True</span>
+)
+
+<span class="code-comment"># Example for a retail application</span>
+product_description = overall_chain.run(<span class="code-string">"inventory management software"</span>)
+
+<span class="code-comment"># Now let's use message history in a more complex chain</span>
+<span class="code-comment"># Create a prompt template that includes conversation history</span>
+template_with_history = <span class="code-string">"""
+You are a helpful assistant for a retail company. 
+
+Previous conversation:
+{history}
+
+Current question: {input}
+Answer:
+"""</span>
+
+prompt_with_history = PromptTemplate(
+    input_variables=[<span class="code-string">"history"</span>, <span class="code-string">"input"</span>],
+    template=template_with_history
+)
+
+<span class="code-comment"># Create a chain with memory</span>
+conversation_chain = LLMChain(
+    llm=llm,
+    prompt=prompt_with_history,
+    memory=memory,
+    verbose=<span class="code-keyword">True</span>
+)
+
+<span class="code-comment"># Simulate a conversation with a retail customer</span>
+conversation_chain.predict(input=<span class="code-string">"I'm looking for a gift for my husband's birthday. He likes technology and outdoor activities."</span>)
+conversation_chain.predict(input=<span class="code-string">"What about smartwatches? Are they waterproof?"</span>)
+conversation_chain.predict(input=<span class="code-string">"Can you recommend one that's good for hiking?"</span>)
+
+<span class="code-comment"># View the conversation history</span>
+print(<span class="code-string">"\nConversation History:"</span>)
+print(memory.load_memory_variables({})[<span class="code-string">"history"</span>])
+
+<span class="code-comment"># Example of adding messages directly to memory</span>
+<span class="code-comment"># This is useful when integrating with external systems</span>
+memory.chat_memory.add_message(
+    HumanMessage(content=<span class="code-string">"What's your return policy?"</span>)
+)
+memory.chat_memory.add_message(
+    AIMessage(content=<span class="code-string">"We offer a 30-day return policy for all items in original condition with receipt."</span>)
+)
+
+<span class="code-comment"># Continue the conversation</span>
+conversation_chain.predict(input=<span class="code-string">"What if I lost the receipt?"</span>)
+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-card">
+                    <div class="card-header">
+                        <i class="fas fa-compress-alt"></i>
+                        <span>Managing Large Chat History</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-check-circle" style="color: var(--success-color)"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <div class="card-section-content">
+                                <div class="business-example">
+                                    <div class="business-example-title">Retail Example</div>
+                                    <p>A customer support system for a large e-commerce platform manages extensive chat histories with customers who may have multiple interactions over weeks or months. By efficiently managing these large histories, the system can provide context-aware support without exceeding token limits or incurring excessive costs.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-times-circle" style="color: var(--danger-color)"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Addresses the challenge of maintaining context in long-running conversations while managing computational constraints. Large chat histories can exceed token limits and increase processing costs, so effective management strategies are essential for scalable applications.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-exclamation-triangle" style="color: var(--warning-color)"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Applications would face performance degradation, increased costs, and potential failures when processing long conversations. In customer support scenarios, this could lead to timeouts, incomplete responses, and inability to access important historical context needed to resolve issues.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-cog"></i>
+                                <span>Predefined or Custom</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-custom">Custom</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-link"></i>
+                                <span>Relationship Keyword</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-control">Control</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-brain"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Managing large chat histories involves various strategies to maintain context while respecting computational constraints. These include summarization, sliding windows, knowledge extraction, and selective retention based on relevance.</p>
+                                
+                                <div class="code-block">
+<span class="code-keyword">from</span> langchain.memory <span class="code-keyword">import</span> (
+    ConversationSummaryMemory,
+    ConversationBufferWindowMemory,
+    ConversationKGMemory,
+    ConversationTokenBufferMemory
+)
+<span class="code-keyword">from</span> langchain.llms <span class="code-keyword">import</span> OpenAI
+<span class="code-keyword">from</span> langchain.chains <span class="code-keyword">import</span> ConversationChain
+<span class="code-keyword">from</span> langchain.memory.chat_memory <span class="code-keyword">import</span> ChatMessageHistory
+<span class="code-keyword">from</span> langchain.prompts <span class="code-keyword">import</span> PromptTemplate
+<span class="code-keyword">from</span> langchain.chains <span class="code-keyword">import</span> LLMChain
+
+<span class="code-comment"># Initialize language model</span>
+llm = OpenAI(temperature=<span class="code-number">0</span>)
+
+<span class="code-comment"># Strategy 1: Summary Memory</span>
+<span class="code-comment"># Compresses conversation into a summary</span>
+summary_memory = ConversationSummaryMemory(
+    llm=llm,
+    max_token_limit=<span class="code-number">500</span>
+)
+
+<span class="code-comment"># Strategy 2: Buffer Window Memory</span>
+<span class="code-comment"># Keeps only the most recent K messages</span>
+window_memory = ConversationBufferWindowMemory(
+    k=<span class="code-number">10</span>
+)
+
+<span class="code-comment"># Strategy 3: Knowledge Graph Memory</span>
+<span class="code-comment"># Extracts entities and relationships</span>
+kg_memory = ConversationKGMemory(
+    llm=llm
+)
+
+<span class="code-comment"># Strategy 4: Token Buffer Memory</span>
+<span class="code-comment"># Keeps messages until a token limit is reached</span>
+token_memory = ConversationTokenBufferMemory(
+    llm=llm,
+    max_token_limit=<span class="code-number">1000</span>
+)
+
+<span class="code-comment"># Create a conversation chain with summary memory for a healthcare application</span>
+healthcare_chain = ConversationChain(
+    llm=llm,
+    memory=summary_memory,
+    verbose=<span class="code-keyword">True</span>
+)
+
+<span class="code-comment"># Simulate a long conversation about patient symptoms</span>
+healthcare_chain.predict(input=<span class="code-string">"I've been experiencing headaches for the past week."</span>)
+healthcare_chain.predict(input=<span class="code-string">"They're mostly in the front of my head and behind my eyes."</span>)
+healthcare_chain.predict(input=<span class="code-string">"I've also been feeling nauseous sometimes when the headaches are severe."</span>)
+healthcare_chain.predict(input=<span class="code-string">"I work on a computer all day, could that be related?"</span>)
+healthcare_chain.predict(input=<span class="code-string">"I've been taking over-the-counter pain medication, but it only helps temporarily."</span>)
+
+<span class="code-comment"># View the summary</span>
+print(<span class="code-string">"Conversation Summary:"</span>)
+print(summary_memory.buffer)
+
+<span class="code-comment"># Custom memory management strategy</span>
+<span class="code-keyword">class</span> <span class="code-function">SelectiveMemory</span>:
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(self, max_messages=<span class="code-number">20</span>, importance_threshold=<span class="code-number">0.7</span>):
+        <span class="code-keyword">self</span>.chat_memory = ChatMessageHistory()
+        <span class="code-keyword">self</span>.max_messages = max_messages
+        <span class="code-keyword">self</span>.importance_threshold = importance_threshold
+        <span class="code-keyword">self</span>.llm = OpenAI(temperature=<span class="code-number">0</span>)
+        
+        <span class="code-comment"># Template for assessing message importance</span>
+        <span class="code-keyword">self</span>.importance_template = PromptTemplate(
+            input_variables=[<span class="code-string">"message"</span>],
+            template=<span class="code-string">"On a scale of 0 to 1, how important is this message for maintaining conversation context? Message: {message}. Just return the number."</span>
+        )
+        
+        <span class="code-keyword">self</span>.importance_chain = LLMChain(
+            llm=<span class="code-keyword">self</span>.llm,
+            prompt=<span class="code-keyword">self</span>.importance_template
+        )
+    
+    <span class="code-keyword">def</span> <span class="code-function">add_message</span>(<span class="code-keyword">self</span>, message, is_human=<span class="code-keyword">True</span>):
+        <span class="code-comment"># Add message to memory</span>
+        <span class="code-keyword">if</span> is_human:
+            <span class="code-keyword">self</span>.chat_memory.add_user_message(message)
+        <span class="code-keyword">else</span>:
+            <span class="code-keyword">self</span>.chat_memory.add_ai_message(message)
+        
+        <span class="code-comment"># Check if we need to prune messages</span>
+        <span class="code-keyword">if</span> len(<span class="code-keyword">self</span>.chat_memory.messages) > <span class="code-keyword">self</span>.max_messages:
+            <span class="code-keyword">self</span>._prune_messages()
+    
+    <span class="code-keyword">def</span> <span class="code-function">_prune_messages</span>(<span class="code-keyword">self</span>):
+        <span class="code-comment"># Score each message by importance</span>
+        message_scores = []
+        
+        <span class="code-keyword">for</span> msg <span class="code-keyword">in</span> <span class="code-keyword">self</span>.chat_memory.messages:
+            <span class="code-keyword">try</span>:
+                score = float(<span class="code-keyword">self</span>.importance_chain.run(msg.content))
+                message_scores.append((msg, score))
+            <span class="code-keyword">except</span>:
+                <span class="code-comment"># Default to medium importance if scoring fails</span>
+                message_scores.append((msg, <span class="code-number">0.5</span>))
+        
+        <span class="code-comment"># Sort by score (lowest first)</span>
+        message_scores.sort(key=<span class="code-keyword">lambda</span> x: x[<span class="code-number">1</span>])
+        
+        <span class="code-comment"># Keep the highest scoring messages</span>
+        messages_to_keep = [msg <span class="code-keyword">for</span> msg, score <span class="code-keyword">in</span> message_scores[-<span class="code-keyword">self</span>.max_messages:]]
+        
+        <span class="code-comment"># Replace the message history with the pruned version</span>
+        <span class="code-keyword">self</span>.chat_memory = ChatMessageHistory()
+        <span class="code-keyword">for</span> msg <span class="code-keyword">in</span> messages_to_keep:
+            <span class="code-keyword">if</span> msg.type == <span class="code-string">"human"</span>:
+                <span class="code-keyword">self</span>.chat_memory.add_user_message(msg.content)
+            <span class="code-keyword">else</span>:
+                <span class="code-keyword">self</span>.chat_memory.add_ai_message(msg.content)
+    
+    <span class="code-keyword">def</span> <span class="code-function">get_messages</span>(<span class="code-keyword">self</span>):
+        <span class="code-keyword">return</span> <span class="code-keyword">self</span>.chat_memory.messages
+
+<span class="code-comment"># Example using the custom selective memory for a banking application</span>
+banking_memory = SelectiveMemory(max_messages=<span class="code-number">15</span>)
+
+<span class="code-comment"># Simulate a conversation about account issues</span>
+banking_memory.add_message(<span class="code-string">"I'm having trouble with my account login."</span>, is_human=<span class="code-keyword">True</span>)
+banking_memory.add_message(<span class="code-string">"I can help you with that. Can you confirm your account number?"</span>, is_human=<span class="code-keyword">False</span>)
+banking_memory.add_message(<span class="code-string">"It's 12345678."</span>, is_human=<span class="code-keyword">True</span>)
+banking_memory.add_message(<span class="code-string">"Thank you. I see you've had several failed login attempts. Let's reset your password."</span>, is_human=<span class="code-keyword">False</span>)
+banking_memory.add_message(<span class="code-string">"That would be great. How do I do that?"</span>, is_human=<span class="code-keyword">True</span>)
+banking_memory.add_message(<span class="code-string">"I'll send a reset link to your registered email address."</span>, is_human=<span class="code-keyword">False</span>)
+banking_memory.add_message(<span class="code-string">"OK, I haven't received it yet."</span>, is_human=<span class="code-keyword">True</span>)
+banking_memory.add_message(<span class="code-string">"Let me check if there was an issue with sending it."</span>, is_human=<span class="code-keyword">False</span>)
+banking_memory.add_message(<span class="code-string">"Also, I wanted to ask about my recent transaction that seems incorrect."</span>, is_human=<span class="code-keyword">True</span>)
+banking_memory.add_message(<span class="code-string">"I can help with that after we resolve your login issue. Let me resend the password reset email."</span>, is_human=<span class="code-keyword">False</span>)
+
+<span class="code-comment"># View the pruned conversation</span>
+print(<span class="code-string">"\nPruned Banking Conversation:"</span>)
+<span class="code-keyword">for</span> msg <span class="code-keyword">in</span> banking_memory.get_messages():
+    print(<span class="code-string">f"{msg.type}: {msg.content}"</span>)
+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">7.2 State Persistence</h2>
+            
+            <div class="component-grid">
+                <div class="component-card">
+                    <div class="card-header">
+                        <i class="fas fa-window-maximize"></i>
+                        <span>Context Window Management</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-check-circle" style="color: var(--success-color)"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <div class="card-section-content">
+                                <div class="business-example">
+                                    <div class="business-example-title">Healthcare Example</div>
+                                    <p>A medical diagnosis system uses context window management to ensure that critical patient information, symptoms, and medical history are always available within the model's context window, even during lengthy consultations. This enables accurate diagnosis and treatment recommendations without losing important details.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-times-circle" style="color: var(--danger-color)"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Addresses the fundamental limitation of language models having a fixed context window. By strategically managing what information is included in the context, applications can maintain the most relevant information while respecting token limits.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-exclamation-triangle" style="color: var(--warning-color)"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Applications would lose important context as conversations grow longer, leading to irrelevant responses, forgotten details, and potentially critical errors. In healthcare, this could result in missed symptoms or incorrect treatment recommendations.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-cog"></i>
+                                <span>Predefined or Custom</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-custom">Custom</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-link"></i>
+                                <span>Relationship Keyword</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-control">Control</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-brain"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Context window management involves strategies to maximize the value of the limited token space available in language models. This includes prioritizing information, summarizing older content, and dynamically adjusting what's included based on relevance.</p>
+                                
+                                <div class="code-block">
+<span class="code-keyword">from</span> langchain.memory <span class="code-keyword">import</span> (
+    ConversationSummaryMemory,
+    ConversationTokenBufferMemory,
+    ConversationBufferWindowMemory
+)
+<span class="code-keyword">from</span> langchain.llms <span class="code-keyword">import</span> OpenAI
+<span class="code-keyword">from</span> langchain.chains <span class="code-keyword">import</span> ConversationChain
+<span class="code-keyword">from</span> langchain.prompts <span class="code-keyword">import</span> PromptTemplate
+<span class="code-keyword">from</span> langchain.callbacks <span class="code-keyword">import</span> get_openai_callback
+<span class="code-keyword">from</span> langchain.memory.chat_memory <span class="code-keyword">import</span> ChatMessageHistory
+<span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage, AIMessage
+<span class="code-keyword">import</span> tiktoken
+
+<span class="code-comment"># Initialize language model</span>
+llm = OpenAI(temperature=<span class="code-number">0</span>)
+
+<span class="code-comment"># Function to count tokens</span>
+<span class="code-keyword">def</span> <span class="code-function">count_tokens</span>(text, model=<span class="code-string">"text-davinci-003"</span>):
+    encoding = tiktoken.encoding_for_model(model)
+    <span class="code-keyword">return</span> len(encoding.encode(text))
+
+<span class="code-comment"># Strategy 1: Token Buffer Memory</span>
+<span class="code-comment"># Keeps messages until a token limit is reached</span>
+token_memory = ConversationTokenBufferMemory(
+    llm=llm,
+    max_token_limit=<span class="code-number">1000</span>
+)
+
+<span class="code-comment"># Strategy 2: Buffer Window Memory</span>
+<span class="code-comment"># Keeps only the most recent K messages</span>
+window_memory = ConversationBufferWindowMemory(
+    k=<span class="code-number">5</span>
+)
+
+<span class="code-comment"># Strategy 3: Summary Memory</span>
+<span class="code-comment"># Summarizes older conversations</span>
+summary_memory = ConversationSummaryMemory(
+    llm=llm,
+    max_token_limit=<span class="code-number">500</span>
+)
+
+<span class="code-comment"># Custom context window manager for healthcare applications</span>
+<span class="code-keyword">class</span> <span class="code-function">HealthcareContextManager</span>:
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-keyword">self</span>, max_tokens=<span class="code-number">2000</span>):
+        <span class="code-keyword">self</span>.max_tokens = max_tokens
+        <span class="code-keyword">self</span>.chat_memory = ChatMessageHistory()
+        <span class="code-keyword">self</span>.llm = OpenAI(temperature=<span class="code-number">0</span>)
+        
+        <span class="code-comment"># Template for summarizing medical history</span>
+        <span class="code-keyword">self</span>.summary_template = PromptTemplate(
+            input_variables=[<span class="code-string">"history"</span>],
+            template=<span class="code-string">"Summarize the following medical conversation, focusing on symptoms, diagnoses, and treatments: {history}"</span>
+        )
+        
+        <span class="code-keyword">self</span>.summary_chain = LLMChain(
+            llm=<span class="code-keyword">self</span>.llm,
+            prompt=<span class="code-keyword">self</span>.summary_template
+        )
+        
+        <span class="code-comment"># Critical medical terms that should always be preserved</span>
+        <span class="code-keyword">self</span>.critical_terms = [
+            <span class="code-string">"allergy"</span>, <span class="code-string">"medication"</span>, <span class="code-string">"diagnosis"</span>, <span class="code-string">"symptom"</span>,
+            <span class="code-string">"treatment"</span>, <span class="code-string">"pain"</span>, <span class="code-string">"fever"</span>, <span class="code-string">"prescription"</span>
+        ]
+    
+    <span class="code-keyword">def</span> <span class="code-function">add_message</span>(<span class="code-keyword">self</span>, message, is_human=<span class="code-keyword">True</span>):
+        <span class="code-comment"># Add message to memory</span>
+        <span class="code-keyword">if</span> is_human:
+            <span class="code-keyword">self</span>.chat_memory.add_user_message(message)
+        <span class="code-keyword">else</span>:
+            <span class="code-keyword">self</span>.chat_memory.add_ai_message(message)
+        
+        <span class="code-comment"># Check if we need to manage the context window</span>
+        <span class="code-keyword">if</span> <span class="code-keyword">self</span>._get_token_count() > <span class="code-keyword">self</span>.max_tokens:
+            <span class="code-keyword">self</span>._manage_context()
+    
+    <span class="code-keyword">def</span> <span class="code-function">_get_token_count</span>(<span class="code-keyword">self</span>):
+        <span class="code-comment"># Calculate total tokens in the conversation</span>
+        total_tokens = <span class="code-number">0</span>
+        <span class="code-keyword">for</span> msg <span class="code-keyword">in</span> <span class="code-keyword">self</span>.chat_memory.messages:
+            total_tokens += count_tokens(msg.content)
+        <span class="code-keyword">return</span> total_tokens
+    
+    <span class="code-keyword">def</span> <span class="code-function">_manage_context</span>(<span class="code-keyword">self</span>):
+        <span class="code-comment"># Separate messages into critical and non-critical</span>
+        critical_messages = []
+        non_critical_messages = []
+        
+        <span class="code-keyword">for</span> msg <span class="code-keyword">in</span> <span class="code-keyword">self</span>.chat_memory.messages:
+            is_critical = <span class="code-keyword">any</span>(term <span class="code-keyword">in</span> msg.content.lower() <span class="code-keyword">for</span> term <span class="code-keyword">in</span> <span class="code-keyword">self</span>.critical_terms)
+            
+            <span class="code-keyword">if</span> is_critical:
+                critical_messages.append(msg)
+            <span class="code-keyword">else</span>:
+                non_critical_messages.append(msg)
+        
+        <span class="code-comment"># If we still have too many tokens after separating, summarize non-critical messages</span>
+        <span class="code-keyword">if</span> <span class="code-keyword">self</span>._count_messages_tokens(critical_messages) > <span class="code-keyword">self</span>.max_tokens * <span class="code-number">0.7</span>:
+            <span class="code-comment"># Summarize the oldest critical messages</span>
+            half_point = len(critical_messages) // <span class="code-number">2</span>
+            old_critical = critical_messages[:half_point]
+            recent_critical = critical_messages[half_point:]
+            
+            <span class="code-comment"># Create a summary of old critical messages</span>
+            history_text = <span class="code-string">"\n"</span>.join([<span class="code-string">f"{msg.type}: {msg.content}"</span> <span class="code-keyword">for</span> msg <span class="code-keyword">in</span> old_critical])
+            summary = <span class="code-keyword">self</span>.summary_chain.run(history=history_text)
+            
+            <span class="code-comment"># Create a new message history with summary and recent messages</span>
+            <span class="code-keyword">self</span>.chat_memory = ChatMessageHistory()
+            <span class="code-keyword">self</span>.chat_memory.add_ai_message(<span class="code-string">f"Previous medical summary: {summary}"</span>)
+            
+            <span class="code-keyword">for</span> msg <span class="code-keyword">in</span> recent_critical:
+                <span class="code-keyword">if</span> msg.type == <span class="code-string">"human"</span>:
+                    <span class="code-keyword">self</span>.chat_memory.add_user_message(msg.content)
+                <span class="code-keyword">else</span>:
+                    <span class="code-keyword">self</span>.chat_memory.add_ai_message(msg.content)
+        <span class="code-keyword">else</span>:
+            <span class="code-comment"># Summarize non-critical messages</span>
+            <span class="code-keyword">if</span> non_critical_messages:
+                history_text = <span class="code-string">"\n"</span>.join([<span class="code-string">f"{msg.type}: {msg.content}"</span> <span class="code-keyword">for</span> msg <span class="code-keyword">in</span> non_critical_messages])
+                summary = <span class="code-keyword">self</span>.summary_chain.run(history=history_text)
+                
+                <span class="code-comment"># Create a new message history with critical messages and summary</span>
+                <span class="code-keyword">self</span>.chat_memory = ChatMessageHistory()
+                <span class="code-keyword">self</span>.chat_memory.add_ai_message(<span class="code-string">f"Previous conversation summary: {summary}"</span>)
+                
+                <span class="code-keyword">for</span> msg <span class="code-keyword">in</span> critical_messages:
+                    <span class="code-keyword">if</span> msg.type == <span class="code-string">"human"</span>:
+                        <span class="code-keyword">self</span>.chat_memory.add_user_message(msg.content)
+                    <span class="code-keyword">else</span>:
+                        <span class="code-keyword">self</span>.chat_memory.add_ai_message(msg.content)
+    
+    <span class="code-keyword">def</span> <span class="code-function">_count_messages_tokens</span>(<span class="code-keyword">self</span>, messages):
+        <span class="code-comment"># Count tokens in a list of messages</span>
+        total_tokens = <span class="code-number">0</span>
+        <span class="code-keyword">for</span> msg <span class="code-keyword">in</span> messages:
+            total_tokens += count_tokens(msg.content)
+        <span class="code-keyword">return</span> total_tokens
+    
+    <span class="code-keyword">def</span> <span class="code-function">get_messages</span>(<span class="code-keyword">self</span>):
+        <span class="code-keyword">return</span> <span class="code-keyword">self</span>.chat_memory.messages
+
+<span class="code-comment"># Example using the healthcare context manager</span>
+healthcare_context = HealthcareContextManager(max_tokens=<span class="code-number">1500</span>)
+
+<span class="code-comment"># Simulate a medical consultation</span>
+healthcare_context.add_message(<span class="code-string">"I've been having headaches for the past week."</span>, is_human=<span class="code-keyword">True</span>)
+healthcare_context.add_message(<span class="code-string">"I see. Can you describe the pain? Is it sharp or dull?"</span>, is_human=<span class="code-keyword">False</span>)
+healthcare_context.add_message(<span class="code-string">"It's mostly dull, but sometimes it becomes sharp behind my eyes."</span>, is_human=<span class="code-keyword">True</span>)
+healthcare_context.add_message(<span class="code-string">"Any other symptoms? Nausea, sensitivity to light?"</span>, is_human=<span class="code-keyword">False</span>)
+healthcare_context.add_message(<span class="code-string">"Yes, I've been feeling nauseous when the pain is severe. Bright lights bother me too."</span>, is_human=<span class="code-keyword">True</span>)
+healthcare_context.add_message(<span class="code-string">"Have you taken any medication for the headaches?"</span>, is_human=<span class="code-keyword">False</span>)
+healthcare_context.add_message(<span class="code-string">"I've been taking ibuprofen, but it only helps for a few hours."</span>, is_human=<span class="code-keyword">True</span>)
+healthcare_context.add_message(<span class="code-string">"I'm concerned you might be experiencing migraines. I recommend keeping a headache diary and we can discuss preventive medication options."</span>, is_human=<span class="code-keyword">False</span>)
+healthcare_context.add_message(<span class="code-string">"That makes sense. I have a family history of migraines. My mother gets them too."</span>, is_human=<span class="code-keyword">True</span>)
+healthcare_context.add_message(<span class="code-string">"That's a significant risk factor. Let's discuss some lifestyle changes that might help reduce the frequency."</span>, is_human=<span class="code-keyword">False</span>)
+
+<span class="code-comment"># View the managed conversation</span>
+print(<span class="code-string">"Managed Healthcare Conversation:"</span>)
+<span class="code-keyword">for</span> msg <span class="code-keyword">in</span> healthcare_context.get_messages():
+    print(<span class="code-string">f"{msg.type}: {msg.content}"</span>)
+
+<span class="code-comment"># Check token usage</span>
+print(<span class="code-string">f"\nTotal tokens: {healthcare_context._get_token_count()}"</span>)
+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-card">
+                    <div class="card-header">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>Conversation Patterns</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-check-circle" style="color: var(--success-color)"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <div class="card-section-content">
+                                <div class="business-example">
+                                    <div class="business-example-title">Banking Example</div>
+                                    <p>A banking chatbot uses conversation patterns to recognize different types of customer interactions, such as account inquiries, transaction disputes, or loan applications. By identifying these patterns, the system can route conversations to the appropriate specialized agents or processes.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-times-circle" style="color: var(--danger-color)"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Addresses the challenge of understanding the structure and intent of conversations. By recognizing patterns, applications can respond more appropriately, extract relevant information, and guide conversations toward successful outcomes.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-exclamation-triangle" style="color: var(--warning-color)"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Applications would treat all conversations as generic exchanges, missing important contextual cues and user intentions. In banking, this could lead to misdirected customer service, incorrect information provided, and failure to identify potentially fraudulent activities.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-cog"></i>
+                                <span>Predefined or Custom</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-custom">Custom</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-link"></i>
+                                <span>Relationship Keyword</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-interface">Interface</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-brain"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Conversation patterns are structured ways of organizing and understanding dialogues. They include templates, flows, and recognition strategies that help applications interpret user intent and respond appropriately.</p>
+                                
+                                <div class="code-block">
+<span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage, AIMessage, SystemMessage
+<span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain.prompts <span class="code-keyword">import</span> ChatPromptTemplate, HumanMessagePromptTemplate
+<span class="code-keyword">from</span> langchain.chains <span class="code-keyword">import</span> LLMChain
+<span class="code-keyword">from</span> langchain.memory <span class="code-keyword">import</span> ConversationBufferMemory
+<span class="code-keyword">from</span> langchain.memory.chat_memory <span class="code-keyword">import</span> ChatMessageHistory
+<span class="code-keyword">from</span> typing <span class="code-keyword">import</span> List, Dict, Optional, Tuple
+<span class="code-keyword">import</span> re
+
+<span class="code-comment"># Initialize language model</span>
+chat_model = ChatOpenAI(temperature=<span class="code-number">0</span>)
+
+<span class="code-comment"># Define conversation patterns for a banking application</span>
+<span class="code-keyword">class</span> <span class="code-function">BankingConversationPatterns</span>:
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-keyword">self</span>):
+        <span class="code-comment"># Define pattern templates for different banking scenarios</span>
+        <span class="code-keyword">self</span>.patterns = {
+            <span class="code-string">"balance_inquiry"</span>: {
+                <span class="code-string">"keywords"</span>: [<span class="code-string">"balance"</span>, <span class="code-string">"how much"</span>, <span class="code-string">"account"</span>, <span class="code-string">"money"</span>],
+                <span class="code-string">"response_template"</span>: <span class="code-string">"I can help you check your account balance. Which account would you like to check?"</span>,
+                <span class="code-string">"required_info"</span>: [<span class="code-string">"account_type"</span>, <span class="code-string">"account_number"</span>]
+            },
+            <span class="code-string">"transfer_funds"</span>: {
+                <span class="code-string">"keywords"</span>: [<span class="code-string">"transfer"</span>, <span class="code-string">"send"</span>, <span class="code-string">"move"</span>, <span class="code-string">"payment"</span>],
+                <span class="code-string">"response_template"</span>: <span class="code-string">"I can help you transfer funds. Please provide the source account, destination account, and amount."</span>,
+                <span class="code-string">"required_info"</span>: [<span class="code-string">"source_account"</span>, <span class="code-string">"destination_account"</span>, <span class="code-string">"amount"</span>]
+            },
+            <span class="code-string">"report_fraud"</span>: {
+                <span class="code-string">"keywords"</span>: [<span class="code-string">"fraud"</span>, <span class="code-string">"unauthorized"</span>, <span class="code-string">"suspicious"</span>, <span class="code-string">"stolen"</span>],
+                <span class="code-string">"response_template"</span>: <span class="code-string">"I'm sorry to hear that. Let me help you report the fraudulent activity. Which account is affected?"</span>,
+                <span class="code-string">"required_info"</span>: [<span class="code-string">"account_number"</span>, <span class="code-string">"transaction_details"</span>, <span class="code-string">"date_range"</span>]
+            },
+            <span class="code-string">"loan_application"</span>: {
+                <span class="code-string">"keywords"</span>: [<span class="code-string">"loan"</span>, <span class="code-string">"borrow"</span>, <span class="code-string">"financing"</span>, <span class="code-string">"mortgage"</span>],
+                <span class="code-string">"response_template"</span>: <span class="code-string">"I'd be happy to help you with a loan application. What type of loan are you interested in?"</span>,
+                <span class="code-string">"required_info"</span>: [<span class="code-string">"loan_type"</span>, <span class="code-string">"amount"</span>, <span class="code-string">"purpose"</span>, <span class="code-string">"term"</span>]
+            }
+        }
+        
+        <span class="code-comment"># Conversation state tracking</span>
+        <span class="code-keyword">self</span>.current_pattern = <span class="code-keyword">None</span>
+        <span class="code-keyword">self</span>.collected_info = {}
+        <span class="code-keyword">self</span>.memory = ConversationBufferMemory()
+    
+    <span class="code-keyword">def</span> <span class="code-function">identify_pattern</span>(<span class="code-keyword">self</span>, message: str) -> Optional[str]:
+        <span class="code-comment"># Identify which conversation pattern matches the user's message</span>
+        <span class="code-keyword">for</span> pattern_name, pattern_data <span class="code-keyword">in</span> <span class="code-keyword">self</span>.patterns.items():
+            <span class="code-keyword">for</span> keyword <span class="code-keyword">in</span> pattern_data[<span class="code-string">"keywords"</span>]:
+                <span class="code-keyword">if</span> keyword.lower() <span class="code-keyword">in</span> message.lower():
+                    <span class="code-keyword">return</span> pattern_name
+        <span class="code-keyword">return</span> <span class="code-keyword">None</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">extract_information</span>(<span class="code-keyword">self</span>, message: str, pattern_name: str) -> Dict[str, str]:
+        <span class="code-comment"># Extract relevant information based on the current pattern</span>
+        extracted_info = {}
+        pattern = <span class="code-keyword">self</span>.patterns[pattern_name]
+        
+        <span class="code-comment"># Simple extraction logic (in a real system, this would use NLP)</span>
+        <span class="code-keyword">if</span> <span class="code-string">"account_number"</span> <span class="code-keyword">in</span> pattern[<span class="code-string">"required_info"</span>]:
+            account_match = re.search(<span class="code-string">r'\b\d{10,16}\b'</span>, message)
+            <span class="code-keyword">if</span> account_match:
+                extracted_info[<span class="code-string">"account_number"</span>] = account_match.group()
+        
+        <span class="code-keyword">if</span> <span class="code-string">"amount"</span> <span class="code-keyword">in</span> pattern[<span class="code-string">"required_info"</span>]:
+            amount_match = re.search(<span class="code-string">r'\$\d+\.?\d*|\d+\.?\d*\s*(dollars?|USD)'</span>, message, re.IGNORECASE)
+            <span class="code-keyword">if</span> amount_match:
+                extracted_info[<span class="code-string">"amount"</span>] = amount_match.group()
+        
+        <span class="code-keyword">return</span> extracted_info
+    
+    <span class="code-keyword">def</span> <span class="code-function">get_next_question</span>(<span class="code-keyword">self</span>, pattern_name: str) -> str:
+        <span class="code-comment"># Determine what information to ask for next</span>
+        pattern = <span class="code-keyword">self</span>.patterns[pattern_name]
+        
+        <span class="code-keyword">for</span> info_field <span class="code-keyword">in</span> pattern[<span class="code-string">"required_info"</span>]:
+            <span class="code-keyword">if</span> info_field <span class="code-keyword">not</span> <span class="code-keyword">in</span> <span class="code-keyword">self</span>.collected_info:
+                <span class="code-comment"># Return a question for this information field</span>
+                <span class="code-keyword">if</span> info_field == <span class="code-string">"account_type"</span>:
+                    <span class="code-keyword">return</span> <span class="code-string">"Which type of account? (checking, savings, etc.)"</span>
+                <span class="code-keyword">elif</span> info_field == <span class="code-string">"account_number"</span>:
+                    <span class="code-keyword">return</span> <span class="code-string">"What is your account number?"</span>
+                <span class="code-keyword">elif</span> info_field == <span class="code-string">"source_account"</span>:
+                    <span class="code-keyword">return</span> <span class="code-string">"Which account would you like to transfer from?"</span>
+                <span class="code-keyword">elif</span> info_field == <span class="code-string">"destination_account"</span>:
+                    <span class="code-keyword">return</span> <span class="code-string">"Which account would you like to transfer to?"</span>
+                <span class="code-keyword">elif</span> info_field == <span class="code-string">"amount"</span>:
+                    <span class="code-keyword">return</span> <span class="code-string">"How much would you like to transfer?"</span>
+                <span class="code-keyword">elif</span> info_field == <span class="code-string">"transaction_details"</span>:
+                    <span class="code-keyword">return</span> <span class="code-string">"Can you provide details about the suspicious transaction?"</span>
+                <span class="code-keyword">elif</span> info_field == <span class="code-string">"date_range"</span>:
+                    <span class="code-keyword">return</span> <span class="code-string">"When did you notice the suspicious activity?"</span>
+                <span class="code-keyword">elif</span> info_field == <span class="code-string">"loan_type"</span>:
+                    <span class="code-keyword">return</span> <span class="code-string">"What type of loan are you interested in? (personal, auto, home, etc.)"</span>
+                <span class="code-keyword">elif</span> info_field == <span class="code-string">"purpose"</span>:
+                    <span class="code-keyword">return</span> <span class="code-string">"What is the purpose of the loan?"</span>
+                <span class="code-keyword">elif</span> info_field == <span class="code-string">"term"</span>:
+                    <span class="code-keyword">return</span> <span class="code-string">"What loan term are you looking for?"</span>
+        
+        <span class="code-comment"># If all required info is collected, return a completion message</span>
+        <span class="code-keyword">return</span> <span class="code-string">"Thank you for providing all the necessary information. I'll process your request now."</span>
+    
+    <span class="code-keyword">def</span> <span class="code-function">process_message</span>(<span class="code-keyword">self</span>, message: str) -> str:
+        <span class="code-comment"># Process a user message according to conversation patterns</span>
+        
+        <span class="code-comment"># Add message to memory</span>
+        <span class="code-keyword">self</span>.memory.chat_memory.add_user_message(message)
+        
+        <span class="code-comment"># If we don't have an active pattern, identify one</span>
+        <span class="code-keyword">if</span> <span class="code-keyword">not</span> <span class="code-keyword">self</span>.current_pattern:
+            pattern_name = <span class="code-keyword">self</span>.identify_pattern(message)
+            
+            <span class="code-keyword">if</span> pattern_name:
+                <span class="code-keyword">self</span>.current_pattern = pattern_name
+                response = <span class="code-keyword">self</span>.patterns[pattern_name][<span class="code-string">"response_template"</span>]
+                <span class="code-keyword">self</span>.memory.chat_memory.add_ai_message(response)
+                <span class="code-keyword">return</span> response
+            <span class="code-keyword">else</span>:
+                response = <span class="code-string">"How can I help you with your banking needs today?"</span>
+                <span class="code-keyword">self</span>.memory.chat_memory.add_ai_message(response)
+                <span class="code-keyword">return</span> response
+        
+        <span class="code-comment"># If we have an active pattern, extract information</span>
+        extracted_info = <span class="code-keyword">self</span>.extract_information(message, <span class="code-keyword">self</span>.current_pattern)
+        <span class="code-keyword">self</span>.collected_info.update(extracted_info)
+        
+        <span class="code-comment"># Determine the next response</span>
+        response = <span class="code-keyword">self</span>.get_next_question(<span class="code-keyword">self</span>.current_pattern)
+        
+        <span class="code-comment"># If we've completed the pattern, reset</span>
+        <span class="code-keyword">if</span> response.startswith(<span class="code-string">"Thank you for providing"</span>):
+            <span class="code-comment"># In a real system, we would process the collected information here</span>
+            print(<span class="code-string">f"Processing {self.current_pattern} with info: {self.collected_info}"</span>)
+            <span class="code-keyword">self</span>.current_pattern = <span class="code-keyword">None</span>
+            <span class="code-keyword">self</span>.collected_info = {}
+        
+        <span class="code-comment"># Add response to memory</span>
+        <span class="code-keyword">self</span>.memory.chat_memory.add_ai_message(response)
+        
+        <span class="code-keyword">return</span> response
+
+<span class="code-comment"># Example using the banking conversation patterns</span>
+banking_patterns = BankingConversationPatterns()
+
+<span class="code-comment"># Simulate a conversation about transferring funds</span>
+print(<span class="code-string">"Customer: I want to transfer money to my savings account."</span>)
+response = banking_patterns.process_message(<span class="code-string">"I want to transfer money to my savings account."</span>)
+print(<span class="code-string">f"Bank: {response}"</span>)
+
+print(<span class="code-string">"\nCustomer: From my checking account 1234567890."</span>)
+response = banking_patterns.process_message(<span class="code-string">"From my checking account 1234567890."</span>)
+print(<span class="code-string">f"Bank: {response}"</span>)
+
+print(<span class="code-string">"\nCustomer: To my savings account 9876543210."</span>)
+response = banking_patterns.process_message(<span class="code-string">"To my savings account 9876543210."</span>)
+print(<span class="code-string">f"Bank: {response}"</span>)
+
+print(<span class="code-string">"\nCustomer: $500."</span>)
+response = banking_patterns.process_message(<span class="code-string">"$500."</span>)
+print(<span class="code-string">f"Bank: {response}"</span>)
+
+<span class="code-comment"># View the conversation history</span>
+print(<span class="code-string">"\nConversation History:"</span>)
+<span class="code-keyword">for</span> msg <span class="code-keyword">in</span> banking_patterns.memory.chat_memory.messages:
+    print(<span class="code-string">f"{msg.type}: {msg.content}"</span>)
+
+<span class="code-comment"># Now simulate a different conversation pattern</span>
+print(<span class="code-string">"\nCustomer: I think there's a fraudulent charge on my credit card."</span>)
+response = banking_patterns.process_message(<span class="code-string">"I think there's a fraudulent charge on my credit card."</span>)
+print(<span class="code-string">f"Bank: {response}"</span>)
+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-card">
+                    <div class="card-header">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Message Removal (RemoveMessage)</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-check-circle" style="color: var(--success-color)"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <div class="card-section-content">
+                                <div class="business-example">
+                                    <div class="business-example-title">Retail Example</div>
+                                    <p>In a customer service chatbot for a retail company, the RemoveMessage functionality allows the system to remove sensitive information like credit card numbers or personal details from the conversation history after they've been processed. This ensures compliance with data protection regulations while maintaining the overall context of the conversation.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-times-circle" style="color: var(--danger-color)"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Addresses the challenge of managing sensitive information in conversation histories. By selectively removing messages or parts of messages, applications can maintain conversational context while protecting sensitive data and managing context window constraints.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-exclamation-triangle" style="color: var(--warning-color)"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Applications would retain all information in conversations, including sensitive data, creating privacy and security risks. In retail, this could lead to violations of PCI compliance when credit card information is stored in conversation logs.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-cog"></i>
+                                <span>Predefined or Custom</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-predefined">Predefined</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-link"></i>
+                                <span>Relationship Keyword</span>
+                            </div>
+                            <div class="card-section-content">
+                                <span class="tag tag-control">Control</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-section">
+                            <div class="card-section-title">
+                                <i class="fas fa-brain"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <div class="card-section-content">
+                                <p>Message removal is a critical feature for managing conversation history, particularly when dealing with sensitive information or when trying to optimize context window usage. LangChain provides mechanisms to selectively remove messages from conversation history.</p>
+                                
+                                <div class="code-block">
+<span class="code-keyword">from</span> langchain.memory <span class="code-keyword">import</span> ConversationBufferMemory
+<span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage, AIMessage, SystemMessage
+<span class="code-keyword">from</span> langchain.memory.chat_memory <span class="code-keyword">import</span> ChatMessageHistory
+<span class="code-keyword">from</span> langchain.prompts <span class="code-keyword">import</span> PromptTemplate
+<span class="code-keyword">from</span> langchain.chains <span class="code-keyword">import</span> LLMChain
+<span class="code-keyword">from</span> langchain.llms <span class="code-keyword">import</span> OpenAI
+<span class="code-keyword">import</span> re
+
+<span class="code-comment"># Initialize language model</span>
+llm = OpenAI(temperature=<span class="code-number">0</span>)
+
+<span class="code-comment"># Basic message removal example</span>
+<span class="code-keyword">def</span> <span class="code-function">remove_messages_by_index</span>(memory, start_index, end_index=None):
+    <span class="code-comment"># Remove messages from memory by index range</span>
+    <span class="code-keyword">if</span> end_index <span class="code-keyword">is</span> <span class="code-keyword">None</span>:
+        end_index = start_index + <span class="code-number">1</span>
+    
+    <span class="code-comment"># Create a new message history with the specified messages removed</span>
+    new_history = ChatMessageHistory()
+    
+    <span class="code-keyword">for</span> i, msg <span class="code-keyword">in</span> enumerate(memory.chat_memory.messages):
+        <span class="code-keyword">if</span> i < start_index <span class="code-keyword">or</span> i >= end_index:
+            <span class="code-keyword">if</span> msg.type == <span class="code-string">"human"</span>:
+                new_history.add_user_message(msg.content)
+            <span class="code-keyword">else</span>:
+                new_history.add_ai_message(msg.content)
+    
+    <span class="code-comment"># Replace the memory's chat history</span>
+    memory.chat_memory = new_history
+    <span class="code-keyword">return</span> memory
+
+<span class="code-comment"># Create a memory with some messages</span>
+memory = ConversationBufferMemory()
+memory.chat_memory.add_user_message(<span class="code-string">"Hello, I'd like to make a purchase."</span>)
+memory.chat_memory.add_ai_message(<span class="code-string">"I'd be happy to help you with your purchase. What would you like to buy?"</span>)
+memory.chat_memory.add_user_message(<span class="code-string">"I want to buy a laptop and my credit card number is 4532-1234-5678-9012."</span>)
+memory.chat_memory.add_ai_message(<span class="code-string">"Thank you for providing your payment information. Which laptop model are you interested in?"</span>)
+
+<span class="code-comment"># Display the original conversation</span>
+print(<span class="code-string">"Original Conversation:"</span>)
+<span class="code-keyword">for</span> msg <span class="code-keyword">in</span> memory.chat_memory.messages:
+    print(<span class="code-string">f"{msg.type}: {msg.content}"</span>)
+
+<span class="code-comment"># Remove the message containing the credit card number</span>
+memory = remove_messages_by_index(memory, <span class="code-number">2</span>)
+
+<span class="code-comment"># Display the conversation after removal</span>
+print(<span class="code-string">"\nConversation After Removal:"</span>)
+<span class="code-keyword">for</span> msg <span class="code-keyword">in</span> memory.chat_memory.messages:
+    print(<span class="code-string">f"{msg.type}: {msg.content}"</span>)
+
+<span class="code-comment"># Advanced message removal with redaction</span>
+<span class="code-keyword">class</span> <span class="code-function">SecureMemory</span>:
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-keyword">self</span>):
+        <span class="code-keyword">self</span>.chat_memory = ChatMessageHistory()
+        
+        <span class="code-comment"># Patterns for sensitive information</span>
+        <span class="code-keyword">self</span>.sensitive_patterns = {
+            <span class="code-string">"credit_card"</span>: re.compile(<span class="code-string">r'\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b'</span>),
+            <span class="code-string">"ssn"</span>: re.compile(<span class="code-string">r'\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b'</span>),
+            <span class="code-string">"email"</span>: re.compile(<span class="code-string">r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'</span>),
+            <span class="code-string">"phone"</span>: re.compile(<span class="code-string">r'\b\d{3}[-\s]?\d{3}[-\s]?\d{4}\b'</span>)
+        }
+    
+    <span class="code-keyword">def</span> <span class="code-function">add_message</span>(<span class="code-keyword">self</span>, message, is_human=<span class="code-keyword">True</span>):
+        <span class="code-comment"># Check for sensitive information</span>
+        redacted_message = <span class="code-keyword">self</span>._redact_sensitive_info(message)
+        
+        <span class="code-comment"># Add the redacted message to memory</span>
+        <span class="code-keyword">if</span> is_human:
+            <span class="code-keyword">self</span>.chat_memory.add_user_message(redacted_message)
+        <span class="code-keyword">else</span>:
+            <span class="code-keyword">self</span>.chat_memory.add_ai_message(redacted_message)
+    
+    <span class="code-keyword">def</span> <span class="code-function">_redact_sensitive_info</span>(<span class="code-keyword">self</span>, message):
+        <span class="code-comment"># Redact sensitive information from the message</span>
+        redacted_message = message
+        
+        <span class="code-keyword">for</span> info_type, pattern <span class="code-keyword">in</span> <span class="code-keyword">self</span>.sensitive_patterns.items():
+            redacted_message = pattern.sub(<span class="code-keyword">lambda</span> m: <span class="code-string">f"[REDACTED {info_type.upper()}]"</span>, redacted_message)
+        
+        <span class="code-keyword">return</span> redacted_message
+    
+    <span class="code-keyword">def</span> <span class="code-function">remove_messages_with_sensitive_info</span>(<span class="code-keyword">self</span>):
+        <span class="code-comment"># Remove messages that contain sensitive information</span>
+        new_history = ChatMessageHistory()
+        
+        <span class="code-keyword">for</span> msg <span class="code-keyword">in</span> <span class="code-keyword">self</span>.chat_memory.messages:
+            has_sensitive = <span class="code-keyword">any</span>(pattern.search(msg.content) <span class="code-keyword">for</span> pattern <span class="code-keyword">in</span> <span class="code-keyword">self</span>.sensitive_patterns.values())
+            
+            <span class="code-keyword">if</span> <span class="code-keyword">not</span> has_sensitive:
+                <span class="code-keyword">if</span> msg.type == <span class="code-string">"human"</span>:
+                    new_history.add_user_message(msg.content)
+                <span class="code-keyword">else</span>:
+                    new_history.add_ai_message(msg.content)
+        
+        <span class="code-keyword">self</span>.chat_memory = new_history
+    
+    <span class="code-keyword">def</span> <span class="code-function">get_messages</span>(<span class="code-keyword">self</span>):
+        <span class="code-keyword">return</span> <span class="code-keyword">self</span>.chat_memory.messages
+
+<span class="code-comment"># Example using the SecureMemory class for a retail application</span>
+secure_memory = SecureMemory()
+
+<span class="code-comment"># Simulate a conversation with sensitive information</span>
+secure_memory.add_message(<span class="code-string">"Hi, I want to buy a new smartphone."</span>, is_human=<span class="code-keyword">True</span>)
+secure_memory.add_message(<span class="code-string">"I'd be happy to help you choose a smartphone. Which model are you interested in?"</span>, is_human=<span class="code-keyword">False</span>)
+secure_memory.add_message(<span class="code-string">"I'm interested in the latest iPhone. My email is customer@example.com and my phone is 555-123-4567."</span>, is_human=<span class="code-keyword">True</span>)
+secure_memory.add_message(<span class="code-string">"Great choice! Would you like to use a payment plan or pay in full?"</span>, is_human=<span class="code-keyword">False</span>)
+secure_memory.add_message(<span class="code-string">"I'll pay in full with my credit card 4532-9876-5432-1098."</span>, is_human=<span class="code-keyword">True</span>)
+secure_memory.add_message(<span class="code-string">"Thank you. Your order has been placed successfully."</span>, is_human=<span class="code-keyword">False</span>)
+
+<span class="code-comment"># Display the conversation with redacted information</span>
+print(<span class="code-string">"\nRetail Conversation with Redacted Information:"</span>)
+<span class="code-keyword">for</span> msg <span class="code-keyword">in</span> secure_memory.get_messages():
+    print(<span class="code-string">f"{msg.type}: {msg.content}"</span>)
+
+<span class="code-comment"># Now remove messages containing sensitive information entirely</span>
+secure_memory.remove_messages_with_sensitive_info()
+
+<span class="code-comment"># Display the conversation after removal</span>
+print(<span class="code-string">"\nRetail Conversation After Removing Sensitive Messages:"</span>)
+<span class="code-keyword">for</span> msg <span class="code-keyword">in</span> secure_memory.get_messages():
+    print(<span class="code-string">f"{msg.type}: {msg.content}"</span>)
+
+<span class="code-comment"># Message removal based on time or relevance</span>
+<span class="code-keyword">class</span> <span class="code-function">ContextOptimizedMemory</span>:
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-keyword">self</span>, max_messages=<span class="code-number">10</span>):
+        <span class="code-keyword">self</span>.chat_memory = ChatMessageHistory()
+        <span class="code-keyword">self</span>.max_messages = max_messages
+        <span class="code-keyword">self</span>.llm = OpenAI(temperature=<span class="code-number">0</span>)
+        
+        <span class="code-comment"># Template for assessing message importance</span>
+        <span class="code-keyword">self</span>.importance_template = PromptTemplate(
+            input_variables=[<span class="code-string">"message"</span>],
+            template=<span class="code-string">"On a scale of 1 to 10, how important is this message for maintaining conversation context? Just return the number. Message: {message}"</span>
+        )
+        
+        <span class="code-keyword">self</span>.importance_chain = LLMChain(
+            llm=<span class="code-keyword">self</span>.llm,
+            prompt=<span class="code-keyword">self</span>.importance_template
+        )
+    
+    <span class="code-keyword">def</span> <span class="code-function">add_message</span>(<span class="code-keyword">self</span>, message, is_human=<span class="code-keyword">True</span>):
+        <span class="code-comment"># Add message to memory</span>
+        <span class="code-keyword">if</span> is_human:
+            <span class="code-keyword">self</span>.chat_memory.add_user_message(message)
+        <span class="code-keyword">else</span>:
+            <span class="code-keyword">self</span>.chat_memory.add_ai_message(message)
+        
+        <span class="code-comment"># Check if we need to remove messages</span>
+        <span class="code-keyword">if</span> len(<span class="code-keyword">self</span>.chat_memory.messages) > <span class="code-keyword">self</span>.max_messages:
+            <span class="code-keyword">self</span>._remove_least_important_messages()
+    
+    <span class="code-keyword">def</span> <span class="code-function">_remove_least_important_messages</span>(<span class="code-keyword">self</span>):
+        <span class="code-comment"># Score each message by importance</span>
+        message_scores = []
+        
+        <span class="code-keyword">for</span> msg <span class="code-keyword">in</span> <span class="code-keyword">self</span>.chat_memory.messages:
+            <span class="code-keyword">try</span>:
+                score = float(<span class="code-keyword">self</span>.importance_chain.run(message=msg.content))
+                message_scores.append((msg, score))
+            <span class="code-keyword">except</span>:
+                <span class="code-comment"># Default to medium importance if scoring fails</span>
+                message_scores.append((msg, <span class="code-number">5.0</span>))
+        
+        <span class="code-comment"># Sort by score (lowest first)</span>
+        message_scores.sort(key=<span class="code-keyword">lambda</span> x: x[<span class="code-number">1</span>])
+        
+        <span class="code-comment"># Keep the highest scoring messages</span>
+        messages_to_keep = [msg <span class="code-keyword">for</span> msg, score <span class="code-keyword">in</span> message_scores[-<span class="code-keyword">self</span>.max_messages:]]
+        
+        <span class="code-comment"># Replace the message history with the pruned version</span>
+        <span class="code-keyword">self</span>.chat_memory = ChatMessageHistory()
+        <span class="code-keyword">for</span> msg <span class="code-keyword">in</span> messages_to_keep:
+            <span class="code-keyword">if</span> msg.type == <span class="code-string">"human"</span>:
+                <span class="code-keyword">self</span>.chat_memory.add_user_message(msg.content)
+            <span class="code-keyword">else</span>:
+                <span class="code-keyword">self</span>.chat_memory.add_ai_message(msg.content)
+    
+    <span class="code-keyword">def</span> <span class="code-function">get_messages</span>(<span class="code-keyword">self</span>):
+        <span class="code-keyword">return</span> <span class="code-keyword">self</span>.chat_memory.messages
+
+<span class="code-comment"># Example using the ContextOptimizedMemory for a logistics application</span>
+logistics_memory = ContextOptimizedMemory(max_messages=<span class="code-number">6</span>)
+
+<span class="code-comment"># Simulate a conversation about shipment tracking</span>
+logistics_memory.add_message(<span class="code-string">"I need to track my shipment with tracking number SH123456789."</span>, is_human=<span class="code-keyword">True</span>)
+logistics_memory.add_message(<span class="code-string">"I can help you track your shipment. It's currently in transit."</span>, is_human=<span class="code-keyword">False</span>)
+logistics_memory.add_message(<span class="code-string">"When is it expected to arrive?"</span>, is_human=<span class="code-keyword">True</span>)
+logistics_memory.add_message(<span class="code-string">"Based on the current schedule, it should arrive by Friday."</span>, is_human=<span class="code-keyword">False</span>)
+logistics_memory.add_message(<span class="code-string">"Can you notify me when it's delivered?"</span>, is_human=<span class="code-keyword">True</span>)
+logistics_memory.add_message(<span class="code-string">"Yes, I've set up a delivery notification for you."</span>, is_human=<span class="code-keyword">False</span>)
+logistics_memory.add_message(<span class="code-string">"What's the shipping carrier?"</span>, is_human=<span class="code-keyword">True</span>)
+logistics_memory.add_message(<span class="code-string">"Your shipment is being handled by Express Logistics."</span>, is_human=<span class="code-keyword">False</span>)
+
+<span class="code-comment"># Display the optimized conversation</span>
+print(<span class="code-string">"\nOptimized Logistics Conversation:"</span>)
+<span class="code-keyword">for</span> msg <span class="code-keyword">in</span> logistics_memory.get_messages():
+    print(<span class="code-string">f"{msg.type}: {msg.content}"</span>)
+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Documentation</h3>
+                    <ul>
+                        <li><a href="#">Getting Started</a></li>
+                        <li><a href="#">Components</a></li>
+                        <li><a href="#">Modules</a></li>
+                        <li><a href="#">API Reference</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">Examples</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Videos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Community</h3>
+                    <ul>
+                        <li><a href="#">Discord</a></li>
+                        <li><a href="#">GitHub</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Events</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>About</h3>
+                    <ul>
+                        <li><a href="#">Team</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Partners</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 LangChain Documentation. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple tab functionality for future expansion
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and contents
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    
+                    // Get the target content
+                    const targetId = tab.getAttribute('data-target');
+                    if (targetId) {
+                        const targetContent = document.getElementById(targetId);
+                        if (targetContent) {
+                            targetContent.classList.add('active');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
