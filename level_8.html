@@ -1,1 +1,2461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 8: Orchestration & Workflows - LangChain Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --dark-bg: #0f172a;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+        }
 
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background-color: var(--dark-bg);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: 500;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: white !important;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 15px;
+        }
+
+        .component-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .component-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .component-title {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .component-title i {
+            margin-right: 10px;
+        }
+
+        .feature-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .feature-list li i {
+            color: var(--primary-color);
+            margin-right: 10px;
+            margin-top: 5px;
+        }
+
+        .info-block {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .use-case {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .problem-solved {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .impact-absent {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .info-label {
+            font-weight: 700;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-label i {
+            margin-right: 8px;
+        }
+
+        .info-label.use-case-label {
+            color: var(--success-color);
+        }
+
+        .info-label.problem-solved-label {
+            color: var(--warning-color);
+        }
+
+        .info-label.impact-absent-label {
+            color: var(--danger-color);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tag.predefined {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+        }
+
+        .tag.custom {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+
+        .tag.foundation {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .tag.execution {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .tag.control {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .tag.interface {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+        }
+
+        pre {
+            background-color: var(--code-bg) !important;
+            border-radius: 8px !important;
+            padding: 20px !important;
+            margin: 20px 0 !important;
+            overflow-x: auto !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        code {
+            color: var(--code-text) !important;
+            font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .code-comment {
+            color: #64748b !important;
+            font-style: italic;
+        }
+
+        .code-keyword {
+            color: #c084fc !important;
+            font-weight: bold;
+        }
+
+        .code-string {
+            color: #86efac !important;
+        }
+
+        .code-function {
+            color: #93c5fd !important;
+        }
+
+        .code-variable {
+            color: #fda4af !important;
+        }
+
+        .code-number {
+            color: #fbbf24 !important;
+        }
+
+        .code-operator {
+            color: #a5b4fc !important;
+        }
+
+        .code-class {
+            color: #67e8f9 !important;
+        }
+
+        .footer {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 40px 0;
+            margin-top: 80px;
+        }
+
+        .footer h5 {
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .footer ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .footer ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        .copyright {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 80px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar-title {
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .sidebar-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .sidebar-list li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-list a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            display: block;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .sidebar-list a:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+        }
+
+        .sidebar-list a.active {
+            background-color: rgba(37, 99, 235, 0.15);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .domain-example {
+            background-color: rgba(37, 99, 235, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .domain-example-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .domain-example-title i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                margin-bottom: 30px;
+                position: relative;
+                top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">LangChain Documentation</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Getting Started</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Components</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Examples</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">API Reference</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="container">
+            <h1>Level 8: Orchestration & Workflows</h1>
+            <p>Build on all previous components to create complex applications with advanced orchestration capabilities using LangChain Expression Language, advanced orchestration techniques, and LangGraph integration.</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3">
+                <div class="sidebar">
+                    <h5 class="sidebar-title">Table of Contents</h5>
+                    <ul class="sidebar-list">
+                        <li><a href="#lcel">8.1 LangChain Expression Language (LCEL)</a></li>
+                        <li><a href="#advanced-orchestration">8.2 Advanced Orchestration</a></li>
+                        <li><a href="#langgraph">8.3 LangGraph Integration</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="col-lg-9">
+                <!-- Section 8.1 -->
+                <div id="lcel" class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-code-branch"></i>
+                        8.1 LangChain Expression Language (LCEL)
+                    </h2>
+                    
+                    <div class="component-card">
+                        <h3 class="component-title">
+                            <i class="fas fa-link"></i>
+                            Chain Creation
+                        </h3>
+                        
+                        <div class="info-block use-case">
+                            <div class="info-label use-case-label">
+                                <i class="fas fa-check-circle"></i> Business Use Case
+                            </div>
+                            <p>In a retail banking context, LCEL chain creation allows for the development of sophisticated customer service workflows. For example, a bank can create a chain that first authenticates a customer, then retrieves their account information, analyzes recent transactions for potential fraud, and finally generates personalized financial advice—all in a seamless, automated process.</p>
+                            
+                            <div class="domain-example">
+                                <div class="domain-example-title">
+                                    <i class="fas fa-university"></i> Banking Example
+                                </div>
+                                <p>A major retail bank implemented LCEL chains to automate their loan application process. The chain starts by collecting customer information, then performs credit checks, calculates risk scores, determines loan eligibility, and generates personalized loan offers. This reduced processing time from days to minutes and improved customer satisfaction by 40%.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-block problem-solved">
+                            <div class="info-label problem-solved-label">
+                                <i class="fas fa-lightbulb"></i> Problems Solved
+                            </div>
+                            <p>LCEL chain creation solves the challenge of connecting multiple processing steps in a clean, maintainable way. Without LCEL, developers would need to write extensive boilerplate code to pass data between components, handle errors, and manage execution flow. LCEL provides a declarative syntax that makes these connections intuitive and reduces code complexity.</p>
+                        </div>
+                        
+                        <div class="info-block impact-absent">
+                            <div class="info-label impact-absent-label">
+                                <i class="fas fa-exclamation-triangle"></i> Impact if Absent
+                            </div>
+                            <p>Without LCEL chain creation, businesses would face significant development overhead when building complex AI workflows. Each connection between components would require custom code, leading to longer development cycles, more bugs, and difficult maintenance. This would severely limit the ability to iterate on AI applications and adapt to changing business requirements.</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <span class="tag predefined">Predefined</span>
+                            <span class="tag execution">Execution</span>
+                        </div>
+                        
+                        <div class="info-block">
+                            <div class="info-label">
+                                <i class="fas fa-brain"></i> In-depth Technical Insight
+                            </div>
+                            <p>LangChain Expression Language (LCEL) provides a declarative way to build chains by composing Runnable components. The core concept is that each component in the chain implements the Runnable interface, which standardizes how inputs are processed and outputs are generated.</p>
+                            
+                            <p>The fundamental building block of LCEL is the pipe operator (|), which chains Runnables together. When you chain Runnables, the output of one becomes the input to the next, creating a seamless data flow.</p>
+                            
+                            <pre><code><span class="code-keyword">from</span> langchain_core.prompts <span class="code-keyword">import</span> ChatPromptTemplate
+<span class="code-keyword">from</span> langchain_core.runnables <span class="code-keyword">import</span> RunnablePassthrough
+<span class="code-keyword">from</span> langchain_openai <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain_core.output_parsers <span class="code-keyword">import</span> StrOutputParser
+
+<span class="code-comment"># Define a prompt template for a retail banking customer service scenario</span>
+prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a helpful customer service assistant for a retail bank. Answer the customer's question based on their account information: {account_info}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"{question}"</span>)
+])
+
+<span class="code-comment"># Initialize the language model</span>
+model = ChatOpenAI(model=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-number">0.2</span>)
+
+<span class="code-comment"># Create an output parser to extract the response as a string</span>
+output_parser = StrOutputParser()
+
+<span class="code-comment"># Define a function to retrieve account information</span>
+<span class="code-keyword">def</span> <span class="code-function">get_account_info</span>(customer_id):
+    <span class="code-comment"># In a real implementation, this would query a database</span>
+    <span class="code-comment"># For this example, we'll return mock data</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"customer_id"</span>: customer_id,
+        <span class="code-string">"name"</span>: <span class="code-string">"John Smith"</span>,
+        <span class="code-string">"account_type"</span>: <span class="code-string">"Premium Checking"</span>,
+        <span class="code-string">"balance"</span>: <span class="code-number">5420.75</span>,
+        <span class="code-string">"recent_transactions"</span>: [
+            {<span class="code-string">"date"</span>: <span class="code-string">"2023-06-15"</span>, <span class="code-string">"description"</span>: <span class="code-string">"Grocery Store"</span>, <span class="code-string">"amount"</span>: -<span class="code-number">85.32</span>},
+            {<span class="code-string">"date"</span>: <span class="code-string">"2023-06-14"</span>, <span class="code-string">"description"</span>: <span class="code-string">"Salary Deposit"</span>, <span class="code-string">"amount"</span>: <span class="code-number">3200.00</span>},
+            {<span class="code-string">"date"</span>: <span class="code-string">"2023-06-12"</span>, <span class="code-string">"description"</span>: <span class="code-string">"Utility Payment"</span>, <span class="code-string">"amount"</span>: -<span class="code-number">120.50</span>}
+        ]
+    }
+
+<span class="code-comment"># Create a chain using LCEL syntax</span>
+chain = (
+    {<span class="code-string">"account_info"</span>: lambda x: get_account_info(x[<span class="code-string">"customer_id"</span>]), <span class="code-string">"question"</span>: RunnablePassthrough()}
+    | prompt
+    | model
+    | output_parser
+)
+
+<span class="code-comment"># Invoke the chain with a customer question</span>
+response = chain.invoke({
+    <span class="code-string">"customer_id"</span>: <span class="code-string">"12345"</span>,
+    <span class="code-string">"question"</span>: <span class="code-string">"What's my current account balance and can you explain my recent transactions?"</span>
+})
+
+<span class="code-keyword">print</span>(response)</code></pre>
+
+                            <p>In this example, we've created a chain that:</p>
+                            <ol>
+                                <li>Takes a customer ID and question as input</li>
+                                <li>Retrieves account information using a custom function</li>
+                                <li>Formats the input using a prompt template</li>
+                                <li>Processes the prompt with a language model</li>
+                                <li>Parses the output to extract the response string</li>
+                            </ol>
+                            
+                            <p>The power of LCEL is in its composability. Each component is a self-contained Runnable that can be tested independently, then combined into more complex workflows. This modular approach makes it easier to build, debug, and maintain sophisticated AI applications.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <h3 class="component-title">
+                            <i class="fas fa-code-branch"></i>
+                            Parallel Execution
+                        </h3>
+                        
+                        <div class="info-block use-case">
+                            <div class="info-label use-case-label">
+                                <i class="fas fa-check-circle"></i> Business Use Case
+                            </div>
+                            <p>In healthcare, parallel execution enables simultaneous processing of multiple patient data streams to provide comprehensive diagnostic insights. For instance, when analyzing a patient's condition, a system can concurrently process lab results, medical imaging reports, and clinical notes to generate a holistic assessment much faster than sequential processing would allow.</p>
+                            
+                            <div class="domain-example">
+                                <div class="domain-example-title">
+                                    <i class="fas fa-hospital"></i> Healthcare Example
+                                </div>
+                                <p>A hospital network implemented parallel execution in their diagnostic support system. When a patient presents with complex symptoms, the system simultaneously analyzes blood test results, radiology reports, and the patient's medical history. This parallel processing reduced diagnosis time from hours to minutes and improved diagnostic accuracy by 25%, leading to better patient outcomes and more efficient use of medical resources.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-block problem-solved">
+                            <div class="info-label problem-solved-label">
+                                <i class="fas fa-lightbulb"></i> Problems Solved
+                            </div>
+                            <p>Parallel execution solves the challenge of processing multiple independent tasks simultaneously, significantly reducing overall processing time. In traditional sequential processing, each task must complete before the next begins, creating bottlenecks. Parallel execution allows independent tasks to run concurrently, making much more efficient use of computational resources and providing faster results to users.</p>
+                        </div>
+                        
+                        <div class="info-block impact-absent">
+                            <div class="info-label impact-absent-label">
+                                <i class="fas fa-exclamation-triangle"></i> Impact if Absent
+                            </div>
+                            <p>Without parallel execution, applications that need to process multiple data sources would experience significant latency. In time-sensitive scenarios like healthcare diagnostics or financial fraud detection, this delay could have serious consequences. Businesses would need to invest in more powerful hardware to compensate for the inefficiency of sequential processing, increasing operational costs without necessarily improving the user experience.</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <span class="tag predefined">Predefined</span>
+                            <span class="tag execution">Execution</span>
+                        </div>
+                        
+                        <div class="info-block">
+                            <div class="info-label">
+                                <i class="fas fa-brain"></i> In-depth Technical Insight
+                            </div>
+                            <p>LangChain's parallel execution capabilities are implemented through the RunnableParallel class, which allows multiple Runnable components to execute simultaneously. This is particularly useful when you need to process multiple inputs or perform multiple transformations on the same input concurrently.</p>
+                            
+                            <p>The RunnableParallel component takes a dictionary of Runnables and executes them in parallel, then returns a dictionary with the same keys and the results of each Runnable as values.</p>
+                            
+                            <pre><code><span class="code-keyword">from</span> langchain_core.runnables <span class="code-keyword">import</span> RunnableParallel, RunnablePassthrough
+<span class="code-keyword">from</span> langchain_openai <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain_core.prompts <span class="code-keyword">import</span> ChatPromptTemplate
+<span class="code-keyword">from</span> langchain_core.output_parsers <span class="code-keyword">import</span> StrOutputParser
+<span class="code-keyword">import</span> json
+<span class="code-keyword">import</span> time
+
+<span class="code-comment"># Initialize the language model</span>
+model = ChatOpenAI(model=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-number">0.2</span>)
+
+<span class="code-comment"># Define a function to simulate processing lab results</span>
+<span class="code-keyword">def</span> <span class="code-function">process_lab_results</span>(patient_id):
+    <span class="code-comment"># Simulate processing time</span>
+    time.sleep(<span class="code-number">1</span>)
+    <span class="code-comment"># In a real implementation, this would query a database or API</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"patient_id"</span>: patient_id,
+        <span class="code-string">"blood_count"</span>: {
+            <span class="code-string">"white_blood_cells"</span>: <span class="code-number">7.2</span>,
+            <span class="code-string">"red_blood_cells"</span>: <span class="code-number">4.8</span>,
+            <span class="code-string">"platelets"</span>: <span class="code-number">250000</span>
+        },
+        <span class="code-string">"cholesterol"</span>: <span class="code-number">185</span>,
+        <span class="code-string">"glucose"</span>: <span class="code-number">92</span>
+    }
+
+<span class="code-comment"># Define a function to simulate processing medical imaging</span>
+<span class="code-keyword">def</span> <span class="code-function">process_medical_imaging</span>(patient_id):
+    <span class="code-comment"># Simulate processing time</span>
+    time.sleep(<span class="code-number">1.5</span>)
+    <span class="code-comment"># In a real implementation, this would analyze medical images</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"patient_id"</span>: patient_id,
+        <span class="code-string">"xray_findings"</span>: <span class="code-string">"No acute abnormalities detected in chest X-ray."</span>,
+        <span class="code-string">"mri_findings"</span>: <span class="code-string">"Minor inflammation in the right knee joint."</span>
+    }
+
+<span class="code-comment"># Define a function to simulate processing clinical notes</span>
+<span class="code-keyword">def</span> <span class="code-function">process_clinical_notes</span>(patient_id):
+    <span class="code-comment"># Simulate processing time</span>
+    time.sleep(<span class="code-number">0.8</span>)
+    <span class="code-comment"># In a real implementation, this would process clinical documentation</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"patient_id"</span>: patient_id,
+        <span class="code-string">"symptoms"</span>: [<span class="code-string">"knee pain"</span>, <span class="code-string">"fatigue"</span>],
+        <span class="code-string">"medications"</span>: [<span class="code-string">"ibuprofen"</span>, <span class="code-string">"vitamin D"</span>],
+        <span class="code-string">"allergies"</span>: [<span class="code-string">"penicillin"</span>]
+    }
+
+<span class="code-comment"># Create a prompt template for synthesizing the diagnostic information</span>
+synthesis_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a medical diagnostic assistant. Synthesize the following information to provide a comprehensive assessment of the patient's condition:\n\nLab Results:\n{lab_results}\n\nMedical Imaging:\n{imaging_results}\n\nClinical Notes:\n{clinical_notes}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Provide a comprehensive assessment and recommendations for this patient."</span>)
+])
+
+<span class="code-comment"># Create a parallel processing chain</span>
+parallel_chain = RunnableParallel({
+    <span class="code-string">"lab_results"</span>: lambda x: json.dumps(process_lab_results(x[<span class="code-string">"patient_id"</span>]), indent=<span class="code-number">2</span>),
+    <span class="code-string">"imaging_results"</span>: lambda x: json.dumps(process_medical_imaging(x[<span class="code-string">"patient_id"</span>]), indent=<span class="code-number">2</span>),
+    <span class="code-string">"clinical_notes"</span>: lambda x: json.dumps(process_clinical_notes(x[<span class="code-string">"patient_id"</span>]), indent=<span class="code-number">2</span>)
+})
+
+<span class="code-comment"># Create the full chain by combining parallel processing with synthesis</span>
+full_chain = (
+    parallel_chain
+    | synthesis_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Measure execution time</span>
+start_time = time.time()
+
+<span class="code-comment"># Invoke the chain with a patient ID</span>
+result = full_chain.invoke({
+    <span class="code-string">"patient_id"</span>: <span class="code-string">"P789456"</span>
+})
+
+end_time = time.time()
+execution_time = end_time - start_time
+
+<span class="code-keyword">print</span>(<span class="code-string">f"Execution time: {execution_time:.2f} seconds"</span>)
+<span class="code-keyword">print</span>(<span class="code-string">"\nDiagnostic Assessment:"</span>)
+<span class="code-keyword">print</span>(result)</code></pre>
+
+                            <p>In this healthcare example, we've created a chain that:</p>
+                            <ol>
+                                <li>Processes three different types of patient data in parallel (lab results, medical imaging, and clinical notes)</li>
+                                <li>Each processing function simulates the time it would take to retrieve and analyze that data</li>
+                                <li>The results are then passed to a synthesis prompt that combines all the information</li>
+                                <li>The language model generates a comprehensive diagnostic assessment</li>
+                            </ol>
+                            
+                            <p>The key benefit here is that the total execution time is roughly equal to the longest individual processing time (1.5 seconds for medical imaging), rather than the sum of all processing times (3.3 seconds). This represents a significant performance improvement that directly translates to better patient care in time-sensitive medical situations.</p>
+                            
+                            <p>Parallel execution is especially valuable in scenarios where:</p>
+                            <ul>
+                                <li>Multiple independent data sources need to be analyzed</li>
+                                <li>Several transformations need to be applied to the same data</li>
+                                <li>Real-time processing requirements exist</li>
+                                <li>Computational resources are available for concurrent execution</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <h3 class="component-title">
+                            <i class="fas fa-cog"></i>
+                            Runtime Configuration
+                        </h3>
+                        
+                        <div class="info-block use-case">
+                            <div class="info-label use-case-label">
+                                <i class="fas fa-check-circle"></i> Business Use Case
+                            </div>
+                            <p>In logistics, runtime configuration allows supply chain management systems to adapt to changing conditions in real-time. For example, a global shipping company can adjust its routing algorithms based on weather conditions, port congestion, or fuel price changes without redeploying the entire application. This flexibility enables more efficient resource allocation and faster response to disruptions.</p>
+                            
+                            <div class="domain-example">
+                                <div class="domain-example-title">
+                                    <i class="fas fa-shipping-fast"></i> Logistics Example
+                                </div>
+                                <p>A major logistics company implemented runtime configuration in their AI-powered route optimization system. When unexpected events like port closures or customs delays occur, the system dynamically adjusts its parameters to prioritize different factors (speed vs. cost vs. reliability). This adaptive approach reduced delivery delays by 35% and saved millions in fuel costs during a period of extreme weather disruptions.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-block problem-solved">
+                            <div class="info-label problem-solved-label">
+                                <i class="fas fa-lightbulb"></i> Problems Solved
+                            </div>
+                            <p>Runtime configuration solves the challenge of adapting AI system behavior without requiring code changes or redeployment. In traditional systems, changing parameters like model temperature, token limits, or processing strategies would require modifying code and redeploying the application. Runtime configuration allows these adjustments to be made dynamically, enabling systems to respond to changing conditions or user preferences in real-time.</p>
+                        </div>
+                        
+                        <div class="info-block impact-absent">
+                            <div class="info-label impact-absent-label">
+                                <i class="fas fa-exclamation-triangle"></i> Impact if Absent
+                            </div>
+                            <p>Without runtime configuration, businesses would face significant operational friction when trying to optimize their AI systems. Each adjustment would require a development cycle, testing, and deployment, creating delays in responding to changing market conditions or user feedback. This rigidity would result in suboptimal performance, higher operational costs, and reduced competitiveness in dynamic markets.</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <span class="tag predefined">Predefined</span>
+                            <span class="tag control">Control</span>
+                        </div>
+                        
+                        <div class="info-block">
+                            <div class="info-label">
+                                <i class="fas fa-brain"></i> In-depth Technical Insight
+                            </div>
+                            <p>Runtime configuration in LangChain is implemented through the configurable field in Runnable objects. This allows you to specify parameters that can be changed at runtime without modifying the chain definition. The configurable field accepts a dictionary of parameters that can be used to customize the behavior of components within the chain.</p>
+                            
+                            <p>Configurable parameters are particularly useful for adjusting model settings, prompt templates, or other aspects of chain behavior based on user preferences, system conditions, or business rules.</p>
+                            
+                            <pre><code><span class="code-keyword">from</span> langchain_core.runnables <span class="code-keyword">import</span> ConfigurableField
+<span class="code-keyword">from</span> langchain_openai <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain_core.prompts <span class="code-keyword">import</span> ChatPromptTemplate
+<span class="code-keyword">from</span> langchain_core.output_parsers <span class="code-keyword">import</span> StrOutputParser
+<span class="code-keyword">import</span> json
+
+<span class="code-comment"># Define a function to get current logistics data</span>
+<span class="code-keyword">def</span> <span class="code-function">get_logistics_data</span>():
+    <span class="code-comment"># In a real implementation, this would query logistics databases</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"fuel_prices"</span>: {
+            <span class="code-string">"diesel"</span>: <span class="code-number">3.85</span>,
+            <span class="code-string">"gasoline"</span>: <span class="code-number">3.45</span>
+        },
+        <span class="code-string">"weather_conditions"</span>: {
+            <span class="code-string">"region_a"</span>: <span class="code-string">"severe storms"</span>,
+            <span class="code-string">"region_b"</span>: <span class="code-string">"clear"</span>,
+            <span class="code-string">"region_c"</span>: <span class="code-string">"light rain"</span>
+        },
+        <span class="code-string">"port_congestion"</span>: {
+            <span class="code-string">"port_x"</span>: <span class="code-string">"high"</span>,
+            <span class="code-string">"port_y"</span>: <span class="code-string">"medium"</span>,
+            <span class="code-string">"port_z"</span>: <span class="code-string">"low"</span>
+        }
+    }
+
+<span class="code-comment"># Create a configurable model with different temperature settings</span>
+model = ChatOpenAI(model=<span class="code-string">"gpt-4"</span>).configurable_fields(
+    temperature=ConfigurableField(
+        id=<span class="code-string">"temperature"</span>,
+        name=<span class="code-string">"LLM Temperature"</span>,
+        description=<span class="code-string">"Controls randomness in the model's responses"</span>
+    )
+)
+
+<span class="code-comment"># Create a configurable prompt template</span>
+prompt_template = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a logistics optimization expert. Based on the following data, provide optimal shipping recommendations:\n\n{logistics_data}\n\nPrioritize the following factors in this order: {priority_factors}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Generate a shipping plan for delivering goods from warehouse A to customer B, considering the current conditions."</span>)
+]).configurable_fields(
+    template=ConfigurableField(
+        id=<span class="code-string">"template"</span>,
+        name=<span class="code-string">"Prompt Template"</span>,
+        description=<span class="code-string">"The template used to generate the prompt"</span>
+    )
+)
+
+<span class="code-comment"># Create the chain</span>
+chain = (
+    {
+        <span class="code-string">"logistics_data"</span>: lambda x: json.dumps(get_logistics_data(), indent=<span class="code-number">2</span>),
+        <span class="code-string">"priority_factors"</span>: lambda x: x.get(<span class="code-string">"priority_factors"</span>, <span class="code-string">"cost, speed, reliability"</span>)
+    }
+    | prompt_template
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Example 1: Standard configuration (balanced approach)</span>
+<span class="code-keyword">print</span>(<span class="code-string">"=== Standard Configuration ==="</span>)
+result1 = chain.invoke(
+    {<span class="code-string">"priority_factors"</span>: <span class="code-string">"cost, speed, reliability"</span>},
+    config={<span class="code-string">"configurable"</span>: {<span class="code-string">"temperature"</span>: <span class="code-number">0.2</span>}}
+)
+<span class="code-keyword">print</span>(result1)
+
+<span class="code-comment"># Example 2: Cost-optimized configuration (during fuel price spikes)</span>
+<span class="code-keyword">print</span>(<span class="code-string">"\n=== Cost-Optimized Configuration ==="</span>)
+result2 = chain.invoke(
+    {<span class="code-string">"priority_factors"</span>: <span class="code-string">"cost, reliability, speed"</span>},
+    config={<span class="code-string">"configurable"</span>: {<span class="code-string">"temperature"</span>: <span class="code-number">0.1</span>}}
+)
+<span class="code-keyword">print</span>(result2)
+
+<span class="code-comment"># Example 3: Speed-optimized configuration (during urgent deliveries)</span>
+<span class="code-keyword">print</span>(<span class="code-string">"\n=== Speed-Optimized Configuration ==="</span>)
+result3 = chain.invoke(
+    {<span class="code-string">"priority_factors"</span>: <span class="code-string">"speed, reliability, cost"</span>},
+    config={<span class="code-string">"configurable"</span>: {<span class="code-string">"temperature"</span>: <span class="code-number">0.3</span>}}
+)
+<span class="code-keyword">print</span>(result3)
+
+<span class="code-comment"># Example 4: Reliability-optimized configuration (during severe weather)</span>
+<span class="code-keyword">print</span>(<span class="code-string">"\n=== Reliability-Optimized Configuration ==="</span>)
+result4 = chain.invoke(
+    {<span class="code-string">"priority_factors"</span>: <span class="code-string">"reliability, speed, cost"</span>},
+    config={<span class="code-string">"configurable"</span>: {<span class="code-string">"temperature"</span>: <span class="code-number">0.05</span>}}
+)
+<span class="code-keyword">print</span>(result4)</code></pre>
+
+                            <p>In this logistics example, we've demonstrated how runtime configuration can be used to adapt the behavior of an AI system based on changing business requirements:</p>
+                            
+                            <ol>
+                                <li>We created a configurable model with adjustable temperature settings</li>
+                                <li>We defined a configurable prompt template that can prioritize different factors</li>
+                                <li>We invoked the chain with different configurations to simulate various business scenarios</li>
+                            </ol>
+                            
+                            <p>The key advantage of this approach is that the same chain can be used for different purposes simply by changing the configuration at runtime. This eliminates the need to maintain multiple versions of the chain for different scenarios and allows for rapid adaptation to changing conditions.</p>
+                            
+                            <p>Runtime configuration is particularly valuable in scenarios where:</p>
+                            <ul>
+                                <li>Business requirements change frequently</li>
+                                <li>Different users or user groups need different behaviors</li>
+                                <li>System conditions vary (e.g., load, resource availability)</li>
+                                <li>A/B testing of different configurations is needed</li>
+                            </ul>
+                            
+                            <p>By leveraging runtime configuration, businesses can create more flexible, responsive AI systems that adapt to changing conditions without requiring code changes or redeployment.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <h3 class="component-title">
+                            <i class="fas fa-exchange-alt"></i>
+                            Input Passthrough
+                        </h3>
+                        
+                        <div class="info-block use-case">
+                            <div class="info-label use-case-label">
+                                <i class="fas fa-check-circle"></i> Business Use Case
+                            </div>
+                            <p>In retail, input passthrough enables the preservation of original customer data throughout complex recommendation workflows. For example, an e-commerce platform can maintain customer profile information, browsing history, and cart contents while processing these inputs through various analysis stages to generate personalized product recommendations. This ensures that all relevant context is available at each step of the process.</p>
+                            
+                            <div class="domain-example">
+                                <div class="domain-example-title">
+                                    <i class="fas fa-shopping-cart"></i> Retail Example
+                                </div>
+                                <p>A leading online retailer implemented input passthrough in their recommendation engine. The system maintains customer data (demographics, purchase history) and current context (browsing behavior, time of day) throughout the recommendation workflow, allowing each processing stage to access both the original inputs and the outputs of previous stages. This holistic approach increased recommendation relevance by 30% and boosted conversion rates by 18%.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-block problem-solved">
+                            <div class="info-label problem-solved-label">
+                                <i class="fas fa-lightbulb"></i> Problems Solved
+                            </div>
+                            <p>Input passthrough solves the challenge of maintaining context throughout a multi-stage processing pipeline. In complex chains, later stages often need access to the original inputs in addition to the outputs of earlier stages. Without input passthrough, developers would need to manually manage the flow of data between stages, resulting in more complex code and potential errors when important context is lost.</p>
+                        </div>
+                        
+                        <div class="info-block impact-absent">
+                            <div class="info-label impact-absent-label">
+                                <i class="fas fa-exclamation-triangle"></i> Impact if Absent
+                            </div>
+                            <p>Without input passthrough, developers would need to implement custom solutions to preserve context throughout processing chains. This would increase code complexity, maintenance burden, and the likelihood of errors. In business applications, this could result in suboptimal decisions due to missing context, reduced personalization, and ultimately lower customer satisfaction and business performance.</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <span class="tag predefined">Predefined</span>
+                            <span class="tag execution">Execution</span>
+                        </div>
+                        
+                        <div class="info-block">
+                            <div class="info-label">
+                                <i class="fas fa-brain"></i> In-depth Technical Insight
+                            </div>
+                            <p>Input passthrough in LangChain is implemented through the RunnablePassthrough class, which allows inputs to pass through unchanged while still being part of the chain. This is particularly useful when you need to preserve original inputs for later stages in the chain or when you want to combine original inputs with processed data.</p>
+                            
+                            <p>RunnablePassthrough can be used in several ways:</p>
+                            <ul>
+                                <li>To pass inputs through unchanged</li>
+                                <li>To apply a function to inputs while preserving the original</li>
+                                <li>To selectively include or exclude certain inputs</li>
+                            </ul>
+                            
+                            <pre><code><span class="code-keyword">from</span> langchain_core.runnables <span class="code-keyword">import</span> RunnablePassthrough, RunnableParallel
+<span class="code-keyword">from</span> langchain_openai <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain_core.prompts <span class="code-keyword">import</span> ChatPromptTemplate
+<span class="code-keyword">from</span> langchain_core.output_parsers <span class="code-keyword">import</span> StrOutputParser, JsonOutputParser
+<span class="code-keyword">import</span> json
+
+<span class="code-comment"># Initialize the language model</span>
+model = ChatOpenAI(model=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-number">0.2</span>)
+
+<span class="code-comment"># Define a function to get customer profile</span>
+<span class="code-keyword">def</span> <span class="code-function">get_customer_profile</span>(customer_id):
+    <span class="code-comment"># In a real implementation, this would query a database</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"customer_id"</span>: customer_id,
+        <span class="code-string">"name"</span>: <span class="code-string">"Sarah Johnson"</span>,
+        <span class="code-string">"age"</span>: <span class="code-number">32</span>,
+        <span class="code-string">"location"</span>: <span class="code-string">"New York, NY"</span>,
+        <span class="code-string">"membership_level"</span>: <span class="code-string">"Premium"</span>,
+        <span class="code-string">"preferences"</span>: {
+            <span class="code-string">"categories"</span>: [<span class="code-string">"electronics"</span>, <span class="code-string">"home goods"</span>, <span class="code-string">"books"</span>],
+            <span class="code-string">"price_range"</span>: <span class="code-string">"medium"</span>,
+            <span class="code-string">"brands"</span>: [<span class="code-string">"Apple"</span>, <span class="code-string">"Samsung"</span>, <span class="code-string">"Nike"</span>]
+        },
+        <span class="code-string">"purchase_history"</span>: [
+            {<span class="code-string">"product"</span>: <span class="code-string">"Wireless Headphones"</span>, <span class="code-string">"category"</span>: <span class="code-string">"electronics"</span>, <span class="code-string">"price"</span>: <span class="code-number">129.99</span>, <span class="code-string">"date"</span>: <span class="code-string">"2023-05-15"</span>},
+            {<span class="code-string">"product"</span>: <span class="code-string">"Running Shoes"</span>, <span class="code-string">"category"</span>: <span class="code-string">"footwear"</span>, <span class="code-string">"price"</span>: <span class="code-number">89.99</span>, <span class="code-string">"date"</span>: <span class="code-string">"2023-04-22"</span>}
+        ]
+    }
+
+<span class="code-comment"># Define a function to get browsing history</span>
+<span class="code-keyword">def</span> <span class="code-function">get_browsing_history</span>(customer_id):
+    <span class="code-comment"># In a real implementation, this would query user activity logs</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"customer_id"</span>: customer_id,
+        <span class="code-string">"recent_views"</span>: [
+            {<span class="code-string">"product"</span>: <span class="code-string">"Smart Watch"</span>, <span class="code-string">"category"</span>: <span class="code-string">"electronics"</span>, <span class="code-string">"price"</span>: <span class="code-number">249.99</span>, <span class="code-string">"duration"</span>: <span class="code-string">"2:45"</span>},
+            {<span class="code-string">"product"</span>: <span class="code-string">"Yoga Mat"</span>, <span class="code-string">"category"</span>: <span class="code-string">"fitness"</span>, <span class="code-string">"price"</span>: <span class="code-number">29.99</span>, <span class="code-string">"duration"</span>: <span class="code-string">"1:20"</span>}
+        ],
+        <span class="code-string">"search_queries"</span>: [<span class="code-string">"wireless earbuds"</span>, <span class="code-string">"fitness tracker"</span>, <span class="code-string">"home office desk"</span>]
+    }
+
+<span class="code-comment"># Define a function to get current cart contents</span>
+<span class="code-keyword">def</span> <span class="code-function">get_cart_contents</span>(customer_id):
+    <span class="code-comment"># In a real implementation, this would query the shopping cart</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"customer_id"</span>: customer_id,
+        <span class="code-string">"items"</span>: [
+            {<span class="code-string">"product"</span>: <span class="code-string">"Bluetooth Speaker"</span>, <span class="code-string">"category"</span>: <span class="code-string">"electronics"</span>, <span class="code-string">"price"</span>: <span class="code-number">79.99</span>, <span class="code-string">"quantity"</span>: <span class="code-number">1</span>},
+            {<span class="code-string">"product"</span>: <span class="code-string">"Desk Lamp"</span>, <span class="code-string">"category"</span>: <span class="code-string">"home goods"</span>, <span class="code-string">"price"</span>: <span class="code-number">34.99</span>, <span class="code-string">"quantity"</span>: <span class="code-number">1</span>}
+        ],
+        <span class="code-string">"total"</span>: <span class="code-number">114.98</span>
+    }
+
+<span class="code-comment"># Create a prompt template for analyzing customer data</span>
+analysis_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a retail analytics expert. Analyze the following customer data to identify key patterns and preferences:\n\nCustomer Profile:\n{customer_profile}\n\nBrowsing History:\n{browsing_history}\n\nCart Contents:\n{cart_contents}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Identify the customer's top 3 interests and any complementary products they might be interested in."</span>)
+])
+
+<span class="code-comment"># Create a prompt template for generating recommendations</span>
+recommendation_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a personal shopping assistant. Based on the customer analysis and their current context, generate personalized product recommendations:\n\nCustomer Analysis:\n{customer_analysis}\n\nCurrent Context:\n- Time of day: {time_of_day}\n- Season: {season}\n- Special occasion: {special_occasion}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Generate 3 personalized product recommendations with explanations for why each would be a good fit for this customer."</span>)
+])
+
+<span class="code-comment"># Create a JSON output parser for structured recommendations</span>
+json_parser = JsonOutputParser()
+
+<span class="code-comment"># Create the analysis chain</span>
+analysis_chain = (
+    {
+        <span class="code-string">"customer_profile"</span>: lambda x: json.dumps(get_customer_profile(x[<span class="code-string">"customer_id"</span>]), indent=<span class="code-number">2</span>),
+        <span class="code-string">"browsing_history"</span>: lambda x: json.dumps(get_browsing_history(x[<span class="code-string">"customer_id"</span>]), indent=<span class="code-number">2</span>),
+        <span class="code-string">"cart_contents"</span>: lambda x: json.dumps(get_cart_contents(x[<span class="code-string">"customer_id"</span>]), indent=<span class="code-number">2</span>)
+    }
+    | analysis_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Create the recommendation chain using RunnablePassthrough to preserve original inputs</span>
+recommendation_chain = (
+    RunnableParallel({
+        <span class="code-string">"customer_analysis"</span>: analysis_chain,
+        <span class="code-string">"time_of_day"</span>: RunnablePassthrough(),
+        <span class="code-string">"season"</span>: RunnablePassthrough(),
+        <span class="code-string">"special_occasion"</span>: RunnablePassthrough()
+    })
+    | recommendation_prompt
+    | model
+    | json_parser
+)
+
+<span class="code-comment"># Invoke the recommendation chain with customer data and context</span>
+recommendations = recommendation_chain.invoke({
+    <span class="code-string">"customer_id"</span>: <span class="code-string">"CUST789456"</span>,
+    <span class="code-string">"time_of_day"</span>: <span class="code-string">"evening"</span>,
+    <span class="code-string">"season"</span>: <span class="code-string">"summer"</span>,
+    <span class="code-string">"special_occasion"</span>: <span class="code-string">"none"</span>
+})
+
+<span class="code-comment"># Print the recommendations</span>
+<span class="code-keyword">print</span>(<span class="code-string">"Personalized Recommendations:"</span>)
+<span class="code-keyword">for</span> i, rec <span class="code-keyword">in</span> enumerate(recommendations.get(<span class="code-string">"recommendations"</span>, []), <span class="code-number">1</span>):
+    <span class="code-keyword">print</span>(<span class="code-string">f"\n{i}. {rec.get('product', 'Unknown Product')}"</span>)
+    <span class="code-keyword">print</span>(<span class="code-string">f"   Category: {rec.get('category', 'Unknown Category')}"</span>)
+    <span class="code-keyword">print</span>(<span class="code-string">f"   Price: ${rec.get('price', '0.00')}"</span>)
+    <span class="code-keyword">print</span>(<span class="code-string">f"   Reason: {rec.get('reason', 'No reason provided')}"</span>)</code></pre>
+
+                            <p>In this retail example, we've demonstrated how input passthrough can be used to maintain context throughout a multi-stage processing pipeline:</p>
+                            
+                            <ol>
+                                <li>We created an analysis chain that processes customer data to identify patterns and preferences</li>
+                                <li>We created a recommendation chain that uses the analysis results along with original context inputs (time of day, season, special occasion)</li>
+                                <li>Using RunnablePassthrough, we preserved the original context inputs while still processing the customer data through the analysis chain</li>
+                            </ol>
+                            
+                            <p>The key advantage of this approach is that the recommendation stage has access to both the processed customer analysis and the original context inputs. This allows for more personalized and context-aware recommendations that take into account not just the customer's general preferences but also their current situation.</p>
+                            
+                            <p>Input passthrough is particularly valuable in scenarios where:</p>
+                            <ul>
+                                <li>Multiple processing stages need access to original inputs</li>
+                                <li>Context from early stages needs to be preserved for later stages</li>
+                                <li>Different parts of a chain need different subsets of the input data</li>
+                                <li>Original inputs need to be combined with processed data</li>
+                            </ul>
+                            
+                            <p>By leveraging input passthrough, developers can create more sophisticated AI workflows that maintain context throughout the processing pipeline, leading to more accurate and contextually relevant outputs.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <h3 class="component-title">
+                            <i class="fas fa-project-diagram"></i>
+                            Dynamic Chains
+                        </h3>
+                        
+                        <div class="info-block use-case">
+                            <div class="info-label use-case-label">
+                                <i class="fas fa-check-circle"></i> Business Use Case
+                            </div>
+                            <p>In banking, dynamic chains enable adaptive fraud detection systems that can adjust their analysis approach based on transaction characteristics. For example, a bank's fraud detection system can dynamically select different analysis chains based on transaction amount, location, customer history, and other risk factors. This allows the system to apply the most appropriate level of scrutiny to each transaction, balancing security with customer experience.</p>
+                            
+                            <div class="domain-example">
+                                <div class="domain-example-title">
+                                    <i class="fas fa-university"></i> Banking Example
+                                </div>
+                                <p>A global bank implemented dynamic chains in their fraud detection system. For low-risk transactions (small amounts, familiar locations), the system uses a lightweight verification chain. For high-risk transactions (large amounts, unusual locations), it activates a comprehensive analysis chain that includes multiple verification steps. This adaptive approach reduced false positives by 45% while maintaining the same level of fraud detection, significantly improving customer experience without compromising security.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-block problem-solved">
+                            <div class="info-label problem-solved-label">
+                                <i class="fas fa-lightbulb"></i> Problems Solved
+                            </div>
+                            <p>Dynamic chains solve the challenge of adapting processing workflows based on input characteristics or external conditions. In traditional systems, the same processing pipeline is applied to all inputs, regardless of their specific characteristics. This one-size-fits-all approach can be inefficient for simple cases and insufficient for complex cases. Dynamic chains allow the system to select the most appropriate processing approach for each input, optimizing both efficiency and effectiveness.</p>
+                        </div>
+                        
+                        <div class="info-block impact-absent">
+                            <div class="info-label impact-absent-label">
+                                <i class="fas fa-exclamation-triangle"></i> Impact if Absent
+                            </div>
+                            <p>Without dynamic chains, businesses would need to implement complex conditional logic within their processing pipelines or maintain multiple separate systems for different scenarios. This would increase development complexity, maintenance burden, and operational costs. In applications like fraud detection or customer service, this rigidity could result in either excessive scrutiny of low-risk cases (causing customer friction) or insufficient analysis of high-risk cases (increasing security risks).</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <span class="tag custom">Custom</span>
+                            <span class="tag execution">Execution</span>
+                        </div>
+                        
+                        <div class="info-block">
+                            <div class="info-label">
+                                <i class="fas fa-brain"></i> In-depth Technical Insight
+                            </div>
+                            <p>Dynamic chains in LangChain are implemented using the RunnableLambda class, which allows you to create custom Runnables that can dynamically select or construct chains based on input characteristics. This enables the creation of adaptive workflows that can respond to varying conditions or requirements.</p>
+                            
+                            <p>The key to implementing dynamic chains is creating a function that analyzes the input and returns the appropriate chain for processing that input. This function can then be wrapped in a RunnableLambda and used as part of a larger chain.</p>
+                            
+                            <pre><code><span class="code-keyword">from</span> langchain_core.runnables <span class="code-keyword">import</span> RunnableLambda, RunnablePassthrough
+<span class="code-keyword">from</span> langchain_openai <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain_core.prompts <span class="code-keyword">import</span> ChatPromptTemplate
+<span class="code-keyword">from</span> langchain_core.output_parsers <span class="code-keyword">import</span> StrOutputParser, JsonOutputParser
+<span class="code-keyword">import</span> json
+<span class="code-keyword">import</span> random
+
+<span class="code-comment"># Initialize the language model</span>
+model = ChatOpenAI(model=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-number">0.2</span>)
+
+<span class="code-comment"># Define a function to get customer profile</span>
+<span class="code-keyword">def</span> <span class="code-function">get_customer_profile</span>(customer_id):
+    <span class="code-comment"># In a real implementation, this would query a database</span>
+    profiles = {
+        <span class="code-string">"CUST123456"</span>: {
+            <span class="code-string">"customer_id"</span>: <span class="code-string">"CUST123456"</span>,
+            <span class="code-string">"name"</span>: <span class="code-string">"John Smith"</span>,
+            <span class="code-string">"account_type"</span>: <span class="code-string">"Premium"</span>,
+            <span class="code-string">"years_with_bank"</span>: <span class="code-number">8</span>,
+            <span class="code-string">"typical_transaction_amount"</span>: <span class="code-number">150.00</span>,
+            <span class="code-string">"typical_locations"</span>: [<span class="code-string">"New York, NY"</span>, <span class="code-string">"Boston, MA"</span>],
+            <span class="code-string">"risk_score"</span>: <span class="code-number">0.2</span>  <span class="code-comment"># Low risk</span>
+        },
+        <span class="code-string">"CUST789012"</span>: {
+            <span class="code-string">"customer_id"</span>: <span class="code-string">"CUST789012"</span>,
+            <span class="code-string">"name"</span>: <span class="code-string">"Jane Doe"</span>,
+            <span class="code-string">"account_type"</span>: <span class="code-string">"Standard"</span>,
+            <span class="code-string">"years_with_bank"</span>: <span class="code-number">1</span>,
+            <span class="code-string">"typical_transaction_amount"</span>: <span class="code-number">75.00</span>,
+            <span class="code-string">"typical_locations"</span>: [<span class="code-string">"Chicago, IL"</span>],
+            <span class="code-string">"risk_score"</span>: <span class="code-number">0.6</span>  <span class="code-comment"># Medium risk</span>
+        }
+    }
+    <span class="code-keyword">return</span> profiles.get(customer_id, {})
+
+<span class="code-comment"># Define a function to assess transaction risk</span>
+<span class="code-keyword">def</span> <span class="code-function">assess_transaction_risk</span>(transaction):
+    <span class="code-comment"># Get customer profile</span>
+    customer_profile = get_customer_profile(transaction.get(<span class="code-string">"customer_id"</span>))
+    
+    <span class="code-comment"># Calculate risk factors</span>
+    risk_factors = []
+    risk_score = customer_profile.get(<span class="code-string">"risk_score"</span>, <span class="code-number">0.5</span>)
+    
+    <span class="code-comment"># Check amount factor</span>
+    typical_amount = customer_profile.get(<span class="code-string">"typical_transaction_amount"</span>, <span class="code-number">100</span>)
+    amount_ratio = transaction.get(<span class="code-string">"amount"</span>, <span class="code-number">0</span>) / typical_amount
+    
+    <span class="code-keyword">if</span> amount_ratio > <span class="code-number">10</span>:
+        risk_score += <span class="code-number">0.3</span>
+        risk_factors.append(<span class="code-string">"Unusually high amount"</span>)
+    <span class="code-keyword">elif</span> amount_ratio > <span class="code-number">5</span>:
+        risk_score += <span class="code-number">0.2</span>
+        risk_factors.append(<span class="code-string">"High amount"</span>)
+    <span class="code-keyword">elif</span> amount_ratio > <span class="code-number">2</span>:
+        risk_score += <span class="code-number">0.1</span>
+        risk_factors.append(<span class="code-string">"Above average amount"</span>)
+    
+    <span class="code-comment"># Check location factor</span>
+    typical_locations = customer_profile.get(<span class="code-string">"typical_locations"</span>, [])
+    location = transaction.get(<span class="code-string">"location"</span>, <span class="code-string">""</span>)
+    
+    <span class="code-keyword">if</span> location <span class="code-keyword">not</span> in typical_locations:
+        risk_score += <span class="code-number">0.2</span>
+        risk_factors.append(<span class="code-string">"Unusual location"</span>)
+    
+    <span class="code-comment"># Check time factor</span>
+    hour = transaction.get(<span class="code-string">"time"</span>, {}).get(<span class="code-string">"hour"</span>, <span class="code-number">12</span>)
+    <span class="code-keyword">if</span> hour < <span class="code-number">6</span> <span class="code-keyword">or</span> hour > <span class="code-number">23</span>:
+        risk_score += <span class="code-number">0.15</span>
+        risk_factors.append(<span class="code-string">"Unusual time"</span>)
+    
+    <span class="code-comment"># Normalize risk score</span>
+    risk_score = min(max(risk_score, <span class="code-number">0</span>), <span class="code-number">1</span>)
+    
+    <span class="code-comment"># Determine risk level</span>
+    <span class="code-keyword">if</span> risk_score < <span class="code-number">0.3</span>:
+        risk_level = <span class="code-string">"low"</span>
+    <span class="code-keyword">elif</span> risk_score < <span class="code-number">0.7</span>:
+        risk_level = <span class="code-string">"medium"</span>
+    <span class="code-keyword">else</span>:
+        risk_level = <span class="code-string">"high"</span>
+    
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"risk_score"</span>: risk_score,
+        <span class="code-string">"risk_level"</span>: risk_level,
+        <span class="code-string">"risk_factors"</span>: risk_factors
+    }
+
+<span class="code-comment"># Create a lightweight verification chain for low-risk transactions</span>
+lightweight_verification_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a fraud detection assistant. Perform a lightweight verification of the following transaction:\n\nTransaction: {transaction}\n\nRisk Assessment: {risk_assessment}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Verify this transaction and provide a brief justification for your decision."</span>)
+])
+
+lightweight_verification_chain = (
+    lightweight_verification_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Create a standard verification chain for medium-risk transactions</span>
+standard_verification_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a fraud detection assistant. Perform a standard verification of the following transaction:\n\nTransaction: {transaction}\n\nCustomer Profile: {customer_profile}\n\nRisk Assessment: {risk_assessment}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Verify this transaction and provide a detailed justification for your decision. If you approve, suggest any additional monitoring that might be appropriate."</span>)
+])
+
+standard_verification_chain = (
+    standard_verification_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Create a comprehensive verification chain for high-risk transactions</span>
+comprehensive_verification_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a senior fraud detection specialist. Perform a comprehensive verification of the following transaction:\n\nTransaction: {transaction}\n\nCustomer Profile: {customer_profile}\n\nRisk Assessment: {risk_assessment}\n\nRecent Transactions: {recent_transactions}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Verify this transaction and provide a comprehensive analysis of your decision. Include specific risk factors, mitigating circumstances, and recommended actions if the transaction is approved."</span>)
+])
+
+comprehensive_verification_chain = (
+    comprehensive_verification_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Define a function to get recent transactions</span>
+<span class="code-keyword">def</span> <span class="code-function">get_recent_transactions</span>(customer_id, limit=<span class="code-number">5</span>):
+    <span class="code-comment"># In a real implementation, this would query transaction history</span>
+    <span class="code-comment"># For this example, we'll generate mock data</span>
+    transactions = []
+    <span class="code-keyword">for</span> i <span class="code-keyword">in</span> range(limit):
+        transactions.append({
+            <span class="code-string">"transaction_id"</span>: <span class="code-string">f"TXN{random.randint(10000, 99999)}"</span>,
+            <span class="code-string">"amount"</span>: round(random.uniform(<span class="code-number">20</span>, <span class="code-number">200</span>), <span class="code-number">2</span>),
+            <span class="code-string">"location"</span>: random.choice([<span class="code-string">"New York, NY"</span>, <span class="code-string">"Boston, MA"</span>, <span class="code-string">"Chicago, IL"</span>]),
+            <span class="code-string">"time"</span>: {<span class="code-string">"hour"</span>: random.randint(<span class="code-number">8</span>, <span class="code-number">22</span>)},
+            <span class="code-string">"status"</span>: <span class="code-string">"approved"</span>
+        })
+    <span class="code-keyword">return</span> transactions
+
+<span class="code-comment"># Create a dynamic chain that selects the appropriate verification chain based on risk level</span>
+<span class="code-keyword">def</span> <span class="code-function">select_verification_chain</span>(inputs):
+    <span class="code-comment"># Extract inputs</span>
+    transaction = inputs.get(<span class="code-string">"transaction"</span>, {})
+    customer_id = transaction.get(<span class="code-string">"customer_id"</span>)
+    
+    <span class="code-comment"># Get customer profile</span>
+    customer_profile = get_customer_profile(customer_id)
+    
+    <span class="code-comment"># Assess transaction risk</span>
+    risk_assessment = assess_transaction_risk(transaction)
+    risk_level = risk_assessment.get(<span class="code-string">"risk_level"</span>, <span class="code-string">"medium"</span>)
+    
+    <span class="code-comment"># Prepare inputs for the verification chain</span>
+    verification_inputs = {
+        <span class="code-string">"transaction"</span>: json.dumps(transaction, indent=<span class="code-number">2</span>),
+        <span class="code-string">"customer_profile"</span>: json.dumps(customer_profile, indent=<span class="code-number">2</span>),
+        <span class="code-string">"risk_assessment"</span>: json.dumps(risk_assessment, indent=<span class="code-number">2</span>)
+    }
+    
+    <span class="code-comment"># Select the appropriate verification chain based on risk level</span>
+    <span class="code-keyword">if</span> risk_level == <span class="code-string">"low"</span>:
+        <span class="code-keyword">return</span> lightweight_verification_chain.invoke(verification_inputs)
+    <span class="code-keyword">elif</span> risk_level == <span class="code-string">"medium"</span>:
+        <span class="code-keyword">return</span> standard_verification_chain.invoke(verification_inputs)
+    <span class="code-keyword">else</span>:  <span class="code-comment"># high risk</span>
+        <span class="code-comment"># Get recent transactions for comprehensive analysis</span>
+        recent_transactions = get_recent_transactions(customer_id)
+        verification_inputs[<span class="code-string">"recent_transactions"</span>] = json.dumps(recent_transactions, indent=<span class="code-number">2</span>)
+        <span class="code-keyword">return</span> comprehensive_verification_chain.invoke(verification_inputs)
+
+<span class="code-comment"># Create the dynamic chain using RunnableLambda</span>
+dynamic_fraud_detection_chain = RunnableLambda(select_verification_chain)
+
+<span class="code-comment"># Test with a low-risk transaction</span>
+low_risk_transaction = {
+    <span class="code-string">"transaction_id"</span>: <span class="code-string">"TXN12345"</span>,
+    <span class="code-string">"customer_id"</span>: <span class="code-string">"CUST123456"</span>,
+    <span class="code-string">"amount"</span>: <span class="code-number">125.50</span>,
+    <span class="code-string">"location"</span>: <span class="code-string">"New York, NY"</span>,
+    <span class="code-string">"time"</span>: {<span class="code-string">"hour"</span>: <span class="code-number">14</span>},
+    <span class="code-string">"merchant"</span>: <span class="code-string">"Grocery Store"</span>
+}
+
+<span class="code-keyword">print</span>(<span class="code-string">"=== Low-Risk Transaction Analysis ==="</span>)
+low_risk_result = dynamic_fraud_detection_chain.invoke({
+    <span class="code-string">"transaction"</span>: low_risk_transaction
+})
+<span class="code-keyword">print</span>(low_risk_result)
+
+<span class="code-comment"># Test with a medium-risk transaction</span>
+medium_risk_transaction = {
+    <span class="code-string">"transaction_id"</span>: <span class="code-string">"TXN67890"</span>,
+    <span class="code-string">"customer_id"</span>: <span class="code-string">"CUST789012"</span>,
+    <span class="code-string">"amount"</span>: <span class="code-number">350.00</span>,
+    <span class="code-string">"location"</span>: <span class="code-string">"Chicago, IL"</span>,
+    <span class="code-string">"time"</span>: {<span class="code-string">"hour"</span>: <span class="code-number">22</span>},
+    <span class="code-string">"merchant"</span>: <span class="code-string">"Electronics Store"</span>
+}
+
+<span class="code-keyword">print</span>(<span class="code-string">"\n=== Medium-Risk Transaction Analysis ==="</span>)
+medium_risk_result = dynamic_fraud_detection_chain.invoke({
+    <span class="code-string">"transaction"</span>: medium_risk_transaction
+})
+<span class="code-keyword">print</span>(medium_risk_result)
+
+<span class="code-comment"># Test with a high-risk transaction</span>
+high_risk_transaction = {
+    <span class="code-string">"transaction_id"</span>: <span class="code-string">"TXN24680"</span>,
+    <span class="code-string">"customer_id"</span>: <span class="code-string">"CUST789012"</span>,
+    <span class="code-string">"amount"</span>: <span class="code-number">2500.00</span>,
+    <span class="code-string">"location"</span>: <span class="code-string">"Miami, FL"</span>,
+    <span class="code-string">"time"</span>: {<span class="code-string">"hour"</span>: <span class="code-number">3</span>},
+    <span class="code-string">"merchant"</span>: <span class="code-string">"Jewelry Store"</span>
+}
+
+<span class="code-keyword">print</span>(<span class="code-string">"\n=== High-Risk Transaction Analysis ==="</span>)
+high_risk_result = dynamic_fraud_detection_chain.invoke({
+    <span class="code-string">"transaction"</span>: high_risk_transaction
+})
+<span class="code-keyword">print</span>(high_risk_result)</code></pre>
+
+                            <p>In this banking example, we've implemented a dynamic fraud detection system that selects different verification chains based on the assessed risk level of each transaction:</p>
+                            
+                            <ol>
+                                <li>We created three different verification chains (lightweight, standard, and comprehensive) for different risk levels</li>
+                                <li>We implemented a risk assessment function that analyzes transaction characteristics to determine risk level</li>
+                                <li>We created a dynamic chain using RunnableLambda that selects the appropriate verification chain based on the risk assessment</li>
+                            </ol>
+                            
+                            <p>The key advantage of this approach is that the system can adapt its verification process based on the specific characteristics of each transaction. Low-risk transactions receive minimal scrutiny, allowing for fast processing and a good customer experience, while high-risk transactions receive comprehensive analysis to ensure security.</p>
+                            
+                            <p>Dynamic chains are particularly valuable in scenarios where:</p>
+                            <ul>
+                                <li>Inputs vary significantly in complexity or risk level</li>
+                                <li>Different processing approaches are needed for different types of inputs</li>
+                                <li>Resource efficiency is important (avoiding over-processing simple cases)</li>
+                                <li>Thorough analysis is required for complex or high-stakes cases</li>
+                            </ul>
+                            
+                            <p>By leveraging dynamic chains, businesses can create more adaptive and efficient AI systems that apply the appropriate level of processing to each input, optimizing both effectiveness and resource utilization.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <h3 class="component-title">
+                            <i class="fas fa-life-ring"></i>
+                            Fallback Mechanisms
+                        </h3>
+                        
+                        <div class="info-block use-case">
+                            <div class="info-label use-case-label">
+                                <i class="fas fa-check-circle"></i> Business Use Case
+                            </div>
+                            <p>In healthcare, fallback mechanisms ensure that critical diagnostic systems remain operational even when primary components fail. For example, a hospital's AI-powered diagnostic system might have a primary analysis chain that uses advanced models, but if those models are unavailable or producing unreliable results, the system can fall back to a simpler, more robust analysis chain. This ensures that clinicians always receive some level of analytical support, even during system disruptions.</p>
+                            
+                            <div class="domain-example">
+                                <div class="domain-example-title">
+                                    <i class="fas fa-hospital"></i> Healthcare Example
+                                </div>
+                                <p>A regional hospital network implemented fallback mechanisms in their AI-assisted diagnostic system. The primary system uses advanced deep learning models to analyze medical images, but when those models are unavailable (due to network issues, maintenance, etc.), the system automatically falls back to rule-based algorithms and simpler statistical models. This fallback approach ensured 99.9% system availability and prevented any disruption to clinical workflows, even during a major cloud service outage.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-block problem-solved">
+                            <div class="info-label problem-solved-label">
+                                <i class="fas fa-lightbulb"></i> Problems Solved
+                            </div>
+                            <p>Fallback mechanisms solve the challenge of maintaining system reliability and availability when primary components fail. In complex AI systems, various components can fail due to network issues, service outages, model errors, or unexpected input formats. Without fallback mechanisms, these failures would result in complete system failures, disrupting business operations and potentially causing significant harm in critical applications like healthcare or finance.</p>
+                        </div>
+                        
+                        <div class="info-block impact-absent">
+                            <div class="info-label impact-absent-label">
+                                <i class="fas fa-exclamation-triangle"></i> Impact if Absent
+                            </div>
+                            <p>Without fallback mechanisms, businesses would face significant risks when their AI systems encounter failures. In critical applications like healthcare diagnostics or financial transaction processing, these failures could have serious consequences. Businesses would need to invest heavily in redundant systems and manual oversight to compensate for the lack of automated fallbacks, increasing operational costs while still risking service disruptions.</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <span class="tag predefined">Predefined</span>
+                            <span class="tag control">Control</span>
+                        </div>
+                        
+                        <div class="info-block">
+                            <div class="info-label">
+                                <i class="fas fa-brain"></i> In-depth Technical Insight
+                            </div>
+                            <p>Fallback mechanisms in LangChain are implemented through the RunnableWithFallbacks class, which allows you to specify a primary Runnable and one or more fallback Runnables that will be used if the primary fails. This creates a resilient chain that can handle various types of failures, including network errors, API timeouts, and invalid outputs.</p>
+                            
+                            <p>The key to implementing effective fallback mechanisms is identifying potential failure points and designing appropriate fallback strategies that maintain functionality even when the primary approach fails.</p>
+                            
+                            <pre><code><span class="code-keyword">from</span> langchain_core.runnables <span class="code-keyword">import</span> RunnableWithFallbacks, RunnableLambda
+<span class="code-keyword">from</span> langchain_openai <span class="code-keyword">import</span> ChatOpenAI, OpenAI
+<span class="code-keyword">from</span> langchain_core.prompts <span class="code-keyword">import</span> ChatPromptTemplate
+<span class="code-keyword">from</span> langchain_core.output_parsers <span class="code-keyword">import</span> StrOutputParser
+<span class="code-keyword">from</span> langchain_core.exceptions <span class="code-keyword">import</span> OutputParserException
+<span class="code-keyword">import</span> json
+<span class="code-keyword">import</span> random
+<span class="code-keyword">import</span> time
+
+<span class="code-comment"># Initialize language models</span>
+advanced_model = ChatOpenAI(model=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-number">0.2</span>)
+fallback_model = OpenAI(model=<span class="code-string">"gpt-3.5-turbo-instruct"</span>, temperature=<span class="code-number">0.1</span>)
+
+<span class="code-comment"># Define a function to get patient data</span>
+<span class="code-keyword">def</span> <span class="code-function">get_patient_data</span>(patient_id):
+    <span class="code-comment"># In a real implementation, this would query a database</span>
+    patients = {
+        <span class="code-string">"PAT123456"</span>: {
+            <span class="code-string">"patient_id"</span>: <span class="code-string">"PAT123456"</span>,
+            <span class="code-string">"name"</span>: <span class="code-string">"Robert Johnson"</span>,
+            <span class="code-string">"age"</span>: <span class="code-number">52</span>,
+            <span class="code-string">"gender"</span>: <span class="code-string">"Male"</span>,
+            <span class="code-string">"medical_history"</span>: [
+                <span class="code-string">"Hypertension"</span>,
+                <span class="code-string">"Type 2 Diabetes"</span>,
+                <span class="code-string">"Previous Heart Attack (2018)"</span>
+            ],
+            <span class="code-string">"current_medications"</span>: [
+                <span class="code-string">"Lisinopril 10mg"</span>,
+                <span class="code-string">"Metformin 500mg"</span>,
+                <span class="code-string">"Atorvastatin 20mg"</span>
+            ],
+            <span class="code-string">"allergies"</span>: [
+                <span class="code-string">"Penicillin"</span>,
+                <span class="code-string">"Sulfa drugs"</span>
+            ]
+        }
+    }
+    <span class="code-keyword">return</span> patients.get(patient_id, {})
+
+<span class="code-comment"># Define a function to get lab results</span>
+<span class="code-keyword">def</span> <span class="code-function">get_lab_results</span>(patient_id):
+    <span class="code-comment"># In a real implementation, this would query laboratory systems</span>
+    <span class="code-comment"># For this example, we'll simulate occasional failures</span>
+    <span class="code-keyword">if</span> random.random() < <span class="code-number">0.2</span>:  <span class="code-comment"># 20% chance of failure</span>
+        <span class="code-keyword">raise</span> Exception(<span class="code-string">"Laboratory system unavailable"</span>)
+    
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"patient_id"</span>: patient_id,
+        <span class="code-string">"results"</span>: [
+            {<span class="code-string">"test"</span>: <span class="code-string">"Complete Blood Count"</span>, <span class="code-string">"value"</span>: <span class="code-string">"Normal"</span>, <span class="code-string">"date"</span>: <span class="code-string">"2023-06-10"</span>},
+            {<span class="code-string">"test"</span>: <span class="code-string">"Lipid Panel"</span>, <span class="code-string">"value"</span>: <span class="code-string">"Elevated LDL"</span>, <span class="code-string">"date"</span>: <span class="code-string">"2023-06-10"</span>},
+            {<span class="code-string">"test"</span>: <span class="code-string">"HbA1c"</span>, <span class="code-string">"value"</span>: <span class="code-string">"7.2%"</span>, <span class="code-string">"date"</span>: <span class="code-string">"2023-06-05"</span>}
+        ]
+    }
+
+<span class="code-comment"># Define a function to get medical images</span>
+<span class="code-keyword">def</span> <span class="code-function">get_medical_images</span>(patient_id):
+    <span class="code-comment"># In a real implementation, this would query imaging systems</span>
+    <span class="code-comment"># For this example, we'll simulate occasional failures</span>
+    <span class="code-keyword">if</span> random.random() < <span class="code-number">0.15</span>:  <span class="code-comment"># 15% chance of failure</span>
+        <span class="code-keyword">raise</span> Exception(<span class="code-string">"Imaging system unavailable"</span>)
+    
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"patient_id"</span>: patient_id,
+        <span class="code-string">"images"</span>: [
+            {<span class="code-string">"type"</span>: <span class="code-string">"Chest X-Ray"</span>, <span class="code-string">"date"</span>: <span class="code-string">"2023-06-12"</span>, <span class="code-string">"findings"</span>: <span class="code-string">"Clear lungs, no acute abnormalities"</span>},
+            {<span class="code-string">"type"</span>: <span class="code-string">"Echocardiogram"</span>, <span class="code-string">"date"</span>: <span class="code-string">"2023-06-08"</span>, <span class="code-string">"findings"</span>: <span class="code-string">"Mildly reduced ejection fraction (45%)"</span>}
+        ]
+    }
+
+<span class="code-comment"># Define a function to get vital signs</span>
+<span class="code-keyword">def</span> <span class="code-function">get_vital_signs</span>(patient_id):
+    <span class="code-comment"># In a real implementation, this would query monitoring systems</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"patient_id"</span>: patient_id,
+        <span class="code-string">"vitals"</span>: {
+            <span class="code-string">"blood_pressure"</span>: <span class="code-string">"142/92 mmHg"</span>,
+            <span class="code-string">"heart_rate"</span>: <span class="code-string">"78 bpm"</span>,
+            <span class="code-string">"respiratory_rate"</span>: <span class="code-string">"16 breaths/min"</span>,
+            <span class="code-string">"temperature"</span>: <span class="code-string">"98.6°F"</span>,
+            <span class="code-string">"oxygen_saturation"</span>: <span class="code-string">"97%"</span>
+        }
+    }
+
+<span class="code-comment"># Create a prompt template for the advanced diagnostic chain</span>
+advanced_diagnostic_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are an expert cardiologist. Analyze the following comprehensive patient data to provide a detailed diagnostic assessment and treatment recommendations:\n\nPatient Data:\n{patient_data}\n\nLab Results:\n{lab_results}\n\nMedical Images:\n{medical_images}\n\nVital Signs:\n{vital_signs}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Provide a comprehensive assessment of this patient's cardiac condition, including diagnosis, risk factors, and detailed treatment recommendations."</span>)
+])
+
+<span class="code-comment"># Create the advanced diagnostic chain</span>
+advanced_diagnostic_chain = (
+    {
+        <span class="code-string">"patient_data"</span>: lambda x: json.dumps(get_patient_data(x[<span class="code-string">"patient_id"</span>]), indent=<span class="code-number">2</span>),
+        <span class="code-string">"lab_results"</span>: lambda x: json.dumps(get_lab_results(x[<span class="code-string">"patient_id"</span>]), indent=<span class="code-number">2</span>),
+        <span class="code-string">"medical_images"</span>: lambda x: json.dumps(get_medical_images(x[<span class="code-string">"patient_id"</span>]), indent=<span class="code-number">2</span>),
+        <span class="code-string">"vital_signs"</span>: lambda x: json.dumps(get_vital_signs(x[<span class="code-string">"patient_id"</span>]), indent=<span class="code-number">2</span>)
+    }
+    | advanced_diagnostic_prompt
+    | advanced_model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Create a prompt template for the fallback diagnostic chain</span>
+fallback_diagnostic_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a medical assistant providing basic diagnostic support. Analyze the available patient data to provide a preliminary assessment:\n\nPatient Data:\n{patient_data}\n\nVital Signs:\n{vital_signs}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Provide a basic assessment of this patient's condition and general recommendations for follow-up care."</span>)
+])
+
+<span class="code-comment"># Create the fallback diagnostic chain</span>
+fallback_diagnostic_chain = (
+    {
+        <span class="code-string">"patient_data"</span>: lambda x: json.dumps(get_patient_data(x[<span class="code-string">"patient_id"</span>]), indent=<span class="code-number">2</span>),
+        <span class="code-string">"vital_signs"</span>: lambda x: json.dumps(get_vital_signs(x[<span class="code-string">"patient_id"</span>]), indent=<span class="code-number">2</span>)
+    }
+    | fallback_diagnostic_prompt
+    | fallback_model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Create a function to handle errors in the advanced chain</span>
+<span class="code-keyword">def</span> <span class="code-function">handle_advanced_errors</span>(inputs):
+    <span class="code-keyword">try</span>:
+        <span class="code-comment"># Try to use the advanced diagnostic chain</span>
+        <span class="code-keyword">return</span> advanced_diagnostic_chain.invoke(inputs)
+    <span class="code-keyword">except</span> Exception <span class="code-keyword">as</span> e:
+        <span class="code-keyword">print</span>(<span class="code-string">f"Advanced diagnostic chain failed: {str(e)}"</span>)
+        <span class="code-comment"># Fall back to the simpler diagnostic chain</span>
+        <span class="code-keyword">return</span> fallback_diagnostic_chain.invoke(inputs)
+
+<span class="code-comment"># Create a fallback chain using RunnableWithFallbacks</span>
+fallback_chain = RunnableWithFallbacks(
+    runnable=RunnableLambda(handle_advanced_errors),
+    fallbacks=[fallback_diagnostic_chain]
+)
+
+<span class="code-comment"># Test the fallback mechanism with multiple patients</span>
+<span class="code-keyword">for</span> i <span class="code-keyword">in</span> range(<span class="code-number">5</span>):
+    patient_id = <span class="code-string">"PAT123456"</span>
+    <span class="code-keyword">print</span>(<span class="code-string">f"\n=== Diagnostic Assessment #{i+1} ==="</span>)
+    
+    start_time = time.time()
+    result = fallback_chain.invoke({<span class="code-string">"patient_id"</span>: patient_id})
+    end_time = time.time()
+    
+    <span class="code-keyword">print</span>(<span class="code-string">f"Processing time: {end_time - start_time:.2f} seconds"</span>)
+    <span class="code-keyword">print</span>(<span class="code-string">"Assessment:"</span>)
+    <span class="code-keyword">print</span>(result)</code></pre>
+
+                            <p>In this healthcare example, we've implemented a diagnostic system with fallback mechanisms to ensure reliability:</p>
+                            
+                            <ol>
+                                <li>We created an advanced diagnostic chain that uses comprehensive patient data and a sophisticated model</li>
+                                <li>We created a fallback diagnostic chain that uses basic patient data and a simpler model</li>
+                                <li>We implemented error handling that falls back to the simpler chain when the advanced chain fails</li>
+                                <li>We used RunnableWithFallbacks to create a resilient chain that automatically handles failures</li>
+                            </ol>
+                            
+                            <p>The key advantage of this approach is that the system can continue to provide diagnostic support even when some components fail. The advanced chain provides more comprehensive analysis when all systems are operational, but the fallback chain ensures that basic functionality is maintained during disruptions.</p>
+                            
+                            <p>Fallback mechanisms are particularly valuable in scenarios where:</p>
+                            <ul>
+                                <li>System reliability is critical (e.g., healthcare, finance)</li>
+                                <li>Primary components may be unavailable due to network issues, service outages, or maintenance</li>
+                                <li>Different levels of functionality can be provided based on system availability</li>
+                                <li>Graceful degradation is preferred over complete failure</li>
+                            </ul>
+                            
+                            <p>By leveraging fallback mechanisms, businesses can create more resilient AI systems that maintain functionality even when components fail, ensuring continuous service delivery and minimizing disruption to critical operations.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 8.2 -->
+                <div id="advanced-orchestration" class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-sitemap"></i>
+                        8.2 Advanced Orchestration
+                    </h2>
+                    
+                    <div class="component-card">
+                        <h3 class="component-title">
+                            <i class="fas fa-route"></i>
+                            Routing Between Sub-chains
+                        </h3>
+                        
+                        <div class="info-block use-case">
+                            <div class="info-label use-case-label">
+                                <i class="fas fa-check-circle"></i> Business Use Case
+                            </div>
+                            <p>In retail, routing between sub-chains enables intelligent customer service systems that direct inquiries to specialized processing paths based on the nature of the request. For example, an e-commerce platform can route product inquiries to a product information chain, order status requests to an order management chain, and return requests to a returns processing chain. This ensures that each customer inquiry is handled by the most appropriate specialized system, improving efficiency and customer satisfaction.</p>
+                            
+                            <div class="domain-example">
+                                <div class="domain-example-title">
+                                    <i class="fas fa-shopping-cart"></i> Retail Example
+                                </div>
+                                <p>A major online retailer implemented routing between sub-chains in their customer service system. The system analyzes customer inquiries using natural language processing to determine the intent, then routes each inquiry to the appropriate specialized chain. This approach reduced average response time by 60% and increased first-contact resolution rate by 35%, significantly improving customer satisfaction while reducing operational costs.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-block problem-solved">
+                            <div class="info-label problem-solved-label">
+                                <i class="fas fa-lightbulb"></i> Problems Solved
+                            </div>
+                            <p>Routing between sub-chains solves the challenge of directing different types of inputs to the most appropriate processing paths. In traditional systems, all inputs often go through the same processing pipeline, regardless of their specific characteristics. This one-size-fits-all approach can be inefficient and ineffective for specialized tasks. Routing allows each input to be processed by the most suitable sub-chain, optimizing both efficiency and effectiveness.</p>
+                        </div>
+                        
+                        <div class="info-block impact-absent">
+                            <div class="info-label impact-absent-label">
+                                <i class="fas fa-exclamation-triangle"></i> Impact if Absent
+                            </div>
+                            <p>Without routing between sub-chains, businesses would need to implement complex conditional logic within monolithic processing pipelines or maintain multiple separate systems for different types of inputs. This would increase development complexity, maintenance burden, and operational costs. In customer service applications, this could result in longer response times, lower resolution rates, and decreased customer satisfaction.</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <span class="tag custom">Custom</span>
+                            <span class="tag execution">Execution</span>
+                        </div>
+                        
+                        <div class="info-block">
+                            <div class="info-label">
+                                <i class="fas fa-brain"></i> In-depth Technical Insight
+                            </div>
+                            <p>Routing between sub-chains in LangChain is implemented using the RunnableLambda class combined with conditional logic. The key is to create a router function that analyzes the input and determines which sub-chain should process it. This router function can then be wrapped in a RunnableLambda and used as part of a larger chain.</p>
+                            
+                            <p>The routing process typically involves:</p>
+                            <ol>
+                                <li>Analyzing the input to determine its characteristics or intent</li>
+                                <li>Selecting the appropriate sub-chain based on this analysis</li>
+                                <li>Invoking the selected sub-chain with the input</li>
+                                <li>Returning the result from the sub-chain</li>
+                            </ol>
+                            
+                            <pre><code><span class="code-keyword">from</span> langchain_core.runnables <span class="code-keyword">import</span> RunnableLambda, RunnablePassthrough
+<span class="code-keyword">from</span> langchain_openai <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain_core.prompts <span class="code-keyword">import</span> ChatPromptTemplate
+<span class="code-keyword">from</span> langchain_core.output_parsers <span class="code-keyword">import</span> StrOutputParser, JsonOutputParser
+<span class="code-keyword">import</span> json
+
+<span class="code-comment"># Initialize the language model</span>
+model = ChatOpenAI(model=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-number">0.2</span>)
+
+<span class="code-comment"># Create a prompt template for intent classification</span>
+intent_classification_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a customer service intent classifier. Analyze the customer's message and determine the primary intent. Classify the intent into one of the following categories:\n\n1. product_inquiry - Questions about products, features, or compatibility\n2. order_status - Questions about order status, tracking, or delivery\n3. return_request - Requests to return or exchange products\n4. technical_support - Technical issues with products or services\n5. billing_inquiry - Questions about charges, payments, or invoices\n6. account_management - Requests related to account settings, passwords, or profile\n7. general_inquiry - General questions that don't fit other categories"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Customer message: {message}\n\nClassify the intent of this message and respond with only the category name."</span>)
+])
+
+<span class="code-comment"># Create the intent classification chain</span>
+intent_classification_chain = (
+    intent_classification_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Create a product information sub-chain</span>
+product_info_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a product information specialist. Answer the customer's question about products based on the following information:\n\nCustomer Message: {message}\n\nProduct Catalog: {product_catalog}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Provide a helpful and accurate response to the customer's product question."</span>)
+])
+
+product_info_chain = (
+    {
+        <span class="code-string">"message"</span>: RunnablePassthrough(),
+        <span class="code-string">"product_catalog"</span>: lambda x: get_product_catalog()
+    }
+    | product_info_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Create an order status sub-chain</span>
+order_status_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are an order status specialist. Answer the customer's question about their order based on the following information:\n\nCustomer Message: {message}\n\nOrder Information: {order_info}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Provide a helpful and accurate response about the customer's order status."</span>)
+])
+
+order_status_chain = (
+    {
+        <span class="code-string">"message"</span>: RunnablePassthrough(),
+        <span class="code-string">"order_info"</span>: lambda x: get_order_info(extract_order_id(x[<span class="code-string">"message"</span>]))
+    }
+    | order_status_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Create a return request sub-chain</span>
+return_request_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a returns specialist. Process the customer's return request based on the following information:\n\nCustomer Message: {message}\n\nOrder Information: {order_info}\n\nReturn Policy: {return_policy}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Provide a helpful response about the customer's return request, including next steps if applicable."</span>)
+])
+
+return_request_chain = (
+    {
+        <span class="code-string">"message"</span>: RunnablePassthrough(),
+        <span class="code-string">"order_info"</span>: lambda x: get_order_info(extract_order_id(x[<span class="code-string">"message"</span>])),
+        <span class="code-string">"return_policy"</span>: lambda x: get_return_policy()
+    }
+    | return_request_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Create a technical support sub-chain</span>
+tech_support_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a technical support specialist. Help the customer with their technical issue based on the following information:\n\nCustomer Message: {message}\n\nProduct Information: {product_info}\n\nTroubleshooting Guides: {troubleshooting_guides}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Provide a helpful response to address the customer's technical issue."</span>)
+])
+
+tech_support_chain = (
+    {
+        <span class="code-string">"message"</span>: RunnablePassthrough(),
+        <span class="code-string">"product_info"</span>: lambda x: get_product_info(extract_product_id(x[<span class="code-string">"message"</span>])),
+        <span class="code-string">"troubleshooting_guides"</span>: lambda x: get_troubleshooting_guides(extract_product_id(x[<span class="code-string">"message"</span>]))
+    }
+    | tech_support_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Create a billing inquiry sub-chain</span>
+billing_inquiry_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a billing specialist. Answer the customer's billing question based on the following information:\n\nCustomer Message: {message}\n\nBilling History: {billing_history}\n\nPayment Methods: {payment_methods}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Provide a helpful and accurate response to the customer's billing question."</span>)
+])
+
+billing_inquiry_chain = (
+    {
+        <span class="code-string">"message"</span>: RunnablePassthrough(),
+        <span class="code-string">"billing_history"</span>: lambda x: get_billing_history(extract_customer_id(x[<span class="code-string">"message"</span>])),
+        <span class="code-string">"payment_methods"</span>: lambda x: get_payment_methods(extract_customer_id(x[<span class="code-string">"message"</span>]))
+    }
+    | billing_inquiry_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Create an account management sub-chain</span>
+account_management_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are an account management specialist. Help the customer with their account request based on the following information:\n\nCustomer Message: {message}\n\nAccount Information: {account_info}\n\nAccount Policies: {account_policies}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Provide a helpful response to address the customer's account request."</span>)
+])
+
+account_management_chain = (
+    {
+        <span class="code-string">"message"</span>: RunnablePassthrough(),
+        <span class="code-string">"account_info"</span>: lambda x: get_account_info(extract_customer_id(x[<span class="code-string">"message"</span>])),
+        <span class="code-string">"account_policies"</span>: lambda x: get_account_policies()
+    }
+    | account_management_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Create a general inquiry sub-chain</span>
+general_inquiry_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a customer service generalist. Answer the customer's general question:\n\nCustomer Message: {message}\n\nCompany Information: {company_info}\n\nFAQs: {faqs}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Provide a helpful response to the customer's general inquiry."</span>)
+])
+
+general_inquiry_chain = (
+    {
+        <span class="code-string">"message"</span>: RunnablePassthrough(),
+        <span class="code-string">"company_info"</span>: lambda x: get_company_info(),
+        <span class="code-string">"faqs"</span>: lambda x: get_faqs()
+    }
+    | general_inquiry_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Define helper functions for extracting information from messages</span>
+<span class="code-keyword">def</span> <span class="code-function">extract_order_id</span>(message):
+    <span class="code-comment"># In a real implementation, this would use NLP to extract order IDs</span>
+    <span class="code-comment"># For this example, we'll return a mock order ID</span>
+    <span class="code-keyword">return</span> <span class="code-string">"ORD123456"</span>
+
+<span class="code-keyword">def</span> <span class="code-function">extract_product_id</span>(message):
+    <span class="code-comment"># In a real implementation, this would use NLP to extract product IDs</span>
+    <span class="code-comment"># For this example, we'll return a mock product ID</span>
+    <span class="code-keyword">return</span> <span class="code-string">"PROD789012"</span>
+
+<span class="code-keyword">def</span> <span class="code-function">extract_customer_id</span>(message):
+    <span class="code-comment"># In a real implementation, this would use NLP to extract customer IDs</span>
+    <span class="code-comment"># For this example, we'll return a mock customer ID</span>
+    <span class="code-keyword">return</span> <span class="code-string">"CUST345678"</span>
+
+<span class="code-comment"># Define helper functions for retrieving data</span>
+<span class="code-keyword">def</span> <span class="code-function">get_product_catalog</span>():
+    <span class="code-comment"># In a real implementation, this would query a product database</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"products"</span>: [
+            {<span class="code-string">"id"</span>: <span class="code-string">"PROD789012"</span>, <span class="code-string">"name"</span>: <span class="code-string">"Wireless Headphones"</span>, <span class="code-string">"price"</span>: <span class="code-number">129.99</span>, <span class="code-string">"category"</span>: <span class="code-string">"Electronics"</span>},
+            {<span class="code-string">"id"</span>: <span class="code-string">"PROD345678"</span>, <span class="code-string">"name"</span>: <span class="code-string">"Smart Watch"</span>, <span class="code-string">"price"</span>: <span class="code-number">249.99</span>, <span class="code-string">"category"</span>: <span class="code-string">"Electronics"</span>}
+        ]
+    }
+
+<span class="code-keyword">def</span> <span class="code-function">get_order_info</span>(order_id):
+    <span class="code-comment"># In a real implementation, this would query an order database</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"order_id"</span>: order_id,
+        <span class="code-string">"status"</span>: <span class="code-string">"Shipped"</span>,
+        <span class="code-string">"tracking_number"</span>: <span class="code-string">"TRK123456789"</span>,
+        <span class="code-string">"estimated_delivery"</span>: <span class="code-string">"2023-06-20"</span>,
+        <span class="code-string">"items"</span>: [
+            {<span class="code-string">"product_id"</span>: <span class="code-string">"PROD789012"</span>, <span class="code-string">"name"</span>: <span class="code-string">"Wireless Headphones"</span>, <span class="code-string">"quantity"</span>: <span class="code-number">1</span>},
+            {<span class="code-string">"product_id"</span>: <span class="code-string">"PROD345678"</span>, <span class="code-string">"name"</span>: <span class="code-string">"Smart Watch"</span>, <span class="code-string">"quantity"</span>: <span class="code-number">1</span>}
+        ]
+    }
+
+<span class="code-keyword">def</span> <span class="code-function">get_return_policy</span>():
+    <span class="code-comment"># In a real implementation, this would retrieve return policy information</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"return_window"</span>: <span class="code-string">"30 days"</span>,
+        <span class="code-string">"restocking_fee"</span>: <span class="code-string">"None for items returned in original condition"</span>,
+        <span class="code-string">"return_methods"</span>: [<span class="code-string">"Mail"</span>, <span class="code-string">"In-store"</span>]
+    }
+
+<span class="code-keyword">def</span> <span class="code-function">get_product_info</span>(product_id):
+    <span class="code-comment"># In a real implementation, this would query a product database</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"product_id"</span>: product_id,
+        <span class="code-string">"name"</span>: <span class="code-string">"Wireless Headphones"</span>,
+        <span class="code-string">"description"</span>: <span class="code-string">"High-quality wireless headphones with noise cancellation"</span>,
+        <span class="code-string">"specifications"</span>: {
+            <span class="code-string">"battery_life"</span>: <span class="code-string">"30 hours"</span>,
+            <span class="code-string">"connectivity"</span>: <span class="code-string">"Bluetooth 5.0"</span>,
+            <span class="code-string">"weight"</span>: <span class="code-string">"250g"</span>
+        }
+    }
+
+<span class="code-keyword">def</span> <span class="code-function">get_troubleshooting_guides</span>(product_id):
+    <span class="code-comment"># In a real implementation, this would retrieve troubleshooting guides</span>
+    <span class="code-keyword">return</span> [
+        {
+            <span class="code-string">"issue"</span>: <span class="code-string">"Headphones not connecting"</span>,
+            <span class="code-string">"solution"</span>: <span class="code-string">"Reset Bluetooth connection and ensure device is in pairing mode"</span>
+        },
+        {
+            <span class="code-string">"issue"</span>: <span class="code-string">"Poor sound quality"</span>,
+            <span class="code-string">"solution"</span>: <span class="code-string">"Check audio source and ensure headphones are fully charged"</span>
+        }
+    ]
+
+<span class="code-keyword">def</span> <span class="code-function">get_billing_history</span>(customer_id):
+    <span class="code-comment"># In a real implementation, this would query billing records</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"customer_id"</span>: customer_id,
+        <span class="code-string">"transactions"</span>: [
+            {<span class="code-string">"date"</span>: <span class="code-string">"2023-06-10"</span>, <span class="code-string">"description"</span>: <span class="code-string">"Order #ORD123456"</span>, <span class="code-string">"amount"</span>: <span class="code-number">379.98</span>},
+            {<span class="code-string">"date"</span>: <span class="code-string">"2023-06-05"</span>, <span class="code-string">"description"</span>: <span class="code-string">"Order #ORD987654"</span>, <span class="code-string">"amount"</span>: <span class="code-number">89.99</span>}
+        ]
+    }
+
+<span class="code-keyword">def</span> <span class="code-function">get_payment_methods</span>(customer_id):
+    <span class="code-comment"># In a real implementation, this would query payment methods</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"customer_id"</span>: customer_id,
+        <span class="code-string">"methods"</span>: [
+            {<span class="code-string">"type"</span>: <span class="code-string">"Credit Card"</span>, <span class="code-string">"last_four"</span>: <span class="code-string">"1234"</span>, <span class="code-string">"expiry"</span>: <span class="code-string">"12/25"</span>},
+            {<span class="code-string">"type"</span>: <span class="code-string">"PayPal"</span>, <span class="code-string">"email"</span>: <span class="code-string">"customer@example.com"</span>}
+        ]
+    }
+
+<span class="code-keyword">def</span> <span class="code-function">get_account_info</span>(customer_id):
+    <span class="code-comment"># In a real implementation, this would query account information</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"customer_id"</span>: customer_id,
+        <span class="code-string">"name"</span>: <span class="code-string">"John Smith"</span>,
+        <span class="code-string">"email"</span>: <span class="code-string">"john.smith@example.com"</span>,
+        <span class="code-string">"membership_level"</span>: <span class="code-string">"Premium"</span>,
+        <span class="code-string">"preferences"</span>: {
+            <span class="code-string">"communication"</span>: <span class="code-string">"Email"</span>,
+            <span class="code-string">"currency"</span>: <span class="code-string">"USD"</span>
+        }
+    }
+
+<span class="code-keyword">def</span> <span class="code-function">get_account_policies</span>():
+    <span class="code-comment"># In a real implementation, this would retrieve account policies</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"password_requirements"</span>: <span class="code-string">"Minimum 8 characters with at least one number and one special character"</span>,
+        <span class="code-string">"data_retention"</span>: <span class="code-string">"Account data is retained for 7 years after account closure"</span>
+    }
+
+<span class="code-keyword">def</span> <span class="code-function">get_company_info</span>():
+    <span class="code-comment"># In a real implementation, this would retrieve company information</span>
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"name"</span>: <span class="code-string">"TechShop Retail"</span>,
+        <span class="code-string">"founded"</span>: <span class="code-string">"2010"</span>,
+        <span class="code-string">"headquarters"</span>: <span class="code-string">"San Francisco, CA"</span>,
+        <span class="code-string">"contact"</span>: {
+            <span class="code-string">"phone"</span>: <span class="code-string">"1-800-555-1234"</span>,
+            <span class="code-string">"email"</span>: <span class="code-string">"support@techshop.com"</span>
+        }
+    }
+
+<span class="code-keyword">def</span> <span class="code-function">get_faqs</span>():
+    <span class="code-comment"># In a real implementation, this would retrieve frequently asked questions</span>
+    <span class="code-keyword">return</span> [
+        {
+            <span class="code-string">"question"</span>: <span class="code-string">"What is your return policy?"</span>,
+            <span class="code-string">"answer"</span>: <span class="code-string">"We offer a 30-day return policy for most items."</span>
+        },
+        {
+            <span class="code-string">"question"</span>: <span class="code-string">"How long does shipping take?"</span>,
+            <span class="code-string">"answer"</span>: <span class="code-string">"Standard shipping takes 3-5 business days."</span>
+        }
+    ]
+
+<span class="code-comment"># Define the router function that directs messages to appropriate sub-chains</span>
+<span class="code-keyword">def</span> <span class="code-function">customer_service_router</span>(message):
+    <span class="code-comment"># Classify the intent of the message</span>
+    intent = intent_classification_chain.invoke({<span class="code-string">"message"</span>: message})
+    
+    <span class="code-comment"># Route to the appropriate sub-chain based on intent</span>
+    <span class="code-keyword">if</span> intent == <span class="code-string">"product_inquiry"</span>:
+        <span class="code-keyword">return</span> product_info_chain.invoke({<span class="code-string">"message"</span>: message})
+    <span class="code-keyword">elif</span> intent == <span class="code-string">"order_status"</span>:
+        <span class="code-keyword">return</span> order_status_chain.invoke({<span class="code-string">"message"</span>: message})
+    <span class="code-keyword">elif</span> intent == <span class="code-string">"return_request"</span>:
+        <span class="code-keyword">return</span> return_request_chain.invoke({<span class="code-string">"message"</span>: message})
+    <span class="code-keyword">elif</span> intent == <span class="code-string">"technical_support"</span>:
+        <span class="code-keyword">return</span> tech_support_chain.invoke({<span class="code-string">"message"</span>: message})
+    <span class="code-keyword">elif</span> intent == <span class="code-string">"billing_inquiry"</span>:
+        <span class="code-keyword">return</span> billing_inquiry_chain.invoke({<span class="code-string">"message"</span>: message})
+    <span class="code-keyword">elif</span> intent == <span class="code-string">"account_management"</span>:
+        <span class="code-keyword">return</span> account_management_chain.invoke({<span class="code-string">"message"</span>: message})
+    <span class="code-keyword">else</span>:  <span class="code-comment"># general_inquiry</span>
+        <span class="code-keyword">return</span> general_inquiry_chain.invoke({<span class="code-string">"message"</span>: message})
+
+<span class="code-comment"># Create the main routing chain using RunnableLambda</span>
+routing_chain = RunnableLambda(customer_service_router)
+
+<span class="code-comment"># Test the routing chain with different types of customer messages</span>
+test_messages = [
+    <span class="code-string">"I'm interested in your wireless headphones. Can you tell me about the battery life?"</span>,
+    <span class="code-string">"Can you check the status of my order #ORD123456?"</span>,
+    <span class="code-string">"I'd like to return the smart watch I bought last week."</span>,
+    <span class="code-string">"My headphones won't connect to my phone. Can you help?"</span>,
+    <span class="code-string">"I was charged twice for my recent order. Can you fix this?"</span>,
+    <span class="code-string">"I need to reset my password but I'm not receiving the email."</span>,
+    <span class="code-string">"What are your store hours?"</span>
+]
+
+<span class="code-keyword">for</span> i, message <span class="code-keyword">in</span> enumerate(test_messages):
+    <span class="code-keyword">print</span>(<span class="code-string">f"\n=== Test Message #{i+1} ==="</span>)
+    <span class="code-keyword">print</span>(<span class="code-string">f"Message: {message}"</span>)
+    
+    <span class="code-comment"># Get the intent classification</span>
+    intent = intent_classification_chain.invoke({<span class="code-string">"message"</span>: message})
+    <span class="code-keyword">print</span>(<span class="code-string">f"Intent: {intent}"</span>)
+    
+    <span class="code-comment"># Get the response from the routing chain</span>
+    response = routing_chain.invoke(message)
+    <span class="code-keyword">print</span>(<span class="code-string">"Response:"</span>)
+    <span class="code-keyword">print</span>(response)</code></pre>
+
+                            <p>In this retail example, we've implemented a customer service system with routing between sub-chains:</p>
+                            
+                            <ol>
+                                <li>We created specialized sub-chains for different types of customer inquiries (product information, order status, returns, technical support, billing, account management, and general inquiries)</li>
+                                <li>We implemented an intent classification chain that determines the purpose of each customer message</li>
+                                <li>We created a router function that directs each message to the appropriate sub-chain based on its intent</li>
+                                <li>We wrapped the router function in a RunnableLambda to create the main routing chain</li>
+                            </ol>
+                            
+                            <p>The key advantage of this approach is that each type of customer inquiry is processed by the most appropriate specialized system. This ensures that customers receive accurate and relevant responses while optimizing the use of computational resources.</p>
+                            
+                            <p>Routing between sub-chains is particularly valuable in scenarios where:</p>
+                            <ul>
+                                <li>Different types of inputs require specialized processing</li>
+                                <li>Efficiency can be improved by avoiding unnecessary processing steps</li>
+                                <li>Specialized knowledge or data sources are needed for different types of inputs</li>
+                                <li>The system needs to handle a wide variety of input types</li>
+                            </ul>
+                            
+                            <p>By leveraging routing between sub-chains, businesses can create more efficient and effective AI systems that direct each input to the most appropriate processing path, optimizing both performance and resource utilization.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <h3 class="component-title">
+                            <i class="fas fa-code-branch"></i>
+                            Conditional Logic
+                        </h3>
+                        
+                        <div class="info-block use-case">
+                            <div class="info-label use-case-label">
+                                <i class="fas fa-check-circle"></i> Business Use Case
+                            </div>
+                            <p>In banking, conditional logic enables loan approval systems to make decisions based on a complex set of rules and criteria. For example, a bank's loan processing system can evaluate applications differently based on loan type, amount, applicant credit score, income level, and other factors. This allows the system to apply different approval criteria and processes for different scenarios, ensuring that each application is evaluated according to the most appropriate standards.</p>
+                            
+                            <div class="domain-example">
+                                <div class="domain-example-title">
+                                    <i class="fas fa-university"></i> Banking Example
+                                </div>
+                                <p>A regional bank implemented conditional logic in their automated loan approval system. The system evaluates applications differently based on loan type (mortgage, auto, personal), amount, applicant credit score, debt-to-income ratio, and other factors. For example, mortgage applications undergo more rigorous scrutiny than small personal loans, and applicants with excellent credit scores receive expedited processing. This conditional approach reduced processing time by 40% while maintaining risk management standards and increasing approval rates for qualified applicants.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-block problem-solved">
+                            <div class="info-label problem-solved-label">
+                                <i class="fas fa-lightbulb"></i> Problems Solved
+                            </div>
+                            <p>Conditional logic solves the challenge of applying different processing rules based on input characteristics or external conditions. In traditional systems, the same rules are often applied to all inputs, regardless of their specific attributes. This one-size-fits-all approach can be inefficient and ineffective for complex decision-making scenarios. Conditional logic allows the system to adapt its behavior based on specific conditions, enabling more nuanced and appropriate responses.</p>
+                        </div>
+                        
+                        <div class="info-block impact-absent">
+                            <div class="info-label impact-absent-label">
+                                <i class="fas fa-exclamation-triangle"></i> Impact if Absent
+                            </div>
+                            <p>Without conditional logic, businesses would need to implement complex, monolithic rule systems that attempt to handle all scenarios with the same logic. This would result in suboptimal decisions for edge cases, inefficient processing, and difficulty in maintaining and updating the system. In applications like loan approval or fraud detection, this could lead to higher risk exposure, missed opportunities, and increased operational costs.</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <span class="tag custom">Custom</span>
+                            <span class="tag control">Control</span>
+                        </div>
+                        
+                        <div class="info-block">
+                            <div class="info-label">
+                                <i class="fas fa-brain"></i> In-depth Technical Insight
+                            </div>
+                            <p>Conditional logic in LangChain is implemented using the RunnableLambda class combined with conditional statements. The key is to create a function that evaluates conditions and executes different logic based on those conditions. This function can then be wrapped in a RunnableLambda and used as part of a larger chain.</p>
+                            
+                            <p>The conditional logic process typically involves:</p>
+                            <ol>
+                                <li>Evaluating one or more conditions based on input characteristics</li>
+                                <li>Executing different processing logic based on the results of these evaluations</li>
+                                <li>Returning the result of the appropriate logic branch</li>
+                            </ol>
+                            
+                            <pre><code><span class="code-keyword">from</span> langchain_core.runnables <span class="code-keyword">import</span> RunnableLambda, RunnablePassthrough
+<span class="code-keyword">from</span> langchain_openai <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain_core.prompts <span class="code-keyword">import</span> ChatPromptTemplate
+<span class="code-keyword">from</span> langchain_core.output_parsers <span class="code-keyword">import</span> StrOutputParser, JsonOutputParser
+<span class="code-keyword">import</span> json
+
+<span class="code-comment"># Initialize the language model</span>
+model = ChatOpenAI(model=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-number">0.2</span>)
+
+<span class="code-comment"># Define a function to get applicant information</span>
+<span class="code-keyword">def</span> <span class="code-function">get_applicant_info</span>(applicant_id):
+    <span class="code-comment"># In a real implementation, this would query a database</span>
+    applicants = {
+        <span class="code-string">"APP123456"</span>: {
+            <span class="code-string">"applicant_id"</span>: <span class="code-string">"APP123456"</span>,
+            <span class="code-string">"name"</span>: <span class="code-string">"Michael Johnson"</span>,
+            <span class="code-string">"age"</span>: <span class="code-number">35</span>,
+            <span class="code-string">"credit_score"</span>: <span class="code-number">780</span>,
+            <span class="code-string">"annual_income"</span>: <span class="code-number">85000</span>,
+            <span class="code-string">"employment_status"</span>: <span class="code-string">"Employed"</span>,
+            <span class="code-string">"years_employed"</span>: <span class="code-number">7</span>,
+            <span class="code-string">"debt_to_income_ratio"</span>: <span class="code-number">0.28</span>,
+            <span class="code-string">"existing_loans"</span>: [
+                {<span class="code-string">"type"</span>: <span class="code-string">"Mortgage"</span>, <span class="code-string">"amount"</span>: <span class="code-number">250000</span>, <span class="code-string">"payment"</span>: <span class="code-number">1500</span>},
+                {<span class="code-string">"type"</span>: <span class="code-string">"Auto Loan"</span>, <span class="code-string">"amount"</span>: <span class="code-number">25000</span>, <span class="code-string">"payment"</span>: <span class="code-number">450</span>}
+            ]
+        },
+        <span class="code-string">"APP789012"</span>: {
+            <span class="code-string">"applicant_id"</span>: <span class="code-string">"APP789012"</span>,
+            <span class="code-string">"name"</span>: <span class="code-string">"Sarah Williams"</span>,
+            <span class="code-string">"age"</span>: <span class="code-number">28</span>,
+            <span class="code-string">"credit_score"</span>: <span class="code-number">620</span>,
+            <span class="code-string">"annual_income"</span>: <span class="code-number">45000</span>,
+            <span class="code-string">"employment_status"</span>: <span class="code-string">"Employed"</span>,
+            <span class="code-string">"years_employed"</span>: <span class="code-number">2</span>,
+            <span class="code-string">"debt_to_income_ratio"</span>: <span class="code-number">0.42</span>,
+            <span class="code-string">"existing_loans"</span>: [
+                {<span class="code-string">"type"</span>: <span class="code-string">"Student Loan"</span>, <span class="code-string">"amount"</span>: <span class="code-number">35000</span>, <span class="code-string">"payment"</span>: <span class="code-number">350</span>}
+            ]
+        }
+    }
+    <span class="code-keyword">return</span> applicants.get(applicant_id, {})
+
+<span class="code-comment"># Define a function to calculate risk score</span>
+<span class="code-keyword">def</span> <span class="code-function">calculate_risk_score</span>(applicant_info, loan_info):
+    <span class="code-comment"># Start with a base score</span>
+    risk_score = <span class="code-number">500</span>
+    
+    <span class="code-comment"># Adjust based on credit score</span>
+    credit_score = applicant_info.get(<span class="code-string">"credit_score"</span>, <span class="code-number">0</span>)
+    <span class="code-keyword">if</span> credit_score >= <span class="code-number">750</span>:
+        risk_score -= <span class="code-number">200</span>
+    <span class="code-keyword">elif</span> credit_score >= <span class="code-number">700</span>:
+        risk_score -= <span class="code-number">150</span>
+    <span class="code-keyword">elif</span> credit_score >= <span class="code-number">650</span>:
+        risk_score -= <span class="code-number">100</span>
+    <span class="code-keyword">elif</span> credit_score >= <span class="code-number">600</span>:
+        risk_score -= <span class="code-number">50</span>
+    <span class="code-keyword">else</span>:
+        risk_score += <span class="code-number">100</span>
+    
+    <span class="code-comment"># Adjust based on debt-to-income ratio</span>
+    dti = applicant_info.get(<span class="code-string">"debt_to_income_ratio"</span>, <span class="code-number">1.0</span>)
+    <span class="code-keyword">if</span> dti <= <span class="code-number">0.2</span>:
+        risk_score -= <span class="code-number">100</span>
+    <span class="code-keyword">elif</span> dti <= <span class="code-number">0.3</span>:
+        risk_score -= <span class="code-number">50</span>
+    <span class="code-keyword">elif</span> dti <= <span class="code-number">0.4</span>:
+        risk_score += <span class="code-number">50</span>
+    <span class="code-keyword">else</span>:
+        risk_score += <span class="code-number">150</span>
+    
+    <span class="code-comment"># Adjust based on employment stability</span>
+    years_employed = applicant_info.get(<span class="code-string">"years_employed"</span>, <span class="code-number">0</span>)
+    <span class="code-keyword">if</span> years_employed >= <span class="code-number">5</span>:
+        risk_score -= <span class="code-number">100</span>
+    <span class="code-keyword">elif</span> years_employed >= <span class="code-number">3</span>:
+        risk_score -= <span class="code-number">50</span>
+    <span class="code-keyword">elif</span> years_employed >= <span class="code-number">1</span>:
+        risk_score += <span class="code-number">0</span>
+    <span class="code-keyword">else</span>:
+        risk_score += <span class="code-number">100</span>
+    
+    <span class="code-comment"># Adjust based on loan type</span>
+    loan_type = loan_info.get(<span class="code-string">"type"</span>, <span class="code-string">""</span>)
+    <span class="code-keyword">if</span> loan_type == <span class="code-string">"mortgage"</span>:
+        risk_score += <span class="code-number">50</span>  <span class="code-comment"># Mortgages are higher risk due to amount</span>
+    <span class="code-keyword">elif</span> loan_type == <span class="code-string">"auto"</span>:
+        risk_score += <span class="code-number">25</span>   <span class="code-comment"># Auto loans are moderate risk</span>
+    <span class="code-keyword">elif</span> loan_type == <span class="code-string">"personal"</span>:
+        risk_score += <span class="code-number">100</span>  <span class="code-comment"># Personal loans are higher risk due to lack of collateral</span>
+    
+    <span class="code-comment"># Adjust based on loan amount relative to income</span>
+    loan_amount = loan_info.get(<span class="code-string">"amount"</span>, <span class="code-number">0</span>)
+    annual_income = applicant_info.get(<span class="code-string">"annual_income"</span>, <span class="code-number">0</span>)
+    <span class="code-keyword">if</span> annual_income > <span class="code-number">0</span>:
+        loan_to_income_ratio = loan_amount / annual_income
+        <span class="code-keyword">if</span> loan_to_income_ratio <= <span class="code-number">0.2</span>:
+            risk_score -= <span class="code-number">50</span>
+        <span class="code-keyword">elif</span> loan_to_income_ratio <= <span class="code-number">0.5</span>:
+            risk_score += <span class="code-number">0</span>
+        <span class="code-keyword">else</span>:
+            risk_score += <span class="code-number">150</span>
+    
+    <span class="code-comment"># Normalize risk score to 0-1000 scale</span>
+    risk_score = max(<span class="code-number">0</span>, min(<span class="code-number">1000</span>, risk_score))
+    
+    <span class="code-comment"># Determine risk category</span>
+    <span class="code-keyword">if</span> risk_score <= <span class="code-number">300</span>:
+        risk_category = <span class="code-string">"low"</span>
+    <span class="code-keyword">elif</span> risk_score <= <span class="code-number">600</span>:
+        risk_category = <span class="code-string">"medium"</span>
+    <span class="code-keyword">else</span>:
+        risk_category = <span class="code-string">"high"</span>
+    
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"score"</span>: risk_score,
+        <span class="code-string">"category"</span>: risk_category
+    }
+
+<span class="code-comment"># Create a prompt template for low-risk loan approval</span>
+low_risk_approval_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a loan approval specialist for low-risk applications. Review the following application and approve it if it meets standard criteria:\n\nApplicant Information:\n{applicant_info}\n\nLoan Information:\n{loan_info}\n\nRisk Assessment:\n{risk_assessment}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Approve this loan application and provide the terms, including interest rate, monthly payment, and any special conditions."</span>)
+])
+
+<span class="code-comment"># Create a prompt template for medium-risk loan approval</span>
+medium_risk_approval_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a loan approval specialist for medium-risk applications. Review the following application carefully and determine if additional conditions are needed:\n\nApplicant Information:\n{applicant_info}\n\nLoan Information:\n{loan_info}\n\nRisk Assessment:\n{risk_assessment}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Evaluate this loan application. If approved, specify any additional conditions or requirements. If denied, provide a clear explanation with suggestions for improvement."</span>)
+])
+
+<span class="code-comment"># Create a prompt template for high-risk loan approval</span>
+high_risk_approval_prompt = ChatPromptTemplate.from_messages([
+    (<span class="code-string">"system"</span>, <span class="code-string">"You are a senior loan approval specialist for high-risk applications. Conduct a thorough review of the following application:\n\nApplicant Information:\n{applicant_info}\n\nLoan Information:\n{loan_info}\n\nRisk Assessment:\n{risk_assessment}"</span>),
+    (<span class="code-string">"human"</span>, <span class="code-string">"Conduct a detailed risk assessment of this loan application. Recommend approval only with substantial mitigating factors, or provide a detailed denial explanation with specific steps the applicant could take to improve their eligibility."</span>)
+])
+
+<span class="code-comment"># Create the approval chains for different risk levels</span>
+low_risk_approval_chain = (
+    {
+        <span class="code-string">"applicant_info"</span>: lambda x: json.dumps(x[<span class="code-string">"applicant_info"</span>], indent=<span class="code-number">2</span>),
+        <span class="code-string">"loan_info"</span>: lambda x: json.dumps(x[<span class="code-string">"loan_info"</span>], indent=<span class="code-number">2</span>),
+        <span class="code-string">"risk_assessment"</span>: lambda x: json.dumps(x[<span class="code-string">"risk_assessment"</span>], indent=<span class="code-number">2</span>)
+    }
+    | low_risk_approval_prompt
+    | model
+    | StrOutputParser()
+)
+
+medium_risk_approval_chain = (
+    {
+        <span class="code-string">"applicant_info"</span>: lambda x: json.dumps(x[<span class="code-string">"applicant_info"</span>], indent=<span class="code-number">2</span>),
+        <span class="code-string">"loan_info"</span>: lambda x: json.dumps(x[<span class="code-string">"loan_info"</span>], indent=<span class="code-number">2</span>),
+        <span class="code-string">"risk_assessment"</span>: lambda x: json.dumps(x[<span class="code-string">"risk_assessment"</span>], indent=<span class="code-number">2</span>)
+    }
+    | medium_risk_approval_prompt
+    | model
+    | StrOutputParser()
+)
+
+high_risk_approval_chain = (
+    {
+        <span class="code-string">"applicant_info"</span>: lambda x: json.dumps(x[<span class="code-string">"applicant_info"</span>], indent=<span class="code-number">2</span>),
+        <span class="code-string">"loan_info"</span>: lambda x: json.dumps(x[<span class="code-string">"loan_info"</span>], indent=<span class="code-number">2</span>),
+        <span class="code-string">"risk_assessment"</span>: lambda x: json.dumps(x[<span class="code-string">"risk_assessment"</span>], indent=<span class="code-number">2</span>)
+    }
+    | high_risk_approval_prompt
+    | model
+    | StrOutputParser()
+)
+
+<span class="code-comment"># Define the conditional loan approval function</span>
+<span class="code-keyword">def</span> <span class="code-function">conditional_loan_approval</span>(inputs):
+    <span class="code-comment"># Extract inputs</span>
+    applicant_id = inputs.get(<span class="code-string">"applicant_id"</span>)
+    loan_info = inputs.get(<span class="code-string">"loan_info"</span>, {})
+    
+    <span class="code-comment"># Get applicant information</span>
+    applicant_info = get_applicant_info(applicant_id)
+    
+    <span class="code-comment"># Calculate risk score</span>
+    risk_assessment = calculate_risk_score(applicant_info, loan_info)
+    risk_category = risk_assessment.get(<span class="code-string">"category"</span>, <span class="code-string">"medium"</span>)
+    
+    <span class="code-comment"># Prepare inputs for the approval chain</span>
+    approval_inputs = {
+        <span class="code-string">"applicant_info"</span>: applicant_info,
+        <span class="code-string">"loan_info"</span>: loan_info,
+        <span class="code-string">"risk_assessment"</span>: risk_assessment
+    }
+    
+    <span class="code-comment"># Apply conditional logic based on risk category</span>
+    <span class="code-keyword">if</span> risk_category == <span class="code-string">"low"</span>:
+        <span class="code-comment"># For low-risk applications, use standard approval process</span>
+        <span class="code-keyword">return</span> low_risk_approval_chain.invoke(approval_inputs)
+    <span class="code-keyword">elif</span> risk_category == <span class="code-string">"medium"</span>:
+        <span class="code-comment"># For medium-risk applications, use enhanced review process</span>
+        <span class="code-keyword">return</span> medium_risk_approval_chain.invoke(approval_inputs)
+    <span class="code-keyword">else</span>:  <span class="code-comment"># high risk</span>
+        <span class="code-comment"># For high-risk applications, use thorough review process</span>
+        <span class="code-keyword">return</span> high_risk_approval_chain.invoke(approval_inputs)
+
+<span class="code-comment"># Create the conditional loan approval chain using RunnableLambda</span>
+conditional_loan_approval_chain = RunnableLambda(conditional_loan_approval)
+
+<span class="code-comment"># Test the conditional loan approval chain with different applications</span>
+test_applications = [
+    {
+        <span class="code-string">"applicant_id"</span>: <span class="code-string">"APP123456"</span>,
+        <span class="code-string">"loan_info"</span>: {
+            <span class="code-string">"type"</span>: <span class="code-string">"auto"</span>,
+            <span class="code-string">"amount"</span>: <span class="code-number">25000</span>,
+            <span class="code-string">"term"</span>: <span class="code-number">60</span>,  <span class="code-comment"># months</span>
+            <span class="code-string">"purpose"</span>: <span class="code-string">"New car purchase"</span>
+        }
+    },
+    {
+        <span class="code-string">"applicant_id"</span>: <span class="code-string">"APP789012"</span>,
+        <span class="code-string">"loan_info"</span>: {
+            <span class="code-string">"type"</span>: <span class="code-string">"personal"</span>,
+            <span class="code-string">"amount"</span>: <span class="code-number">15000</span>,
+            <span class="code-string">"term"</span>: <span class="code-number">36</span>,  <span class="code-comment"># months</span>
+            <span class="code-string">"purpose"</span>: <span class="code-string">"Debt consolidation"</span>
+        }
+    },
+    {
+        <span class="code-string">"applicant_id"</span>: <span class="code-string">"APP123456"</span>,
+        <span class="code-string">"loan_info"</span>: {
+            <span class="code-string">"type"</span>: <span class="code-string">"mortgage"</span>,
+            <span class="code-string">"amount"</span>: <span class="code-number">400000</span>,
+            <span class="code-string">"term"</span>: <span class="code-number">360</span>,  <span class="code-comment"># months</span>
+            <span class="code-string">"purpose"</span>: <span class="code-string">"Home purchase"</span>
+        }
+    }
+]
+
+<span class="code-keyword">for</span> i, application <span class="code-keyword">in</span> enumerate(test_applications):
+    <span class="code-keyword">print</span>(<span class="code-string">f"\n=== Loan Application #{i+1} ==="</span>)
+    
+    <span class="code-comment"># Get applicant information</span>
+    applicant_info = get_applicant_info(application.get(<span class="code-string">"applicant_id"</span>))
+    <span class="code-keyword">print</span>(<span class="code-string">f"Applicant: {applicant_info.get('name', 'Unknown')}"</span>)
+    
+    <span class="code-comment"># Get loan information</span>
+    loan_info = application.get(<span class="code-string">"loan_info"</span>, {})
+    <span class="code-keyword">print</span>(<span class="code-string">f"Loan Type: {loan_info.get('type', 'Unknown')}"</span>)
+    <span class="code-keyword">print</span>(<span class="code-string">f"Loan Amount: ${loan_info.get('amount', 0):,.2f}"</span>)
+    
+    <span class="code-comment"># Calculate risk score</span>
+    risk_assessment = calculate_risk_score(applicant_info, loan_info)
+    risk_category = risk_assessment.get(<span class="code-string">"category"</span>, <span class="code-string">"medium"</span>)
+    risk_score = risk_assessment.get(<span class="code-string">"score"</span>, <span class="code-number">500</span>)
+    <span class="code-keyword">print</span>(<span class="code-string">f"Risk Category: {risk_category.capitalize()} (Score: {risk_score})"</span>)
+    
+    <span class="code-comment"># Get the approval decision</span>
+    approval_decision = conditional_loan_approval_chain.invoke(application)
+    <span class="code-keyword">print</span>(<span class="code-string">"\nApproval Decision:"</span>)
+    <span class="code-keyword">print</span>(approval_decision)</code></pre>
+
+                            <p>In this banking example, we've implemented a loan approval system with conditional logic:</p>
+                            
+                            <ol>
+                                <li>We created a risk assessment function that calculates a risk score based on various applicant and loan factors</li>
+                                <li>We created different approval chains for low, medium, and high-risk applications</li>
+                                <li>We implemented a conditional approval function that selects the appropriate approval process based on the risk category</li>
+                                <li>We wrapped the conditional function in a RunnableLambda to create the main approval chain</li>
+                            </ol>
+                            
+                            <p>The key advantage of this approach is that the loan approval process adapts based on the risk level of each application. Low-risk applications receive standard processing with favorable terms, medium-risk applications undergo enhanced review with possible additional conditions, and high-risk applications receive thorough scrutiny with stricter requirements.</p>
+                            
+                            <p>Conditional logic is particularly valuable in scenarios where:</p>
+                            <ul>
+                                <li>Different processing rules need to be applied based on input characteristics</li>
+                                <li>Decisions need to be made based on complex criteria</li>
+                                <li>Risk management requires different approaches for different scenarios</li>
+                                <li>Efficiency can be improved by applying appropriate levels of scrutiny</li>
+                            </ul>
+                            
+                            <p>By leveraging conditional logic, businesses can create more intelligent and adaptive AI systems that apply the most appropriate processing rules based on specific conditions, optimizing both effectiveness and efficiency.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <h3 class="component-title">
+                            <i class="fas fa-exchange-alt"></i>
+                            Function to Runnable Conversion
+                        </h3>
+                        
+                        <div class="info-block use-case">
+                            <div class="info-label use-case-label">
+                                <i class="fas fa-check-circle"></i> Business Use Case
+                            </div>
+                            <p>In logistics, function to runnable conversion enables the integration of existing business logic into AI-powered optimization workflows. For example, a shipping company can convert their existing cost calculation functions, route optimization algorithms, and inventory management functions into Runnables that can be chained together with AI components. This allows the company to leverage their proven business logic while benefiting from the flexibility and composability of LangChain's orchestration capabilities.</p>
+                            
+                            <div class="domain-example">
+                                <div class="domain-example-title">
+                                    <i class="fas fa-shipping-fast"></i> Logistics Example
+                                </div>
+                                <p>A global logistics company converted their existing supply chain optimization functions into Runnables to create an AI-enhanced logistics planning system. By integrating their proven cost calculation, route optimization, and inventory management functions with AI components for demand forecasting and disruption handling, they created a comprehensive system that improved delivery efficiency by 22% and reduced fuel costs by 15% while maintaining the reliability of their core business logic.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-block problem-solved">
+                            <div class="info-label problem-solved-label">
+                                <i class="fas fa-lightbulb"></i> Problems Solved
+                            </div>
+                            <p>Function to runnable conversion solves the challenge of integrating existing business logic into LangChain workflows. Many organizations have invested significant resources in developing and testing business logic functions that are critical to their operations. Without the ability to convert these functions to Runnables, organizations would need to either rewrite this logic in a LangChain-compatible format or build complex integration layers, both of which would be time-consuming and error-prone.</p>
+                        </div>
+                        
+                        <div class="info-block impact-absent">
+                            <div class="info-label impact-absent-label">
+                                <i class="fas fa-exclamation-triangle"></i> Impact if Absent
+                            </div>
+                            <p>Without function to runnable conversion, businesses would face significant integration challenges when trying to incorporate existing business logic into LangChain workflows. This would result in duplicated code, increased development time, and higher risk of errors. In logistics and other complex domains, this could lead to suboptimal decision-making, increased operational costs, and reduced competitiveness.</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <span class="tag predefined">Predefined</span>
+                            <span class="tag interface">Interface</span>
+                        </div>
+                        
+                        <div class="info-block">
+                            <div class="info-label">
+                                <i class="fas fa-brain"></i> In-depth Technical Insight
+                            </div>
+                            <p>Function to runnable conversion in LangChain is implemented through the RunnableLambda class, which allows any Python function to be wrapped as a Runnable component. This enables existing business logic to be seamlessly integrated into LangChain workflows without requiring modification or rewriting.</p>
+                            
+                            <p>The key to converting functions to Runnables is understanding the input and output requirements of the function and ensuring that it can be composed with other Runnables in a chain. Functions that take simple inputs and return simple outputs are the easiest to convert, but more complex functions can also be wrapped with appropriate input/output transformations.</p>
+                            
+                            <pre><code><span class="code-keyword">from</span> langchain_core.runnables <span class="code-keyword">import</span> RunnableLambda, RunnablePassthrough
+<span class="code-keyword">from</span> langchain_openai <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain_core.prompts <span class="code-keyword">import</span> ChatPromptTemplate
+<span class="code-keyword">from</span> langchain_core.output_parsers <span class="code-keyword">import</span> StrOutputParser, JsonOutputParser
+<span class="code-keyword">import</span> json
+<span class="code-keyword">import</span> math
+<span class="code-keyword">from</span> typing <span class="code-keyword">import</span> Dict, List, Any
+
+<span class="code-comment"># Initialize the language model</span>
+model = ChatOpenAI(model=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-number">0.2</span>)
+
+<span class="code-comment"># Define existing business logic functions for logistics optimization</span>
+
+<span class="code-comment"># Function to calculate distance between two points</span>
+<span class="code-keyword">def</span> <span class="code-function">calculate_distance</span>(point1: Dict[str, float], point2: Dict[str, float]) -> float:
+    <span class="code-comment"># Calculate the Euclidean distance between two points</span>
+    <span class="code-keyword">return</span> math.sqrt((point1[<span class="code-string">'lat'</span>] - point2[<span class="code-string">'lat'</span>])**<span class="code-number">2</span> + (point1[<span class="code-string">'lon'</span>] - point2[<span class="code-string">'lon'</span>])**<span class="code-number">2</span>)
+
+<span class="code-comment"># Function to calculate transportation cost</span>
+<span class="code-keyword">def</span> <span class="code-function">calculate_transportation_cost</span>(distance: float, weight: float, mode: str) -> float:
+    <span class="code-comment"># Base cost per mile varies by transportation mode</span>
+    base_cost_per_mile = {
+        <span class="code-string">'truck'</span>: <span class="code-number">1.5</span>,
+        <span class="code-string">'rail'</span>: <span class="code-number">0.8</span>,
+        <span class="code-string">'air'</span>: <span class="code-number">5.0</span>,
+        <span class="code-string">'ship'</span>: <span class="code-number">0.4</span>
+    }
+    
+    <span class="code-comment"># Weight multiplier</span>
+    weight_multiplier = <span class="code-number">1.0</span> + (weight / <span class="code-number">10000</span>) * <span class="code-number">0.5</span>
+    
+    <span class="code-comment"># Calculate total cost</span>
+    <span class="code-keyword">return</span> distance * base_cost_per_mile.get(mode, <span class="code-number">1.0</span>) * weight_multiplier
+
+<span class="code-comment"># Function to calculate delivery time</span>
+<span class="code-keyword">def</span> <span class="code-function">calculate_delivery_time</span>(distance: float, mode: str) -> float:
+    <span class="code-comment"># Base speed varies by transportation mode (miles per hour)</span>
+    base_speed = {
+        <span class="code-string">'truck'</span>: <span class="code-number">60</span>,
+        <span class="code-string">'rail'</span>: <span class="code-number">40</span>,
+        <span class="code-string">'air'</span>: <span class="code-number">500</span>,
+        <span class="code-string">'ship'</span>: <span class="code-number">20</span>
+    }
+    
+    <span class="code-comment"># Add handling time (hours)</span>
+    handling_time = {
+        <span class="code-string">'truck'</span>: <span class="code-number">2</span>,
+        <span class="code-string">'rail'</span>: <span class="code-number">8</span>,
+        <span class="code-string">'air'</span>: <span class="code-number">4</span>,
+        <span class="code-string">'ship'</span>: <span class="code-number">24</span>
+    }
+    
+    <span class="code-comment"># Calculate total delivery time</span>
+    travel_time = distance / base_speed.get(mode, <span class="code-number">40</span>)
+    <span class="code-keyword">return</span> travel_time + handling_time.get(mode, <span class="code-number">4</span>)
+
+<span class="code-comment"># Function to optimize route (simplified for example)</span>
+<span class="code-keyword">def</span> <span class="code-function">optimize_route</span>(waypoints: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    <span class="code-comment"># Simple nearest neighbor heuristic for route optimization</span>
+    <span class="code-keyword">if</span> <span class="code-keyword">not</span> waypoints:
+        <span class="code-keyword">return</span> []
+    
+    <span class="code-comment"># Start with the first waypoint</span>
+    optimized_route = [waypoints[<span class="code-number">0</span>]]
+    remaining_waypoints = waypoints[<span class="code-number">1</span>:]
+    
+    <span class="code-comment"># Find the nearest unvisited waypoint at each step</span>
+    <span class="code-keyword">while</span> remaining_waypoints:
+        current_point = optimized_route[-<span class="code-number">1</span>][<span class="code-string">'location'</span>]
+        nearest_point = <span class="code-keyword">None</span>
+        nearest_distance = float(<span class="code-string">'inf'</span>)
+        nearest_index = -<span class="code-number">1</span>
+        
+        <span class="code-keyword">for</span> i, waypoint <span class="code-keyword">in</span> enumerate(remaining_waypoints):
+            distance = calculate_distance(current_point, waypoint[<span class="code-string">'location'</span>])
+            <span class="code-keyword">if</span> distance < nearest_distance:
+                nearest_distance = distance
+                nearest_point = waypoint
+                nearest_index = i
+        
+        <span class="code-keyword">if</span> nearest_point:
+            optimized_route.append(nearest_point)
+            remaining_waypoints.pop(nearest_index)
+    
+    <span class="code-keyword">return</span> optimized_route
+
+<span class="code-comment"># Function to calculate carbon footprint</span>
+<span class="code-keyword">def</span> <span class="code-function">calculate_carbon_footprint</span>(distance: float, mode: str) -> float:
+    <span class="code-comment"># Emissions factor varies by transportation mode (kg CO2 per mile)</span>
+    emissions_factor = {
+        <span class="code-string">'truck'</span>: <span class="code-number">0.402</span>,
+        <span class="code-string">'rail'</span>: <span class="code-number">0.104</span>,
+        <span class="code-string">'air'</span>: <span class="code-number">2.52</span>,
+        <span class="code-string">'ship'</span>: <span class="code-number">0.089</span>
+    }
+    
+    <span class="code-comment"># Calculate total emissions</span>
+    <span class="code-keyword">return</span> distance * emissions_factor.get(mode, <span class="code-number">0.2</span>)
+
+<span class="code-comment"># Convert the existing functions to Runnables</span>
+calculate_distance_runnable = RunnableLambda(calculate_distance)
+calculate_transportation_cost_runnable = RunnableLambda(calculate_transportation_cost)
+calculate_delivery_time_runnable = RunnableLambda(calculate_delivery_time)
+optimize_route_runnable = RunnableLambda(optimize_route)
+calculate_carbon_footprint_runnable = RunnableLambda(calculate_carbon_footprint)
+
+<span class="code-comment"># Create a function to get shipment data</span>
+<span class="code-keyword">def</span> <span class="code-function">get_shipment_data</span>(shipment_id: str) -> Dict[str, Any]:
+    <span class="code-comment"># In a real implementation, this would query a database</span>
+    shipments = {
+        <span class="code-string">"SHP123456"</span>: {
+            <span class="code-string">"shipment_id"</span>: <span class="code-string">"SHP123456"</span>,
+            <span class="code-string">"origin"</span>: {<span class="code-s
