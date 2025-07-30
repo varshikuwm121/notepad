@@ -1,1 +1,1888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Language Models - Business Applications</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #4f46e5;
+            --accent-color: #10b981;
+            --dark-bg: #1e293b;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            color: var(--accent-color);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--accent-color);
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 3rem 0;
+        }
+        
+        .section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 15px;
+        }
+        
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border-color);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            gap: 12px;
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .card-content {
+            color: var(--text-secondary);
+        }
+        
+        .business-example {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .business-example-title {
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .code-block {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            position: relative;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .code-title {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .copy-button {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s;
+        }
+        
+        .copy-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .code-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+        
+        .code-keyword {
+            color: #c084fc;
+        }
+        
+        .code-string {
+            color: #86efac;
+        }
+        
+        .code-function {
+            color: #60a5fa;
+        }
+        
+        .code-variable {
+            color: #fbbf24;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .info-item {
+            background-color: var(--light-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .info-item-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-item-content {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .tag {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tag.predefined {
+            background-color: var(--secondary-color);
+        }
+        
+        .tag.custom {
+            background-color: var(--accent-color);
+        }
+        
+        footer {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-brain"></i>
+                    <span>AI Business Framework</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Components</a></li>
+                        <li><a href="#">Use Cases</a></li>
+                        <li><a href="#">Resources</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <h1>Level 2: Core Language Models</h1>
+            <p>Primary components that serve as the main AI interfaces for business applications</p>
+        </div>
+    </section>
+    
+    <main class="main-content">
+        <div class="container">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h2 class="section-title">2.1 Language Model Types</h2>
+                </div>
+                
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <h3 class="card-title">Chat Models</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Modern message-based models that excel at conversational interactions and context-aware responses.</p>
+                            
+                            <div class="business-example">
+                                <div class="business-example-title">
+                                    <i class="fas fa-briefcase-medical"></i>
+                                    Healthcare Use Case
+                                </div>
+                                <p>A hospital implements a Chat Model for their patient triage system. The model engages with patients through a chat interface, asks relevant questions about symptoms, and provides preliminary assessments before directing them to appropriate care levels.</p>
+                            </div>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        Problems Solved
+                                    </div>
+                                    <div class="info-item-content">
+                                        Reduces wait times, optimizes resource allocation, and provides 24/7 initial patient assessment
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Impact of Absence
+                                    </div>
+                                    <div class="info-item-content">
+                                        Overburdened staff, longer patient wait times, and inefficient triage processes
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Python - Chat Model Implementation</div>
+                                    <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage, AIMessage, SystemMessage
+<span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
 
+<span class="code-comment"># Initialize the chat model for healthcare triage</span>
+<span class="code-variable">chat_model</span> = ChatOpenAI(model_name=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-variable">0.2</span>)
+
+<span class="code-comment"># Create a system message to set the context</span>
+<span class="code-variable">system_message</span> = SystemMessage(
+    content=<span class="code-string">"You are a healthcare triage assistant. Ask patients about their symptoms and provide preliminary assessment."</span>
+)
+
+<span class="code-comment"># Patient's message about symptoms</span>
+<span class="code-variable">patient_message</span> = HumanMessage(
+    content=<span class="code-string">"I've had a fever for two days and a persistent cough. What should I do?"</span>
+)
+
+<span class="code-comment"># Generate response</span>
+<span class="code-variable">response</span> = <span class="code-variable">chat_model</span>([<span class="code-variable">system_message</span>, <span class="code-variable">patient_message</span>])
+<span class="code-function">print</span>(<span class="code-variable">response</span>.content)</code></pre>
+                            </div>
+                            
+                            <div>
+                                <span class="tag predefined">Predefined</span>
+                                <span class="tag custom">Custom</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <h3 class="card-title">LLMs (Legacy)</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Traditional string-to-string models that process input text and generate output text without maintaining conversational context.</p>
+                            
+                            <div class="business-example">
+                                <div class="business-example-title">
+                                    <i class="fas fa-university"></i>
+                                    Banking Use Case
+                                </div>
+                                <p>A financial institution uses a legacy LLM to automatically generate customer account summaries. The model processes transaction data and creates natural language summaries for monthly statements.</p>
+                            </div>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        Problems Solved
+                                    </div>
+                                    <div class="info-item-content">
+                                        Automates report generation, reduces manual work, ensures consistent formatting
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Impact of Absence
+                                    </div>
+                                    <div class="info-item-content">
+                                        Manual report creation, higher operational costs, potential for human error
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Python - Legacy LLM Implementation</div>
+                                    <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="code-keyword">from</span> langchain.llms <span class="code-keyword">import</span> OpenAI
+<span class="code-keyword">import</span> json
+
+<span class="code-comment"># Initialize the legacy LLM</span>
+<span class="code-variable">llm</span> = OpenAI(model_name=<span class="code-string">"text-davinci-003"</span>)
+
+<span class="code-comment"># Sample transaction data</span>
+<span class="code-variable">transaction_data</span> = {
+    <span class="code-string">"account_number"</span>: <span class="code-string">"XXXX1234"</span>,
+    <span class="code-string">"transactions"</span>: [
+        {<span class="code-string">"date"</span>: <span class="code-string">"2023-05-01"</span>, <span class="code-string">"description"</span>: <span class="code-string">"Grocery Store"</span>, <span class="code-string">"amount"</span>: -85.50},
+        {<span class="code-string">"date"</span>: <span class="code-string">"2023-05-03"</span>, <span class="code-string">"description"</span>: <span class="code-string">"Salary Deposit"</span>, <span class="code-string">"amount"</span>: 2500.00},
+        {<span class="code-string">"date"</span>: <span class="code-string">"2023-05-05"</span>, <span class="code-string">"description"</span>: <span class="code-string">"Electric Bill"</span>, <span class="code-string">"amount"</span>: -120.75}
+    ]
+}
+
+<span class="code-comment"># Create prompt for the LLM</span>
+<span class="code-variable">prompt</span> = <span class="code-string">f"""
+Generate a monthly account summary based on the following transaction data:
+{json.dumps(transaction_data, indent=2)}
+
+The summary should highlight spending patterns and major transactions.
+"""</span>
+
+<span class="code-comment"># Generate the summary</span>
+<span class="code-variable">summary</span> = <span class="code-variable">llm</span>(<span class="code-variable">prompt</span>)
+<span class="code-function">print</span>(<span class="code-variable">summary</span>)</code></pre>
+                            </div>
+                            
+                            <div>
+                                <span class="tag predefined">Predefined</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <h3 class="card-title">Model Selection & Integration</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Strategic approach to choosing the right language model for specific business needs and integrating it into existing systems.</p>
+                            
+                            <div class="business-example">
+                                <div class="business-example-title">
+                                    <i class="fas fa-shipping-fast"></i>
+                                    Logistics Use Case
+                                </div>
+                                <p>A global shipping company implements a model selection framework to choose between different AI models for various logistics operations: route optimization, customer service chatbots, and document processing.</p>
+                            </div>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        Problems Solved
+                                    </div>
+                                    <div class="info-item-content">
+                                        Optimizes model performance for specific tasks, reduces costs, improves operational efficiency
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Impact of Absence
+                                    </div>
+                                    <div class="info-item-content">
+                                        Suboptimal model selection, higher operational costs, inefficient processes
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Python - Model Selection Framework</div>
+                                    <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="code-keyword">from</span> langchain.llms <span class="code-keyword">import</span> OpenAI, HuggingFaceHub
+<span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain <span class="code-keyword">import</span> LLMChain
+<span class="code-keyword">from</span> langchain.prompts <span class="code-keyword">import</span> PromptTemplate
+
+<span class="code-comment"># Define available models for different logistics tasks</span>
+<span class="code-variable">MODELS</span> = {
+    <span class="code-string">"route_optimization"</span>: {
+        <span class="code-string">"model"</span>: HuggingFaceHub(
+            repo_id=<span class="code-string">"google/flan-t5-large"</span>,
+            model_kwargs={<span class="code-string">"temperature"</span>: <span class="code-variable">0.1</span>}
+        ),
+        <span class="code-string">"prompt_template"</span>: <span class="code-string">"Optimize delivery route for the following locations: {locations}"</span>
+    },
+    <span class="code-string">"customer_service"</span>: {
+        <span class="code-string">"model"</span>: ChatOpenAI(model_name=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-variable">0.3</span>),
+        <span class="code-string">"prompt_template"</span>: <span class="code-string">"As a logistics customer service agent, respond to: {query}"</span>
+    },
+    <span class="code-string">"document_processing"</span>: {
+        <span class="code-string">"model"</span>: OpenAI(model_name=<span class="code-string">"text-davinci-003"</span>, temperature=<span class="code-variable">0.2</span>),
+        <span class="code-string">"prompt_template"</span>: <span class="code-string">"Extract key information from this shipping document: {document_text}"</span>
+    }
+}
+
+<span class="code-keyword">def</span> <span class="code-function">select_and_execute_model</span>(task, input_data):
+    <span class="code-keyword">if</span> task <span class="code-keyword">not in</span> <span class="code-variable">MODELS</span>:
+        <span class="code-keyword">raise</span> <span class="code-function">ValueError</span>(<span class="code-string">f"Unsupported task: {task}"</span>)
+    
+    <span class="code-variable">model_info</span> = <span class="code-variable">MODELS</span>[task]
+    <span class="code-variable">prompt</span> = <span class="code-function">PromptTemplate</span>(
+        input_variables=[<span class="code-string">"input"</span>],
+        template=<span class="code-variable">model_info</span>[<span class="code-string">"prompt_template"</span>].replace(<span class="code-string">"{"</span> + task.split(<span class="code-string">"_"</span>)[0] + <span class="code-string">"}"</span>, <span class="code-string">"{input}"</span>)
+    )
+    
+    <span class="code-variable">chain</span> = <span class="code-function">LLMChain</span>(llm=<span class="code-variable">model_info</span>[<span class="code-string">"model"</span>], prompt=<span class="code-variable">prompt</span>)
+    <span class="code-keyword">return</span> <span class="code-variable">chain</span>.run(input=input_data)
+
+<span class="code-comment"># Example usage</span>
+<span class="code-variable">route_result</span> = <span class="code-function">select_and_execute_model</span>(
+    <span class="code-string">"route_optimization"</span>, 
+    <span class="code-string">"Warehouse A, Customer B, Customer C, Warehouse A"</span>
+)
+<span class="code-function">print</span>(<span class="code-variable">route_result</span>)</code></pre>
+                            </div>
+                            
+                            <div>
+                                <span class="tag predefined">Predefined</span>
+                                <span class="tag custom">Custom</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h2 class="section-title">2.2 Model Operations</h2>
+                </div>
+                
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <h3 class="card-title">Basic Invocation</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Fundamental method of calling language models to generate responses based on input prompts.</p>
+                            
+                            <div class="business-example">
+                                <div class="business-example-title">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Retail Use Case
+                                </div>
+                                <p>A retail company uses basic model invocation to generate product descriptions for their e-commerce platform. The model creates unique, SEO-friendly descriptions for thousands of products.</p>
+                            </div>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        Problems Solved
+                                    </div>
+                                    <div class="info-item-content">
+                                        Automates content creation, ensures consistent quality, saves time and resources
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Impact of Absence
+                                    </div>
+                                    <div class="info-item-content">
+                                        Manual content creation, inconsistent quality, higher operational costs
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Python - Basic Model Invocation</div>
+                                    <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage
+
+<span class="code-comment"># Initialize the model</span>
+<span class="code-variable">model</span> = ChatOpenAI(model_name=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-variable">0.7</span>)
+
+<span class="code-comment"># Function to generate product descriptions</span>
+<span class="code-keyword">def</span> <span class="code-function">generate_product_description</span>(product_name, features, target_audience):
+    <span class="code-variable">prompt</span> = <span class="code-string">f"""
+    Create a compelling product description for {product_name} with the following features:
+    {features}
+    
+    The target audience is: {target_audience}
+    
+    The description should be SEO-friendly, highlight key benefits, and be around 100 words.
+    """</span>
+    
+    <span class="code-comment"># Basic invocation using the invoke method</span>
+    <span class="code-variable">response</span> = <span class="code-variable">model</span>.invoke([HumanMessage(content=<span class="code-variable">prompt</span>)])
+    <span class="code-keyword">return</span> <span class="code-variable">response</span>.content
+
+<span class="code-comment"># Example usage</span>
+<span class="code-variable">product_name</span> = <span class="code-string">"Eco-Friendly Water Bottle"</span>
+<span class="code-variable">features</span> = <span class="code-string">"BPA-free, 32oz capacity, insulated design, leak-proof cap"</span>
+<span class="code-variable">target_audience</span> = <span class="code-string">"Environmentally conscious consumers and outdoor enthusiasts"</span>
+
+<span class="code-variable">description</span> = <span class="code-function">generate_product_description</span>(<span class="code-variable">product_name</span>, <span class="code-variable">features</span>, <span class="code-variable">target_audience</span>)
+<span class="code-function">print</span>(<span class="code-variable">description</span>)</code></pre>
+                            </div>
+                            
+                            <div>
+                                <span class="tag predefined">Predefined</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-stream"></i>
+                            </div>
+                            <h3 class="card-title">Streaming</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Method of receiving model responses in chunks as they're generated, providing real-time feedback to users.</p>
+                            
+                            <div class="business-example">
+                                <div class="business-example-title">
+                                    <i class="fas fa-briefcase-medical"></i>
+                                    Healthcare Use Case
+                                </div>
+                                <p>A telemedicine platform implements streaming to provide real-time transcription of doctor-patient conversations. The transcribed text appears instantly, allowing doctors to review and correct any errors during the consultation.</p>
+                            </div>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        Problems Solved
+                                    </div>
+                                    <div class="info-item-content">
+                                        Improves patient experience, enables real-time error correction, enhances documentation accuracy
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Impact of Absence
+                                    </div>
+                                    <div class="info-item-content">
+                                        Delayed feedback, reduced patient engagement, potential for documentation errors
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Python - Model Streaming Implementation</div>
+                                    <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage
+<span class="code-keyword">from</span> langchain.callbacks.streaming_stdout <span class="code-keyword">import</span> StreamingStdOutCallbackHandler
+
+<span class="code-comment"># Initialize the model with streaming enabled</span>
+<span class="code-variable">chat</span> = ChatOpenAI(
+    model_name=<span class="code-string">"gpt-4"</span>,
+    streaming=<span class="code-keyword">True</span>,
+    callbacks=[StreamingStdOutCallbackHandler()],
+    temperature=<span class="code-variable">0.3</span>
+)
+
+<span class="code-comment"># Simulate a doctor-patient conversation transcription</span>
+<span class="code-variable">conversation</span> = <span class="code-string">"""
+Doctor: Good morning. What brings you in today?
+Patient: I've been experiencing headaches for the past week.
+Doctor: Can you describe the pain? Is it sharp or dull?
+Patient: It's mostly dull, but sometimes it gets sharp behind my eyes.
+Doctor: Any other symptoms? Nausea, sensitivity to light?
+Patient: A little sensitivity to light, but no nausea.
+"""</span>
+
+<span class="code-variable">prompt</span> = <span class="code-string">f"""
+Transcribe the following doctor-patient conversation in a structured format.
+Include timestamps and identify the speaker for each segment:
+
+{conversation}
+"""</span>
+
+<span class="code-comment"># Stream the response</span>
+<span class="code-function">print</span>(<span class="code-string">"Transcription:"</span>)
+<span class="code-variable">response</span> = <span class="code-variable">chat</span>.stream([HumanMessage(content=<span class="code-variable">prompt</span>)])</code></pre>
+                            </div>
+                            
+                            <div>
+                                <span class="tag predefined">Predefined</span>
+                                <span class="tag custom">Custom</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <h3 class="card-title">Batch Processing</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Efficient method of processing multiple inputs simultaneously, optimizing resource usage and reducing processing time.</p>
+                            
+                            <div class="business-example">
+                                <div class="business-example-title">
+                                    <i class="fas fa-university"></i>
+                                    Banking Use Case
+                                </div>
+                                <p>A bank uses batch processing to analyze thousands of loan applications overnight. The model evaluates each application against lending criteria and generates preliminary assessments for loan officers to review in the morning.</p>
+                            </div>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        Problems Solved
+                                    </div>
+                                    <div class="info-item-content">
+                                        Processes large volumes efficiently, reduces processing time, optimizes resource usage
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Impact of Absence
+                                    </div>
+                                    <div class="info-item-content">
+                                        Slower processing, higher operational costs, delayed decision-making
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Python - Batch Processing Implementation</div>
+                                    <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage
+<span class="code-keyword">import</span> json
+<span class="code-keyword">import</span> time
+
+<span class="code-comment"># Initialize the model</span>
+<span class="code-variable">model</span> = ChatOpenAI(model_name=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-variable">0.2</span>)
+
+<span class="code-comment"># Sample loan applications data</span>
+<span class="code-variable">loan_applications</span> = [
+    {
+        <span class="code-string">"application_id"</span>: <span class="code-string">"LA001"</span>,
+        <span class="code-string">"applicant_name"</span>: <span class="code-string">"John Smith"</span>,
+        <span class="code-string">"credit_score"</span>: 720,
+        <span class="code-string">"income"</span>: 75000,
+        <span class="code-string">"loan_amount"</span>: 250000,
+        <span class="code-string">"loan_purpose"</span>: <span class="code-string">"Home Purchase"</span>
+    },
+    {
+        <span class="code-string">"application_id"</span>: <span class="code-string">"LA002"</span>,
+        <span class="code-string">"applicant_name"</span>: <span class="code-string">"Sarah Johnson"</span>,
+        <span class="code-string">"credit_score"</span>: 680,
+        <span class="code-string">"income"</span>: 65000,
+        <span class="code-string">"loan_amount"</span>: 15000,
+        <span class="code-string">"loan_purpose"</span>: <span class="code-string">"Car Purchase"</span>
+    },
+    {
+        <span class="code-string">"application_id"</span>: <span class="code-string">"LA003"</span>,
+        <span class="code-string">"applicant_name"</span>: <span class="code-string">"Michael Brown"</span>,
+        <span class="code-string">"credit_score"</span>: 810,
+        <span class="code-string">"income"</span>: 120000,
+        <span class="code-string">"loan_amount"</span>: 50000,
+        <span class="code-string">"loan_purpose"</span>: <span class="code-string">"Home Improvement"</span>
+    }
+]
+
+<span class="code-comment"># Create prompts for each application</span>
+<span class="code-variable">prompts</span> = []
+<span class="code-keyword">for</span> <span class="code-variable">app</span> <span class="code-keyword">in</span> <span class="code-variable">loan_applications</span>:
+    <span class="code-variable">prompt</span> = <span class="code-string">f"""
+    Evaluate the following loan application and provide a preliminary assessment:
+    
+    Application ID: {app['application_id']}
+    Applicant: {app['applicant_name']}
+    Credit Score: {app['credit_score']}
+    Annual Income: ${app['income']:,}
+    Loan Amount: ${app['loan_amount']:,}
+    Loan Purpose: {app['loan_purpose']}
+    
+    Provide a risk assessment (Low, Medium, High) and a brief explanation.
+    """</span>
+    <span class="code-variable">prompts</span>.append(HumanMessage(content=<span class="code-variable">prompt</span>))
+
+<span class="code-comment"># Process applications in batch</span>
+<span class="code-variable">start_time</span> = time.time()
+<span class="code-variable">results</span> = <span class="code-variable">model</span>.batch(<span class="code-variable">prompts</span>)
+<span class="code-variable">end_time</span> = time.time()
+
+<span class="code-comment"># Display results</span>
+<span class="code-keyword">for</span> <span class="code-variable">i</span>, <span class="code-variable">result</span> <span class="code-keyword">in</span> <span class="code-function">enumerate</span>(<span class="code-variable">results</span>):
+    <span class="code-function">print</span>(<span class="code-string">f"Application ID: {loan_applications[i]['application_id']}"</span>)
+    <span class="code-function">print</span>(<span class="code-variable">result</span>.content)
+    <span class="code-function">print</span>(<span class="code-string">"---"</span>)
+
+<span class="code-function">print</span>(<span class="code-string">f"Processed {len(loan_applications)} applications in {end_time - start_time:.2f} seconds"</span>)</code></pre>
+                            </div>
+                            
+                            <div>
+                                <span class="tag predefined">Predefined</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <h3 class="card-title">Caching Model Responses</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Technique to store and reuse model responses for identical inputs, reducing processing time and costs.</p>
+                            
+                            <div class="business-example">
+                                <div class="business-example-title">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Retail Use Case
+                                </div>
+                                <p>An e-commerce platform implements response caching for product recommendations. Frequently viewed products have their recommendation sets cached, reducing API calls and improving page load times during high-traffic periods.</p>
+                            </div>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        Problems Solved
+                                    </div>
+                                    <div class="info-item-content">
+                                        Reduces API costs, improves response times, enhances user experience
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Impact of Absence
+                                    </div>
+                                    <div class="info-item-content">
+                                        Higher API costs, slower response times, potential for service degradation during peak loads
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Python - Response Caching Implementation</div>
+                                    <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage
+<span class="code-keyword">from</span> langchain.cache <span class="code-keyword">import</span> InMemoryCache
+<span class="code-keyword">from</span> langchain.globals <span class="code-keyword">import</span> set_llm_cache
+<span class="code-keyword">import</span> hashlib
+<span class="code-keyword">import</span> time
+
+<span class="code-comment"># Set up caching</span>
+<span class="code-variable">cache</span> = InMemoryCache()
+set_llm_cache(<span class="code-variable">cache</span>)
+
+<span class="code-comment"># Initialize the model</span>
+<span class="code-variable">model</span> = ChatOpenAI(model_name=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-variable">0.3</span>)
+
+<span class="code-comment"># Function to generate product recommendations with caching</span>
+<span class="code-keyword">def</span> <span class="code-function">get_product_recommendations</span>(product_id, customer_segment):
+    <span class="code-comment"># Create a unique cache key based on input parameters</span>
+    <span class="code-variable">cache_key</span> = hashlib.md5(<span class="code-string">f"{product_id}_{customer_segment}"</span>.encode()).hexdigest()
+    
+    <span class="code-comment"># Check if the result is already in the cache</span>
+    <span class="code-keyword">if</span> <span class="code-variable">cache_key</span> <span class="code-keyword">in</span> <span class="code-variable">cache</span>._cache:
+        <span class="code-function">print</span>(<span class="code-string">f"Retrieving recommendations from cache for {product_id}"</span>)
+        <span class="code-keyword">return</span> <span class="code-variable">cache</span>._cache[<span class="code-variable">cache_key</span>]
+    
+    <span class="code-comment"># If not in cache, generate new recommendations</span>
+    <span class="code-function">print</span>(<span class="code-string">f"Generating new recommendations for {product_id}"</span>)
+    <span class="code-variable">prompt</span> = <span class="code-string">f"""
+    Generate 5 product recommendations for customers who viewed product ID {product_id}.
+    The customer segment is {customer_segment}.
+    
+    Return the recommendations as a JSON array with product IDs and names.
+    """</span>
+    
+    <span class="code-variable">start_time</span> = time.time()
+    <span class="code-variable">response</span> = <span class="code-variable">model</span>.invoke([HumanMessage(content=<span class="code-variable">prompt</span>)])
+    <span class="code-variable">end_time</span> = time.time()
+    
+    <span class="code-function">print</span>(<span class="code-string">f"Generated recommendations in {end_time - start_time:.2f} seconds"</span>)
+    
+    <span class="code-comment"># Store the result in cache</span>
+    <span class="code-variable">cache</span>._cache[<span class="code-variable">cache_key</span>] = <span class="code-variable">response</span>.content
+    
+    <span class="code-keyword">return</span> <span class="code-variable">response</span>.content
+
+<span class="code-comment"># Example usage - first call (not cached)</span>
+<span class="code-variable">recommendations1</span> = <span class="code-function">get_product_recommendations</span>(<span class="code-string">"P12345"</span>, <span class="code-string">"premium"</span>)
+
+<span class="code-comment"># Example usage - second call with same parameters (cached)</span>
+<span class="code-variable">recommendations2</span> = <span class="code-function">get_product_recommendations</span>(<span class="code-string">"P12345"</span>, <span class="code-string">"premium"</span>)
+
+<span class="code-function">print</span>(<span class="code-string">"Recommendations:"</span>, <span class="code-variable">recommendations1</span>)</code></pre>
+                            </div>
+                            
+                            <div>
+                                <span class="tag predefined">Predefined</span>
+                                <span class="tag custom">Custom</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <h3 class="card-title">Token Usage Tracking</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Monitoring and recording the number of tokens consumed by model operations to manage costs and optimize usage.</p>
+                            
+                            <div class="business-example">
+                                <div class="business-example-title">
+                                    <i class="fas fa-shipping-fast"></i>
+                                    Logistics Use Case
+                                </div>
+                                <p>A shipping company implements token usage tracking to monitor costs for their AI-powered logistics optimization system. This helps them budget accurately and identify opportunities to optimize prompts and reduce costs.</p>
+                            </div>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        Problems Solved
+                                    </div>
+                                    <div class="info-item-content">
+                                        Enables accurate cost forecasting, identifies optimization opportunities, prevents budget overruns
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Impact of Absence
+                                    </div>
+                                    <div class="info-item-content">
+                                        Unpredictable costs, missed optimization opportunities, potential budget overruns
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Python - Token Usage Tracking</div>
+                                    <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage
+<span class="code-keyword">from</span> langchain.callbacks <span class="code-keyword">import</span> get_openai_callback
+<span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
+<span class="code-keyword">import</span> datetime
+
+<span class="code-comment"># Initialize the model</span>
+<span class="code-variable">model</span> = ChatOpenAI(model_name=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-variable">0.2</span>)
+
+<span class="code-comment"># Initialize token usage tracking</span>
+<span class="code-variable">token_usage_data</span> = []
+
+<span class="code-keyword">def</span> <span class="code-function">track_token_usage</span>(operation_name, prompt, model_func):
+    <span class="code-keyword">with</span> <span class="code-function">get_openai_callback</span>() <span class="code-keyword">as</span> <span class="code-variable">cb</span>:
+        <span class="code-variable">start_time</span> = datetime.datetime.now()
+        <span class="code-variable">response</span> = <span class="code-variable">model_func</span>(prompt)
+        <span class="code-variable">end_time</span> = datetime.datetime.now()
+        
+        <span class="code-comment"># Calculate duration</span>
+        <span class="code-variable">duration</span> = (<span class="code-variable">end_time</span> - <span class="code-variable">start_time</span>).total_seconds()
+        
+        <span class="code-comment"># Record token usage data</span>
+        <span class="code-variable">token_usage_data</span>.append({
+            <span class="code-string">"timestamp"</span>: <span class="code-variable">start_time</span>,
+            <span class="code-string">"operation"</span>: <span class="code-variable">operation_name</span>,
+            <span class="code-string">"prompt_tokens"</span>: <span class="code-variable">cb</span>.prompt_tokens,
+            <span class="code-string">"completion_tokens"</span>: <span class="code-variable">cb</span>.completion_tokens,
+            <span class="code-string">"total_tokens"</span>: <span class="code-variable">cb</span>.total_tokens,
+            <span class="code-string">"total_cost"</span>: <span class="code-variable">cb</span>.total_cost,
+            <span class="code-string">"duration_seconds"</span>: <span class="code-variable">duration</span>
+        })
+        
+        <span class="code-keyword">return</span> <span class="code-variable">response</span>
+
+<span class="code-comment"># Example usage for logistics optimization</span>
+<span class="code-variable">route_optimization_prompt</span> = <span class="code-string">"""
+Optimize the delivery route for the following locations:
+1. Warehouse (123 Main St)
+2. Customer A (456 Oak Ave)
+3. Customer B (789 Pine Rd)
+4. Customer C (321 Elm Blvd)
+5. Warehouse (123 Main St)
+
+Consider traffic patterns, delivery time windows, and vehicle capacity.
+Provide the optimal sequence of stops and estimated total travel time.
+"""</span>
+
+<span class="code-comment"># Track token usage for route optimization</span>
+<span class="code-variable">route_result</span> = <span class="code-function">track_token_usage</span>(
+    <span class="code-string">"route_optimization"</span>,
+    <span class="code-variable">route_optimization_prompt</span>,
+    <span class="code-keyword">lambda</span> <span class="code-variable">p</span>: <span class="code-variable">model</span>.invoke([HumanMessage(content=<span class="code-variable">p</span>)])
+)
+
+<span class="code-comment"># Example usage for inventory management</span>
+<span class="code-variable">inventory_prompt</span> = <span class="code-string">"""
+Analyze the following inventory data and recommend restocking actions:
+
+Product A: Current stock 50, Weekly demand 120, Lead time 5 days
+Product B: Current stock 200, Weekly demand 80, Lead time 3 days
+Product C: Current stock 30, Weekly demand 45, Lead time 7 days
+
+Consider safety stock levels and seasonal demand variations.
+"""</span>
+
+<span class="code-comment"># Track token usage for inventory management</span>
+<span class="code-variable">inventory_result</span> = <span class="code-function">track_token_usage</span>(
+    <span class="code-string">"inventory_management"</span>,
+    <span class="code-variable">inventory_prompt</span>,
+    <span class="code-keyword">lambda</span> <span class="code-variable">p</span>: <span class="code-variable">model</span>.invoke([HumanMessage(content=<span class="code-variable">p</span>)])
+)
+
+<span class="code-comment"># Display token usage summary</span>
+<span class="code-variable">df</span> = pd.DataFrame(<span class="code-variable">token_usage_data</span>)
+<span class="code-function">print</span>(<span class="code-string">"Token Usage Summary:"</span>)
+<span class="code-function">print</span>(<span class="code-variable">df</span>)
+
+<span class="code-comment"># Calculate total costs</span>
+<span class="code-variable">total_cost</span> = <span class="code-variable">df</span>[<span class="code-string">'total_cost'</span>].sum()
+<span class="code-variable">total_tokens</span> = <span class="code-variable">df</span>[<span class="code-string">'total_tokens'</span>].sum()
+<span class="code-function">print</span>(<span class="code-string">f"\nTotal Tokens Used: {total_tokens}"</span>)
+<span class="code-function">print</span>(<span class="code-string">f"Total Cost: ${total_cost:.4f}"</span>)</code></pre>
+                            </div>
+                            
+                            <div>
+                                <span class="tag predefined">Predefined</span>
+                                <span class="tag custom">Custom</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-tachometer-alt"></i>
+                            </div>
+                            <h3 class="card-title">Rate Limiting</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Controlling the frequency of API requests to prevent exceeding service limits and ensure consistent system performance.</p>
+                            
+                            <div class="business-example">
+                                <div class="business-example-title">
+                                    <i class="fas fa-briefcase-medical"></i>
+                                    Healthcare Use Case
+                                </div>
+                                <p>A hospital's patient data analysis system implements rate limiting to manage API calls during peak hours. This ensures that critical patient care applications always have access to AI services without interruption.</p>
+                            </div>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        Problems Solved
+                                    </div>
+                                    <div class="info-item-content">
+                                        Prevents service interruptions, ensures fair resource allocation, maintains system stability
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Impact of Absence
+                                    </div>
+                                    <div class="info-item-content">
+                                        Service disruptions, uneven resource allocation, potential system failures during peak loads
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Python - Rate Limiting Implementation</div>
+                                    <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage
+<span class="code-keyword">import</span> time
+<span class="code-keyword">import</span> threading
+<span class="code-keyword">from</span> collections <span class="code-keyword">import</span> deque
+
+<span class="code-comment"># Initialize the model</span>
+<span class="code-variable">model</span> = ChatOpenAI(model_name=<span class="code-string">"gpt-4"</span>, temperature=<span class="code-variable">0.3</span>)
+
+<span class="code-comment"># Rate limiter class</span>
+<span class="code-keyword">class</span> <span class="code-function">RateLimiter</span>:
+    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(self, max_calls, time_window):
+        <span class="code-variable">self.max_calls</span> = <span class="code-variable">max_calls</span>
+        <span class="code-variable">self.time_window</span> = <span class="code-variable">time_window</span>
+        <span class="code-variable">self.calls</span> = deque()
+        <span class="code-variable">self.lock</span> = threading.Lock()
+    
+    <span class="code-keyword">def</span> <span class="code-function">wait_if_needed</span>(self):
+        <span class="code-keyword">with</span> <span class="code-variable">self.lock</span>:
+            <span class="code-variable">current_time</span> = time.time()
+            
+            <span class="code-comment"># Remove calls outside the time window</span>
+            <span class="code-keyword">while</span> <span class="code-variable">self.calls</span> <span class="code-keyword">and</span> <span class="code-variable">self.calls</span>[0] <= <span class="code-variable">current_time</span> - <span class="code-variable">self.time_window</span>:
+                <span class="code-variable">self.calls</span>.popleft()
+            
+            <span class="code-comment"># Check if we've reached the limit</span>
+            <span class="code-keyword">if</span> len(<span class="code-variable">self.calls</span>) >= <span class="code-variable">self.max_calls</span>:
+                <span class="code-comment"># Calculate wait time</span>
+                <span class="code-variable">wait_time</span> = <span class="code-variable">self.calls</span>[0] + <span class="code-variable">self.time_window</span> - <span class="code-variable">current_time</span>
+                <span class="code-function">print</span>(<span class="code-string">f"Rate limit reached. Waiting for {wait_time:.2f} seconds."</span>)
+                time.sleep(<span class="code-variable">wait_time</span>)
+            
+            <span class="code-comment"># Record the call</span>
+            <span class="code-variable">self.calls</span>.append(time.time())
+
+<span class="code-comment"># Create rate limiters for different priority levels</span>
+<span class="code-variable">critical_rate_limiter</span> = <span class="code-function">RateLimiter</span>(max_calls=60, time_window=60)  <span class="code-comment"># 60 calls per minute for critical tasks</span>
+<span class="code-variable">standard_rate_limiter</span> = <span class="code-function">RateLimiter</span>(max_calls=20, time_window=60)  <span class="code-comment"># 20 calls per minute for standard tasks</span>
+<span class="code-variable">background_rate_limiter</span> = <span class="code-function">RateLimiter</span>(max_calls=5, time_window=60)  <span class="code-comment"># 5 calls per minute for background tasks</span>
+
+<span class="code-comment"># Function to make rate-limited API calls</span>
+<span class="code-keyword">def</span> <span class="code-function">rate_limited_call</span>(prompt, priority=<span class="code-string">"standard"</span>):
+    <span class="code-comment"># Select appropriate rate limiter based on priority</span>
+    <span class="code-keyword">if</span> priority == <span class="code-string">"critical"</span>:
+        <span class="code-variable">rate_limiter</span> = <span class="code-variable">critical_rate_limiter</span>
+    <span class="code-keyword">elif</span> priority == <span class="code-string">"background"</span>:
+        <span class="code-variable">rate_limiter</span> = <span class="code-variable">background_rate_limiter</span>
+    <span class="code-keyword">else</span>:  <span class="code-comment"># default to standard</span>
+        <span class="code-variable">rate_limiter</span> = <span class="code-variable">standard_rate_limiter</span>
+    
+    <span class="code-comment"># Wait if needed based on rate limit</span>
+    <span class="code-variable">rate_limiter</span>.wait_if_needed()
+    
+    <span class="code-comment"># Make the API call</span>
+    <span class="code-keyword">return</span> <span class="code-variable">model</span>.invoke([HumanMessage(content=<span class="code-variable">prompt</span>)])
+
+<span class="code-comment"># Example usage for healthcare applications</span>
+
+<span class="code-comment"># Critical task: Analyzing patient symptoms</span>
+<span class="code-variable">patient_data_prompt</span> = <span class="code-string">"""
+Analyze the following patient data and provide a preliminary assessment:
+Patient: John Doe, Age 45
+Symptoms: Chest pain, shortness of breath, fatigue
+Vitals: BP 140/90, HR 95, Temp 98.6°F
+History: Family history of heart disease, smoker
+
+Provide potential diagnoses and recommended next steps.
+"""</span>
+
+<span class="code-variable">critical_result</span> = <span class="code-function">rate_limited_call</span>(<span class="code-variable">patient_data_prompt</span>, priority=<span class="code-string">"critical"</span>)
+<span class="code-function">print</span>(<span class="code-string">"Critical Task Result:"</span>)
+<span class="code-function">print</span>(<span class="code-variable">critical_result</span>.content)
+
+<span class="code-comment"># Standard task: Generating patient education materials</span>
+<span class="code-variable">education_prompt</span> = <span class="code-string">"""
+Create patient education materials about managing type 2 diabetes.
+Include information about diet, exercise, medication, and blood sugar monitoring.
+Write at an 8th grade reading level.
+"""</span>
+
+<span class="code-variable">standard_result</span> = <span class="code-function">rate_limited_call</span>(<span class="code-variable">education_prompt</span>, priority=<span class="code-string">"standard"</span>)
+<span class="code-function">print</span>(<span class="code-string">"\nStandard Task Result:"</span>)
+<span class="code-function">print</span>(<span class="code-variable">standard_result</span>.content[:200] + <span class="code-string">"..."</span>)  <span class="code-comment"># Show first 200 characters</span>
+
+<span class="code-comment"># Background task: Analyzing hospital capacity trends</span>
+<span class="code-variable">capacity_prompt</span> = <span class="code-string">"""
+Analyze the following hospital capacity data and identify trends:
+- ICU occupancy: 85% (Monday), 88% (Tuesday), 92% (Wednesday), 90% (Thursday)
+- General ward occupancy: 76% (Monday), 78% (Tuesday), 82% (Wednesday), 84% (Thursday)
+- ER wait times: 45min (Monday), 52min (Tuesday), 68min (Wednesday), 71min (Thursday)
+
+Provide insights on capacity utilization and recommendations.
+"""</span>
+
+<span class="code-variable">background_result</span> = <span class="code-function">rate_limited_call</span>(<span class="code-variable">capacity_prompt</span>, priority=<span class="code-string">"background"</span>)
+<span class="code-function">print</span>(<span class="code-string">"\nBackground Task Result:"</span>)
+<span class="code-function">print</span>(<span class="code-variable">background_result</span>.content[:200] + <span class="code-string">"..."</span>)  <span class="code-comment"># Show first 200 characters</span></code></pre>
+                            </div>
+                            
+                            <div>
+                                <span class="tag predefined">Predefined</span>
+                                <span class="tag custom">Custom</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+                    <h2 class="section-title">2.3 Model Configuration</h2>
+                </div>
+                
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <h3 class="card-title">Standard Parameters</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Common configuration options like temperature, max_tokens, and API keys that control model behavior and access.</p>
+                            
+                            <div class="business-example">
+                                <div class="business-example-title">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    Retail Use Case
+                                </div>
+                                <p>An e-commerce company uses different temperature settings for various AI tasks: low temperature for product categorization (consistency), medium temperature for product descriptions (creativity), and high temperature for marketing content generation (innovation).</p>
+                            </div>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        Problems Solved
+                                    </div>
+                                    <div class="info-item-content">
+                                        Optimizes output for specific tasks, balances consistency and creativity, controls costs
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Impact of Absence
+                                    </div>
+                                    <div class="info-item-content">
+                                        Suboptimal outputs, inconsistent quality, higher operational costs
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Python - Standard Parameters Configuration</div>
+                                    <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage
+<span class="code-keyword">import</span> os
+
+<span class="code-comment"># Set API key (in production, use environment variables or secret management)</span>
+os.environ[<span class="code-string">"OPENAI_API_KEY"</span>] = <span class="code-string">"your-api-key-here"</span>
+
+<span class="code-comment"># Create model configurations for different retail tasks</span>
+<span class="code-variable">model_configs</span> = {
+    <span class="code-string">"product_categorization"</span>: {
+        <span class="code-string">"model_name"</span>: <span class="code-string">"gpt-4"</span>,
+        <span class="code-string">"temperature"</span>: <span class="code-variable">0.1</span>,  <span class="code-comment"># Low temperature for consistency</span>
+        <span class="code-string">"max_tokens"</span>: <span class="code-variable">100</span>,
+        <span class="code-string">"top_p"</span>: <span class="code-variable">0.9</span>
+    },
+    <span class="code-string">"product_description"</span>: {
+        <span class="code-string">"model_name"</span>: <span class="code-string">"gpt-4"</span>,
+        <span class="code-string">"temperature"</span>: <span class="code-variable">0.5</span>,  <span class="code-comment"># Medium temperature for balanced creativity</span>
+        <span class="code-string">"max_tokens"</span>: <span class="code-variable">300</span>,
+        <span class="code-string">"top_p"</span>: <span class="code-variable">0.9</span>
+    },
+    <span class="code-string">"marketing_content"</span>: {
+        <span class="code-string">"model_name"</span>: <span class="code-string">"gpt-4"</span>,
+        <span class="code-string">"temperature"</span>: <span class="code-variable">0.8</span>,  <span class="code-comment"># High temperature for creativity</span>
+        <span class="code-string">"max_tokens"</span>: <span class="code-variable">500</span>,
+        <span class="code-string">"top_p"</span>: <span class="code-variable">0.95</span>
+    }
+}
+
+<span class="code-comment"># Function to create a model with specific configuration</span>
+<span class="code-keyword">def</span> <span class="code-function">create_configured_model</span>(config_name):
+    <span class="code-keyword">if</span> config_name <span class="code-keyword">not in</span> <span class="code-variable">model_configs</span>:
+        <span class="code-keyword">raise</span> <span class="code-function">ValueError</span>(<span class="code-string">f"Unknown configuration: {config_name}"</span>)
+    
+    <span class="code-variable">config</span> = <span class="code-variable">model_configs</span>[config_name]
+    <span class="code-keyword">return</span> ChatOpenAI(
+        model_name=<span class="code-variable">config</span>[<span class="code-string">"model_name"</span>],
+        temperature=<span class="code-variable">config</span>[<span class="code-string">"temperature"</span>],
+        max_tokens=<span class="code-variable">config</span>[<span class="code-string">"max_tokens"</span>],
+        top_p=<span class="code-variable">config</span>[<span class="code-string">"top_p"</span>]
+    )
+
+<span class="code-comment"># Example 1: Product categorization (low temperature)</span>
+<span class="code-variable">categorization_model</span> = <span class="code-function">create_configured_model</span>(<span class="code-string">"product_categorization"</span>)
+<span class="code-variable">categorization_prompt</span> = <span class="code-string">"""
+Categorize the following product into one of these categories: Electronics, Clothing, Home & Garden, Sports & Outdoors
+
+Product: Wireless Bluetooth Headphones with Noise Cancellation
+"""</span>
+<span class="code-variable">category_result</span> = <span class="code-variable">categorization_model</span>.invoke([HumanMessage(content=<span class="code-variable">categorization_prompt</span>)])
+<span class="code-function">print</span>(<span class="code-string">"Product Category:"</span>, <span class="code-variable">category_result</span>.content)
+
+<span class="code-comment"># Example 2: Product description (medium temperature)</span>
+<span class="code-variable">description_model</span> = <span class="code-function">create_configured_model</span>(<span class="code-string">"product_description"</span>)
+<span class="code-variable">description_prompt</span> = <span class="code-string">"""
+Create a product description for the following item:
+Product: Smart Home Security Camera
+Features: 1080p HD video, night vision, motion detection, two-way audio, mobile app control
+"""</span>
+<span class="code-variable">description_result</span> = <span class="code-variable">description_model</span>.invoke([HumanMessage(content=<span class="code-variable">description_prompt</span>)])
+<span class="code-function">print</span>(<span class="code-string">"\nProduct Description:"</span>, <span class="code-variable">description_result</span>.content)
+
+<span class="code-comment"># Example 3: Marketing content (high temperature)</span>
+<span class="code-variable">marketing_model</span> = <span class="code-function">create_configured_model</span>(<span class="code-string">"marketing_content"</span>)
+<span class="code-variable">marketing_prompt</span> = <span class="code-string">"""
+Create an engaging social media post for our Summer Sale promotion.
+Include emojis and a call to action.
+Products included: Swimwear, Beach Towels, Sunglasses, Sunscreen
+Discount: 25% off all items
+"""</span>
+<span class="code-variable">marketing_result</span> = <span class="code-variable">marketing_model</span>.invoke([HumanMessage(content=<span class="code-variable">marketing_prompt</span>)])
+<span class="code-function">print</span>(<span class="code-string">"\nMarketing Content:"</span>, <span class="code-variable">marketing_result</span>.content)</code></pre>
+                            </div>
+                            
+                            <div>
+                                <span class="tag predefined">Predefined</span>
+                                <span class="tag custom">Custom</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3 class="card-title">Runtime Configuration</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Dynamic configuration settings that can be adjusted during model execution, providing flexibility for different scenarios.</p>
+                            
+                            <div class="business-example">
+                                <div class="business-example-title">
+                                    <i class="fas fa-university"></i>
+                                    Banking Use Case
+                                </div>
+                                <p>A financial institution uses runtime configuration to adjust AI model behavior based on transaction risk levels. For high-risk transactions, the model uses stricter parameters and additional verification steps.</p>
+                            </div>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        Problems Solved
+                                    </div>
+                                    <div class="info-item-content">
+                                        Adapts to changing conditions, optimizes resource usage, enhances security for sensitive operations
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Impact of Absence
+                                    </div>
+                                    <div class="info-item-content">
+                                        Inflexible responses, inefficient resource usage, potential security vulnerabilities
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Python - Runtime Configuration Implementation</div>
+                                    <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage
+<span class="code-keyword">from</span> langchain.runnables.config <span class="code-keyword">import</span> RunnableConfig
+<span class="code-keyword">import</span> json
+
+<span class="code-comment"># Initialize the base model</span>
+<span class="code-variable">base_model</span> = ChatOpenAI(model_name=<span class="code-string">"gpt-4"</span>)
+
+<span class="code-comment"># Function to assess transaction risk level</span>
+<span class="code-keyword">def</span> <span class="code-function">assess_transaction_risk</span>(transaction_data):
+    <span class="code-comment"># Simplified risk assessment logic</span>
+    <span class="code-variable">risk_score</span> = 0
+    
+    <span class="code-comment"># Amount factor</span>
+    <span class="code-keyword">if</span> <span class="code-variable">transaction_data</span>[<span class="code-string">"amount"</span>] > 10000:
+        <span class="code-variable">risk_score</span> += 30
+    <span class="code-keyword">elif</span> <span class="code-variable">transaction_data</span>[<span class="code-string">"amount"</span>] > 5000:
+        <span class="code-variable">risk_score</span> += 15
+    
+    <span class="code-comment"># Location factor</span>
+    <span class="code-keyword">if</span> <span class="code-variable">transaction_data</span>[<span class="code-string">"location"</span>] != <span class="code-variable">transaction_data</span>[<span class="code-string">"customer_location"</span>]:
+        <span class="code-variable">risk_score</span> += 25
+    
+    <span class="code-comment"># Time factor</span>
+    <span class="code-keyword">if</span> <span class="code-variable">transaction_data</span>[<span class="code-string">"hour"</span>] < 6 <span class="code-keyword">or</span> <span class="code-variable">transaction_data</span>[<span class="code-string">"hour"</span>] > 23:
+        <span class="code-variable">risk_score</span> += 20
+    
+    <span class="code-comment"># Merchant category factor</span>
+    <span class="code-keyword">if</span> <span class="code-variable">transaction_data</span>[<span class="code-string">"merchant_category"</span>] <span class="code-keyword">in</span> [<span class="code-string">"gambling"</span>, <span class="code-string">"cryptocurrency"</span>]:
+        <span class="code-variable">risk_score</span> += 40
+    
+    <span class="code-comment"># Determine risk level</span>
+    <span class="code-keyword">if</span> <span class="code-variable">risk_score</span> >= 50:
+        <span class="code-keyword">return</span> <span class="code-string">"high"</span>
+    <span class="code-keyword">elif</span> <span class="code-variable">risk_score</span> >= 25:
+        <span class="code-keyword">return</span> <span class="code-string">"medium"</span>
+    <span class="code-keyword">else</span>:
+        <span class="code-keyword">return</span> <span class="code-string">"low"</span>
+
+<span class="code-comment"># Function to get runtime configuration based on risk level</span>
+<span class="code-keyword">def</span> <span class="code-function">get_runtime_config</span>(risk_level):
+    <span class="code-keyword">if</span> risk_level == <span class="code-string">"high"</span>:
+        <span class="code-keyword">return</span> RunnableConfig(
+            configurable={
+                <span class="code-string">"temperature"</span>: <span class="code-variable">0.1</span>,  <span class="code-comment"># Low temperature for consistent, strict analysis</span>
+                <span class="code-string">"max_tokens"</span>: <span class="code-variable">500</span>,
+                <span class="code-string">"verification_steps"</span>: <span class="code-keyword">True</span>,
+                <span class="code-string">"additional_checks"</span>: <span class="code-keyword">True</span>
+            }
+        )
+    <span class="code-keyword">elif</span> risk_level == <span class="code-string">"medium"</span>:
+        <span class="code-keyword">return</span> RunnableConfig(
+            configurable={
+                <span class="code-string">"temperature"</span>: <span class="code-variable">0.3</span>,  <span class="code-comment"># Medium temperature for balanced analysis</span>
+                <span class="code-string">"max_tokens"</span>: <span class="code-variable">300</span>,
+                <span class="code-string">"verification_steps"</span>: <span class="code-keyword">True</span>,
+                <span class="code-string">"additional_checks"</span>: <span class="code-keyword">False</span>
+            }
+        )
+    <span class="code-keyword">else</span>:  <span class="code-comment"># low risk</span>
+        <span class="code-keyword">return</span> RunnableConfig(
+            configurable={
+                <span class="code-string">"temperature"</span>: <span class="code-variable">0.5</span>,  <span class="code-comment"># Higher temperature for faster processing</span>
+                <span class="code-string">"max_tokens"</span>: <span class="code-variable">200</span>,
+                <span class="code-string">"verification_steps"</span>: <span class="code-keyword">False</span>,
+                <span class="code-string">"additional_checks"</span>: <span class="code-keyword">False</span>
+            }
+        )
+
+<span class="code-comment"># Function to process transaction with runtime configuration</span>
+<span class="code-keyword">def</span> <span class="code-function">process_transaction</span>(transaction_data):
+    <span class="code-comment"># Assess risk level</span>
+    <span class="code-variable">risk_level</span> = <span class="code-function">assess_transaction_risk</span>(<span class="code-variable">transaction_data</span>)
+    <span class="code-function">print</span>(<span class="code-string">f"Transaction risk level: {risk_level}"</span>)
+    
+    <span class="code-comment"># Get appropriate runtime configuration</span>
+    <span class="code-variable">config</span> = <span class="code-function">get_runtime_config</span>(<span class="code-variable">risk_level</span>)
+    
+    <span class="code-comment"># Create prompt based on risk level</span>
+    <span class="code-keyword">if</span> <span class="code-variable">risk_level</span> == <span class="code-string">"high"</span>:
+        <span class="code-variable">prompt</span> = <span class="code-string">f"""
+        Perform a detailed fraud analysis for the following transaction:
+        
+        Transaction Data: {json.dumps(transaction_data, indent=2)}
+        
+        Include:
+        1. Risk factors identified
+        2. Recommended verification steps
+        3. Decision (approve, deny, or manual review)
+        4. Additional security measures recommended
+        """</span>
+    <span class="code-keyword">elif</span> <span class="code-variable">risk_level</span> == <span class="code-string">"medium"</span>:
+        <span class="code-variable">prompt</span> = <span class="code-string">f"""
+        Analyze the following transaction for potential fraud:
+        
+        Transaction Data: {json.dumps(transaction_data, indent=2)}
+        
+        Provide:
+        1. Risk assessment
+        2. Decision (approve or deny)
+        3. Brief explanation
+        """</span>
+    <span class="code-keyword">else</span>:  <span class="code-comment"># low risk</span>
+        <span class="code-variable">prompt</span> = <span class="code-string">f"""
+        Quick assessment for the following low-risk transaction:
+        
+        Transaction Data: {json.dumps(transaction_data, indent=2)}
+        
+        Decision: approve or deny
+        """</span>
+    
+    <span class="code-comment"># Process with runtime configuration</span>
+    <span class="code-variable">result</span> = <span class="code-variable">base_model</span>.invoke(
+        [HumanMessage(content=<span class="code-variable">prompt</span>)],
+        config=<span class="code-variable">config</span>
+    )
+    
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"risk_level"</span>: <span class="code-variable">risk_level</span>,
+        <span class="code-string">"analysis"</span>: <span class="code-variable">result</span>.content,
+        <span class="code-string">"config_used"</span>: <span class="code-variable">config</span>.configurable
+    }
+
+<span class="code-comment"># Example usage with a high-risk transaction</span>
+<span class="code-variable">high_risk_transaction</span> = {
+    <span class="code-string">"amount"</span>: 15000,
+    <span class="code-string">"location"</span>: <span class="code-string">"Foreign Country"</span>,
+    <span class="code-string">"customer_location"</span>: <span class="code-string">"USA"</span>,
+    <span class="code-string">"hour"</span>: 3,
+    <span class="code-string">"merchant_category"</span>: <span class="code-string">"cryptocurrency"</span>
+}
+
+<span class="code-variable">result</span> = <span class="code-function">process_transaction</span>(<span class="code-variable">high_risk_transaction</span>)
+<span class="code-function">print</span>(<span class="code-string">"\nAnalysis Result:"</span>)
+<span class="code-function">print</span>(<span class="code-variable">result</span>[<span class="code-string">"analysis"</span>])
+<span class="code-function">print</span>(<span class="code-string">"\nConfiguration Used:"</span>)
+<span class="code-function">print</span>(json.dumps(<span class="code-variable">result</span>[<span class="code-string">"config_used"</span>], indent=2))</code></pre>
+                            </div>
+                            
+                            <div>
+                                <span class="tag predefined">Predefined</span>
+                                <span class="tag custom">Custom</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-server"></i>
+                            </div>
+                            <h3 class="card-title">Local vs Remote Models</h3>
+                        </div>
+                        <div class="card-content">
+                            <p>Comparison and implementation strategies for running language models locally on-premise versus accessing them remotely through APIs.</p>
+                            
+                            <div class="business-example">
+                                <div class="business-example-title">
+                                    <i class="fas fa-shipping-fast"></i>
+                                    Logistics Use Case
+                                </div>
+                                <p>A global shipping company uses a hybrid approach: remote models for complex route optimization requiring high computational power, and local models for basic document processing at distribution centers with limited internet connectivity.</p>
+                            </div>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-check-circle"></i>
+                                        Problems Solved
+                                    </div>
+                                    <div class="info-item-content">
+                                        Balances performance and privacy, enables offline functionality, optimizes costs
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-item-title">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Impact of Absence
+                                    </div>
+                                    <div class="info-item-content">
+                                        Limited flexibility, potential privacy concerns, dependency on internet connectivity
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Python - Local vs Remote Models Implementation</div>
+                                    <button class="copy-button" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="code-keyword">from</span> langchain.chat_models <span class="code-keyword">import</span> ChatOpenAI
+<span class="code-keyword">from</span> langchain.llms <span class="code-keyword">import</span> HuggingFaceHub, HuggingFacePipeline
+<span class="code-keyword">from</span> langchain.schema <span class="code-keyword">import</span> HumanMessage
+<span class="code-keyword">from</span> langchain.chains <span class="code-keyword">import</span> LLMChain
+<span class="code-keyword">from</span> langchain.prompts <span class="code-keyword">import</span> PromptTemplate
+<span class="code-keyword">import</span> os
+<span class="code-keyword">import</span> torch
+
+<span class="code-comment"># Set up remote model (API-based)</span>
+<span class="code-variable">remote_model</span> = ChatOpenAI(
+    model_name=<span class="code-string">"gpt-4"</span>,
+    temperature=<span class="code-variable">0.2</span>,
+    max_tokens=<span class="code-variable">1000</span>
+)
+
+<span class="code-comment"># Set up local model (on-premise)</span>
+<span class="code-comment"># This would typically use a smaller model that can run on local hardware</span>
+<span class="code-keyword">try</span>:
+    <span class="code-comment"># Try to load a local model if hardware supports it</span>
+    <span class="code-keyword">if</span> torch.cuda.is_available():
+        <span class="code-variable">local_model</span> = HuggingFacePipeline.from_model_id(
+            model_id=<span class="code-string">"google/flan-t5-large"</span>,
+            task=<span class="code-string">"text2text-generation"</span>,
+            device=<span class="code-variable">0</span>,  <span class="code-comment"># Use GPU if available</span>
+            model_kwargs={<span class="code-string">"temperature"</span>: <span class="code-variable">0.1</span>, <span class="code-string">"max_length"</span>: <span class="code-variable">500</span>}
+        )
+    <span class="code-keyword">else</span>:
+        <span class="code-comment"># Use CPU if GPU is not available</span>
+        <span class="code-variable">local_model</span> = HuggingFacePipeline.from_model_id(
+            model_id=<span class="code-string">"google/flan-t5-base"</span>,  <span class="code-comment"># Smaller model for CPU</span>
+            task=<span class="code-string">"text2text-generation"</span>,
+            model_kwargs={<span class="code-string">"temperature"</span>: <span class="code-variable">0.1</span>, <span class="code-string">"max_length"</span>: <span class="code-variable">500</span>}
+        )
+    <span class="code-variable">local_model_available</span> = <span class="code-keyword">True</span>
+<span class="code-keyword">except</span> Exception <span class="code-keyword">as</span> e:
+    <span class="code-function">print</span>(<span class="code-string">f"Local model not available: {e}"</span>)
+    <span class="code-variable">local_model_available</span> = <span class="code-keyword">False</span>
+
+<span class="code-comment"># Function to select the appropriate model based on task requirements</span>
+<span class="code-keyword">def</span> <span class="code-function">select_model</span>(task_complexity, privacy_sensitivity, internet_available=True):
+    <span class="code-comment"># Decision logic for model selection</span>
+    <span class="code-keyword">if</span> task_complexity == <span class="code-string">"high"</span> <span class="code-keyword">and</span> internet_available:
+        <span class="code-function">print</span>(<span class="code-string">"Using remote model for complex task"</span>)
+        <span class="code-keyword">return</span> <span class="code-variable">remote_model</span>, <span class="code-string">"remote"</span>
+    <span class="code-keyword">elif</span> privacy_sensitivity == <span class="code-string">"high"</span> <span class="code-keyword">and</span> <span class="code-variable">local_model_available</span>:
+        <span class="code-function">print</span>(<span class="code-string">"Using local model for privacy-sensitive task"</span>)
+        <span class="code-keyword">return</span> <span class="code-variable">local_model</span>, <span class="code-string">"local"</span>
+    <span class="code-keyword">elif</span> <span class="code-keyword">not</span> internet_available <span class="code-keyword">and</span> <span class="code-variable">local_model_available</span>:
+        <span class="code-function">print</span>(<span class="code-string">"Using local model due to no internet connection"</span>)
+        <span class="code-keyword">return</span> <span class="code-variable">local_model</span>, <span class="code-string">"local"</span>
+    <span class="code-keyword">elif</span> <span class="code-variable">local_model_available</span>:
+        <span class="code-function">print</span>(<span class="code-string">"Using local model for efficiency"</span>)
+        <span class="code-keyword">return</span> <span class="code-variable">local_model</span>, <span class="code-string">"local"</span>
+    <span class="code-keyword">else</span>:
+        <span class="code-function">print</span>(<span class="code-string">"Using remote model (no local model available)"</span>)
+        <span class="code-keyword">return</span> <span class="code-variable">remote_model</span>, <span class="code-string">"remote"</span>
+
+<span class="code-comment"># Example 1: Complex route optimization (high complexity, low privacy sensitivity)</span>
+<span class="code-variable">route_optimization_prompt</span> = <span class="code-string">"""
+Optimize the delivery route for a logistics company with the following constraints:
+- 50 delivery locations across a metropolitan area
+- Vehicle capacity: 500 packages
+- Time windows: 9 AM - 5 PM for all deliveries
+- Traffic patterns: Heavy congestion between 7-9 AM and 4-6 PM
+
+Provide the optimal route sequence and estimated total travel time.
+"""</span>
+
+<span class="code-variable">model1</span>, <span class="code-variable">model_type1</span> = <span class="code-function">select_model</span>(
+    task_complexity=<span class="code-string">"high"</span>,
+    privacy_sensitivity=<span class="code-string">"low"</span>,
+    internet_available=<span class="code-keyword">True</span>
+)
+
+<span class="code-keyword">if</span> <span class="code-variable">model_type1</span> == <span class="code-string">"remote"</span>:
+    <span class="code-variable">result1</span> = <span class="code-variable">model1</span>.invoke([HumanMessage(content=<span class="code-variable">route_optimization_prompt</span>)])
+    <span class="code-function">print</span>(<span class="code-string">"\nRoute Optimization Result:"</span>)
+    <span class="code-function">print</span>(<span class="code-variable">result1</span>.content[:200] + <span class="code-string">"..."</span>)  <span class="code-comment"># Show first 200 characters</span>
+<span class="code-keyword">else</span>:
+    <span class="code-variable">chain1</span> = LLMChain(
+        llm=<span class="code-variable">model1</span>,
+        prompt=PromptTemplate.from_template(<span class="code-variable">route_optimization_prompt</span>)
+    )
+    <span class="code-variable">result1</span> = <span class="code-variable">chain1</span>.run({})
+    <span class="code-function">print</span>(<span class="code-string">"\nRoute Optimization Result:"</span>)
+    <span class="code-function">print</span>(<span class="code-variable">result1</span>[:200] + <span class="code-string">"..."</span>)  <span class="code-comment"># Show first 200 characters</span>
+
+<span class="code-comment"># Example 2: Document processing with sensitive data (medium complexity, high privacy sensitivity)</span>
+<span class="code-variable">document_processing_prompt</span> = <span class="code-string">"""
+Extract key information from the following shipping document:
+Document Type: Customs Declaration
+Shipper: ABC Imports
+Consignee: XYZ Retail
+Contents: Electronics
+Value: $25,000
+Origin: China
+Destination: USA
+
+Extract and structure the following fields: shipper, consignee, contents, value, origin, destination.
+"""</span>
+
+<span class="code-variable">model2</span>, <span class="code-variable">model_type2</span> = <span class="code-function">select_model</span>(
+    task_complexity=<span class="code-string">"medium"</span>,
+    privacy_sensitivity=<span class="code-string">"high"</span>,
+    internet_available=<span class="code-keyword">True</span>
+)
+
+<span class="code-keyword">if</span> <span class="code-variable">model_type2</span> == <span class="code-string">"remote"</span>:
+    <span class="code-variable">result2</span> = <span class="code-variable">model2</span>.invoke([HumanMessage(content=<span class="code-variable">document_processing_prompt</span>)])
+    <span class="code-function">print</span>(<span class="code-string">"\nDocument Processing Result:"</span>)
+    <span class="code-function">print</span>(<span class="code-variable">result2</span>.content)
+<span class="code-keyword">else</span>:
+    <span class="code-variable">chain2</span> = LLMChain(
+        llm=<span class="code-variable">model2</span>,
+        prompt=PromptTemplate.from_template(<span class="code-variable">document_processing_prompt</span>)
+    )
+    <span class="code-variable">result2</span> = <span class="code-variable">chain2</span>.run({})
+    <span class="code-function">print</span>(<span class="code-string">"\nDocument Processing Result:"</span>)
+    <span class="code-function">print</span>(<span class="code-variable">result2</span>)</code></pre>
+                            </div>
+                            
+                            <div>
+                                <span class="tag predefined">Predefined</span>
+                                <span class="tag custom">Custom</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="copyright">
+                    © 2023 AI Business Framework. All rights reserved.
+                </div>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Function to copy code to clipboard
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block');
+            const code = codeBlock.querySelector('code').innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                // Update button text temporarily
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                
+                // Reset button text after 2 seconds
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code: ', err);
+            });
+        }
+        
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
