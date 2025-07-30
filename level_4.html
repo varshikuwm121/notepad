@@ -1,1 +1,1897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 4: Data Management & Processing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 30px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--primary);
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 60px 0;
+        }
+        
+        .section {
+            margin-bottom: 60px;
+        }
+        
+        .section-header {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .section-header h2 {
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        
+        .section-header p {
+            color: var(--gray);
+            font-size: 16px;
+        }
+        
+        .card {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+        }
+        
+        .card-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+        
+        .card-body p {
+            margin-bottom: 15px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-list li i {
+            color: var(--primary);
+            margin-right: 10px;
+            margin-top: 4px;
+        }
+        
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .tag {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .tag-predefined {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .tag-custom {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .relationship {
+            display: inline-block;
+            padding: 5px 12px;
+            background-color: #f3f4f6;
+            color: #4b5563;
+            border-radius: 4px;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+        
+        .code-block {
+            background-color: #1e293b;
+            color: #f8fafc;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .code-title {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        
+        .code-copy {
+            background-color: #334155;
+            color: #f8fafc;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .code-copy:hover {
+            background-color: #475569;
+        }
+        
+        .business-case {
+            background-color: #f8fafc;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .business-case h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--gray);
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .impact-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .impact-card h4 {
+            color: var(--danger);
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: var(--white);
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-left: 20px;
+        }
+        
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .copyright {
+            margin-top: 20px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+            }
+            
+            nav ul li {
+                margin: 0 10px;
+            }
+            
+            .hero h1 {
+                font-size: 28px;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .footer-links {
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Data Management Framework</div>
+                <nav>
+                    <ul>
+                        <li><a href="#ingestion">Data Ingestion</a></li>
+                        <li><a href="#processing">Data Processing</a></li>
+                        <li><a href="#transformation">Data Transformation</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <h1>Level 4: Data Management & Processing</h1>
+            <p>Build on Level 1-3 - handle and prepare your data for advanced analytics and AI applications</p>
+        </div>
+    </section>
+    
+    <section class="content">
+        <div class="container">
+            <!-- Data Ingestion Section -->
+            <div class="section" id="ingestion">
+                <div class="section-header">
+                    <h2>4.1 Data Ingestion</h2>
+                    <p>Efficiently collect and import data from various sources into your system</p>
+                    <div class="relationship">Foundation</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-file-import"></i>
+                        </div>
+                        <h3 class="card-title">Document Loaders</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Document loaders are essential components that enable systems to read and parse data from various file formats, making them accessible for further processing.</p>
+                        
+                        <div class="tabs">
+                            <div class="tab active" onclick="openTab(event, 'ingestion-use-cases')">Business Use Cases</div>
+                            <div class="tab" onclick="openTab(event, 'ingestion-problems')">Problems Solved</div>
+                            <div class="tab" onclick="openTab(event, 'ingestion-impact')">Impact of Absence</div>
+                            <div class="tab" onclick="openTab(event, 'ingestion-knowledge')">In-depth Knowledge</div>
+                        </div>
+                        
+                        <div id="ingestion-use-cases" class="tab-content active">
+                            <div class="business-case">
+                                <h4>Healthcare Industry</h4>
+                                <p>A hospital network uses document loaders to ingest patient records from various sources: PDF medical reports, CSV lab results, and JSON-formatted insurance data. This enables a unified view of patient information across different departments.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Banking Sector</h4>
+                                <p>A multinational bank employs document loaders to process thousands of customer documents daily, including loan applications (PDF), transaction histories (CSV), and compliance reports (HTML), streamlining their customer onboarding process.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Retail Industry</h4>
+                                <p>An e-commerce platform utilizes document loaders to ingest product information from multiple suppliers in various formats (JSON, XML, Excel), ensuring their catalog is always updated with the latest product details and pricing.</p>
+                            </div>
+                        </div>
+                        
+                        <div id="ingestion-problems" class="tab-content">
+                            <p>Document loaders solve several critical business challenges:</p>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-check-circle"></i> <strong>Data Silos:</strong> Breaks down barriers between different data sources and formats</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Manual Processing:</strong> Eliminates time-consuming manual data entry and conversion</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Inconsistent Data:</strong> Standardizes data from various sources into a uniform format</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Scalability Issues:</strong> Enables processing of large volumes of documents efficiently</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Integration Complexity:</strong> Simplifies connecting with diverse data sources</li>
+                            </ul>
+                        </div>
+                        
+                        <div id="ingestion-impact" class="tab-content">
+                            <p>If document loaders didn't exist in a business context:</p>
+                            <div class="impact-grid">
+                                <div class="impact-card">
+                                    <h4>Operational Inefficiency</h4>
+                                    <p>Businesses would spend excessive time and resources manually extracting and formatting data, leading to significant delays in decision-making processes.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Data Inconsistency</h4>
+                                    <p>Without standardized ingestion processes, data quality would suffer, leading to inaccurate analytics and unreliable business intelligence.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Competitive Disadvantage</h4>
+                                    <p>Companies would be unable to quickly process and act on market information, falling behind competitors who can rapidly ingest and analyze data.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Increased Compliance Risk</h4>
+                                    <p>Manual data handling increases the risk of errors and omissions, potentially leading to compliance violations in regulated industries like healthcare and finance.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="ingestion-knowledge" class="tab-content">
+                            <p>Document loaders leverage various parsing techniques to extract structured data from unstructured or semi-structured documents. They typically include:</p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Python example of PDF document loading</div>
+                                    <button class="code-copy">Copy</button>
+                                </div>
+                                <pre><code>from langchain.document_loaders import PyPDFLoader
 
+# Load a PDF document
+loader = PyPDFLoader("healthcare_patient_report.pdf")
+pages = loader.load_and_split()
+
+# Process the loaded pages
+for page in pages:
+    print(f"Page {page.metadata['page']}: {page.page_content[:200]}...")
+    
+# Business implication: Healthcare providers can automatically extract
+# patient information from medical reports for EMR integration</code></pre>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">CSV document loading for banking transactions</div>
+                                    <button class="code-copy">Copy</button>
+                                </div>
+                                <pre><code>from langchain.document_loaders.csv_loader import CSVLoader
+
+# Load CSV file containing banking transactions
+loader = CSVLoader(file_path="bank_transactions.csv", 
+                  csv_args={
+                      'delimiter': ',',
+                      'quotechar': '"',
+                      'fieldnames': ['TransactionID', 'Date', 'Amount', 'Description']
+                  })
+data = loader.load()
+
+# Business implication: Banks can automate transaction categorization
+# and fraud detection by ingesting transaction data efficiently</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="tag-container">
+                            <span class="tag tag-predefined">Predefined</span>
+                            <span class="tag tag-custom">Custom</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3 class="card-title">Custom Document Loaders</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Custom document loaders extend the capabilities of standard loaders to handle proprietary formats, specialized data structures, or unique business requirements.</p>
+                        
+                        <div class="tabs">
+                            <div class="tab active" onclick="openTab(event, 'custom-use-cases')">Business Use Cases</div>
+                            <div class="tab" onclick="openTab(event, 'custom-problems')">Problems Solved</div>
+                            <div class="tab" onclick="openTab(event, 'custom-impact')">Impact of Absence</div>
+                            <div class="tab" onclick="openTab(event, 'custom-knowledge')">In-depth Knowledge</div>
+                        </div>
+                        
+                        <div id="custom-use-cases" class="tab-content active">
+                            <div class="business-case">
+                                <h4>Logistics Industry</h4>
+                                <p>A global shipping company developed a custom document loader to process their proprietary shipment tracking format, which combines GPS coordinates, delivery timestamps, and handling notes in a unique binary format. This enables real-time shipment tracking and predictive delivery analytics.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Healthcare Sector</h4>
+                                <p>A medical research institution created a custom loader for specialized diagnostic imaging metadata that wasn't supported by standard loaders. This allowed researchers to automatically extract and analyze imaging parameters alongside patient outcomes for clinical studies.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Banking Industry</h4>
+                                <p>A financial services firm built a custom document loader to process legacy mainframe reports in a proprietary format, enabling them to integrate historical data with modern analytics platforms without costly system replacements.</p>
+                            </div>
+                        </div>
+                        
+                        <div id="custom-problems" class="tab-content">
+                            <p>Custom document loaders address specific business challenges:</p>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-check-circle"></i> <strong>Proprietary Formats:</strong> Handles unique or legacy data formats specific to an industry or organization</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Specialized Processing:</strong> Implements domain-specific data extraction logic</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Legacy Integration:</strong> Bridges the gap between old and new systems</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Competitive Differentiation:</strong> Processes unique data assets that competitors cannot easily access</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Regulatory Requirements:</strong> Ensures compliance with industry-specific data handling standards</li>
+                            </ul>
+                        </div>
+                        
+                        <div id="custom-impact" class="tab-content">
+                            <p>Without custom document loaders, businesses would face:</p>
+                            <div class="impact-grid">
+                                <div class="impact-card">
+                                    <h4>Data Inaccessibility</h4>
+                                    <p>Valuable information locked in proprietary or legacy formats would remain inaccessible, limiting the scope of analytics and decision-making.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Expensive System Replacements</h4>
+                                    <p>Organizations would be forced to replace entire systems rather than extending their capabilities through custom data ingestion solutions.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Competitive Limitations</h4>
+                                    <p>Businesses couldn't leverage unique data assets that provide competitive advantages, such as proprietary customer insights or specialized operational data.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Manual Data Migration</h4>
+                                    <p>Companies would rely on expensive and error-prone manual processes to extract and transform data from specialized formats.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="custom-knowledge" class="tab-content">
+                            <p>Custom document loaders require specialized development to handle unique data structures and formats. They typically extend base loader classes with custom parsing logic:</p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Custom document loader for logistics data</div>
+                                    <button class="code-copy">Copy</button>
+                                </div>
+                                <pre><code>from typing import List
+from langchain.document_loaders.base import BaseLoader
+from langchain.schema import Document
+
+class LogisticsDataLoader(BaseLoader):
+    """Custom loader for proprietary logistics tracking data"""
+    
+    def __init__(self, file_path: str):
+        self.file_path = file_path
+    
+    def load(self) -> List[Document]:
+        """Load and parse the proprietary logistics data format"""
+        with open(self.file_path, 'rb') as f:
+            # Custom parsing logic for binary logistics format
+            header = f.read(20)  # Read header
+            records = []
+            
+            while True:
+                record_data = f.read(128)  # Each record is 128 bytes
+                if not record_data:
+                    break
+                    
+                # Extract shipment ID (bytes 0-8)
+                shipment_id = record_data[0:8].hex()
+                
+                # Extract coordinates (bytes 8-16 as 4-byte floats)
+                lat = struct.unpack('f', record_data[8:12])[0]
+                lon = struct.unpack('f', record_data[12:16])[0]
+                
+                # Extract timestamp (bytes 16-24)
+                timestamp = struct.unpack('Q', record_data[16:24])[0]
+                
+                # Extract status code (byte 24)
+                status_code = record_data[24]
+                
+                # Create document with extracted data
+                content = f"Shipment {shipment_id} at coordinates ({lat}, {lon}) "
+                content += f"at {datetime.fromtimestamp(timestamp)} with status {status_code}"
+                
+                metadata = {
+                    "source": self.file_path,
+                    "shipment_id": shipment_id,
+                    "latitude": lat,
+                    "longitude": lon,
+                    "timestamp": timestamp,
+                    "status": status_code
+                }
+                
+                records.append(Document(page_content=content, metadata=metadata))
+            
+            return records
+
+# Business implication: Logistics companies can track shipments in real-time,
+# predict delivery times, and optimize routes based on historical data</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="tag-container">
+                            <span class="tag tag-custom">Custom</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data Processing Section -->
+            <div class="section" id="processing">
+                <div class="section-header">
+                    <h2>4.2 Data Processing</h2>
+                    <p>Transform raw data into a format suitable for analysis and model training</p>
+                    <div class="relationship">Execution</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-cut"></i>
+                        </div>
+                        <h3 class="card-title">Text Splitters</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Text splitters break down large documents into smaller, manageable chunks while preserving context and meaning, enabling more efficient processing and analysis.</p>
+                        
+                        <div class="tabs">
+                            <div class="tab active" onclick="openTab(event, 'splitters-use-cases')">Business Use Cases</div>
+                            <div class="tab" onclick="openTab(event, 'splitters-problems')">Problems Solved</div>
+                            <div class="tab" onclick="openTab(event, 'splitters-impact')">Impact of Absence</div>
+                            <div class="tab" onclick="openTab(event, 'splitters-knowledge')">In-depth Knowledge</div>
+                        </div>
+                        
+                        <div id="splitters-use-cases" class="tab-content active">
+                            <div class="business-case">
+                                <h4>Healthcare Industry</h4>
+                                <p>A medical research institute uses text splitters to break down lengthy clinical trial documents into meaningful sections. This allows researchers to quickly locate relevant information about specific patient groups, treatment protocols, or adverse events across thousands of pages of documentation.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Banking Sector</h4>
+                                <p>A financial institution employs semantic text splitters to process complex loan agreements and regulatory documents. By splitting these documents into contextually relevant sections, compliance officers can efficiently identify specific clauses, obligations, and risk factors without reading entire documents.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Retail Industry</h4>
+                                <p>An e-commerce company uses text splitters to process customer reviews and feedback. By breaking down long reviews into smaller sentiment-rich segments, they can more accurately analyze product feedback and identify specific strengths and weaknesses mentioned by customers.</p>
+                            </div>
+                        </div>
+                        
+                        <div id="splitters-problems" class="tab-content">
+                            <p>Text splitters solve several critical business challenges:</p>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-check-circle"></i> <strong>Context Limitations:</strong> Overcomes token limitations in language models by breaking large documents into processable chunks</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Information Retrieval:</strong> Enables more precise search and retrieval by creating smaller, focused content segments</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Processing Efficiency:</strong> Reduces computational overhead by processing smaller text segments</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Context Preservation:</strong> Maintains semantic coherence when splitting documents</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Content Organization:</strong> Creates logical divisions within documents for better navigation and analysis</li>
+                            </ul>
+                        </div>
+                        
+                        <div id="splitters-impact" class="tab-content">
+                            <p>Without text splitters, businesses would face:</p>
+                            <div class="impact-grid">
+                                <div class="impact-card">
+                                    <h4>Processing Limitations</h4>
+                                    <p>Large documents would exceed token limits of language models, making them impossible to process without manual intervention or truncation that loses critical information.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Poor Information Retrieval</h4>
+                                    <p>Search and retrieval systems would return entire documents instead of relevant sections, forcing users to manually locate specific information within lengthy texts.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Increased Processing Costs</h4>
+                                    <p>Processing entire documents instead of relevant segments would significantly increase computational costs and processing time, especially for large document collections.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Context Loss</h4>
+                                    <p>Arbitrary splitting of documents would break semantic connections, leading to analysis that misses important relationships between different parts of the text.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="splitters-knowledge" class="tab-content">
+                            <p>Text splitters use various strategies to divide documents while preserving context. Different splitting methods are suited for different types of content:</p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Recursive text splitter for healthcare documents</div>
+                                    <button class="code-copy">Copy</button>
+                                </div>
+                                <pre><code>from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+# Initialize a recursive text splitter for medical reports
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1000,  # Maximum characters per chunk
+    chunk_overlap=200,  # Overlap between chunks to preserve context
+    length_function=len,
+    separators=["\n\n", "\n", ". ", " ", ""]  # Hierarchy of separators
+)
+
+# Sample medical report text
+medical_report = """
+PATIENT INFORMATION
+Name: John Doe
+Age: 45
+Gender: Male
+
+MEDICAL HISTORY
+The patient has a history of hypertension and type 2 diabetes. 
+Previous treatments included metformin and lisinopril.
+
+CURRENT DIAGNOSIS
+The patient presents with elevated blood sugar levels and 
+complaints of frequent urination. Physical examination reveals...
+
+TREATMENT PLAN
+Based on the current symptoms and medical history, the following 
+treatment plan is recommended: 1. Adjust metformin dosage...
+"""
+
+# Split the medical report into chunks
+chunks = text_splitter.split_text(medical_report)
+
+# Process each chunk for analysis
+for i, chunk in enumerate(chunks):
+    print(f"Chunk {i+1}: {chunk[:100]}...")
+
+# Business implication: Healthcare providers can analyze specific sections
+# of medical reports for research, diagnosis support, and treatment planning</code></pre>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Semantic text splitter for banking documents</div>
+                                    <button class="code-copy">Copy</button>
+                                </div>
+                                <pre><code>from langchain.text_splitter import SemanticTextSplitter
+from langchain.embeddings import OpenAIEmbeddings
+
+# Initialize semantic splitter with embeddings
+embeddings = OpenAIEmbeddings()
+semantic_splitter = SemanticTextSplitter(embeddings=embeddings)
+
+# Sample loan agreement text
+loan_agreement = """
+LOAN AGREEMENT
+
+PARTIES
+This Loan Agreement is entered into on January 15, 2023 between 
+ABC Bank ("Lender") and XYZ Corporation ("Borrower").
+
+LOAN TERMS
+The Lender agrees to provide a loan of $500,000 to the Borrower 
+at an annual interest rate of 5.5%. The loan term shall be 60 months.
+
+REPAYMENT SCHEDULE
+The Borrower shall repay the loan in equal monthly installments 
+of $9,550.61, beginning on February 15, 2023.
+
+SECURITY
+The loan is secured by all assets of the Borrower, including 
+inventory, equipment, and accounts receivable.
+
+DEFAULT
+In the event of default, the Lender may accelerate the loan and 
+declare the entire outstanding balance immediately due and payable.
+"""
+
+# Split the loan agreement semantically
+chunks = semantic_splitter.split_text(loan_agreement)
+
+# Process each chunk for compliance checking
+for i, chunk in enumerate(chunks):
+    print(f"Section {i+1}: {chunk[:80]}...")
+    
+    # Here you would analyze each section for compliance with regulations
+    # For example, check if interest rate terms comply with usury laws
+    # or if repayment terms follow regulatory requirements
+
+# Business implication: Banks can automatically review loan agreements
+# for compliance, risk assessment, and consistency with institutional policies</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="tag-container">
+                            <span class="tag tag-predefined">Predefined</span>
+                            <span class="tag tag-custom">Custom</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-filter"></i>
+                        </div>
+                        <h3 class="card-title">Message Processing</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Message processing functions clean, filter, and organize conversational data to improve the quality and relevance of interactions with language models and chat systems.</p>
+                        
+                        <div class="tabs">
+                            <div class="tab active" onclick="openTab(event, 'message-use-cases')">Business Use Cases</div>
+                            <div class="tab" onclick="openTab(event, 'message-problems')">Problems Solved</div>
+                            <div class="tab" onclick="openTab(event, 'message-impact')">Impact of Absence</div>
+                            <div class="tab" onclick="openTab(event, 'message-knowledge')">In-depth Knowledge</div>
+                        </div>
+                        
+                        <div id="message-use-cases" class="tab-content active">
+                            <div class="business-case">
+                                <h4>Healthcare Industry</h4>
+                                <p>A telemedicine platform uses message processing to filter and organize patient inquiries. By trimming irrelevant details and merging related messages, doctors can quickly understand patient concerns without reading through lengthy, repetitive conversations, improving response times and patient care.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Banking Sector</h4>
+                                <p>A financial institution implements message processing in their customer service chatbot. By filtering out sensitive information and merging consecutive customer messages about the same issue, the system provides more coherent responses while maintaining compliance with data protection regulations.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Retail Industry</h4>
+                                <p>An e-commerce company uses message processing to handle customer support inquiries. By trimming redundant information and filtering out spam, their support team can focus on genuine customer issues, improving resolution times and customer satisfaction.</p>
+                            </div>
+                        </div>
+                        
+                        <div id="message-problems" class="tab-content">
+                            <p>Message processing solves several critical business challenges:</p>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-check-circle"></i> <strong>Context Limitations:</strong> Manages conversation history within token constraints by trimming less relevant content</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Information Overload:</strong> Filters out noise and irrelevant details to focus on essential content</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Conversation Flow:</strong> Merges related messages to maintain coherent context</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Data Privacy:</strong> Removes sensitive information to comply with privacy regulations</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Response Quality:</strong> Improves AI response accuracy by providing cleaner, more focused input</li>
+                            </ul>
+                        </div>
+                        
+                        <div id="message-impact" class="tab-content">
+                            <p>Without message processing, businesses would face:</p>
+                            <div class="impact-grid">
+                                <div class="impact-card">
+                                    <h4>Context Overflow</h4>
+                                    <p>Conversations would quickly exceed token limits, causing systems to lose important historical context and provide irrelevant or repetitive responses.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Poor Customer Experience</h4>
+                                    <p>Customers would receive disjointed responses as systems struggle to follow conversation flow across multiple messages, leading to frustration and decreased satisfaction.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Privacy Violations</h4>
+                                    <p>Sensitive information shared in conversations might be inappropriately stored or processed, leading to privacy breaches and regulatory penalties.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Inefficient Resource Usage</h4>
+                                    <p>Systems would waste computational resources processing irrelevant content, increasing operational costs without improving service quality.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="message-knowledge" class="tab-content">
+                            <p>Message processing involves several techniques to clean and organize conversational data. These functions are essential for maintaining effective AI-powered conversations:</p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Message trimming for healthcare conversations</div>
+                                    <button class="code-copy">Copy</button>
+                                </div>
+                                <pre><code>from langchain.schema import HumanMessage, AIMessage
+from langchain.chat_utils import trim_messages
+
+# Sample conversation between a patient and healthcare AI
+conversation = [
+    HumanMessage(content="Hi, I've been experiencing headaches for the past week."),
+    AIMessage(content="I'm sorry to hear that. Can you describe the headaches? Where do you feel them and how severe are they?"),
+    HumanMessage(content="They're mostly on the right side of my head, pretty severe, like an 8 out of 10. I also feel nauseous when they happen. By the way, my appointment is on Friday at 2pm."),
+    AIMessage(content="Thank you for those details. The location, severity, and accompanying nausea are important symptoms. Have you noticed any triggers for these headaches?"),
+    HumanMessage(content="They seem to happen more when I'm stressed. Also, I forgot to mention that bright lights make them worse. Just confirming, my appointment is Friday at 2pm, right?"),
+    AIMessage(content="Yes, your appointment is confirmed for Friday at 2pm. Stress and light sensitivity are common migraine triggers. Based on your symptoms, you might be experiencing migraines rather than tension headaches.")
+]
+
+# Trim the conversation to fit within token limits while preserving key medical info
+trimmed_conversation = trim_messages(
+    conversation,
+    max_tokens=500,  # Adjust based on model limits
+    strategy="last",  # Keep the most recent messages
+    include_system=True,
+    allow_partial=False
+)
+
+# Process the trimmed conversation for medical analysis
+for message in trimmed_conversation:
+    print(f"{message.__class__.__name__}: {message.content}")
+
+# Business implication: Healthcare AI systems can maintain context of patient
+# conversations while focusing on relevant medical information, improving
+# diagnostic accuracy and patient care</code></pre>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Message filtering and merging for banking customer service</div>
+                                    <button class="code-copy">Copy</button>
+                                </div>
+                                <pre><code>from langchain.schema import HumanMessage, AIMessage
+from langchain.chat_utils import merge_message_runs
+import re
+
+# Sample customer service conversation
+conversation = [
+    HumanMessage(content="I need help with my account balance."),
+    AIMessage(content="I'd be happy to help with your account balance. Could you please provide your account number?"),
+    HumanMessage(content="Sure, my account number is 123456789."),
+    HumanMessage(content="Also, I think there might be a fraudulent charge."),
+    HumanMessage(content="The charge is for $200 at a store I've never visited."),
+    AIMessage(content="Thank you for providing your account number and reporting the potential fraudulent charge. I can see the $200 charge you mentioned. To help resolve this, I'll need to verify some information."),
+    HumanMessage(content="My social security number is 987-65-4321."),
+    HumanMessage(content="Actually, I shouldn't have shared that. Please don't use it."),
+    AIMessage(content="I understand your concern. For security purposes, I've noted that you've withdrawn your SSN. We can proceed with other verification methods. Let me help you with the fraudulent charge report.")
+]
+
+# Filter out sensitive information
+def filter_sensitive_info(messages):
+    filtered_messages = []
+    ssn_pattern = r'\b\d{3}-\d{2}-\d{4}\b'
+    
+    for message in messages:
+        if isinstance(message, HumanMessage):
+            # Remove SSN if present
+            filtered_content = re.sub(ssn_pattern, '[REDACTED]', message.content)
+            filtered_messages.append(HumanMessage(content=filtered_content))
+        else:
+            filtered_messages.append(message)
+    
+    return filtered_messages
+
+# Merge consecutive messages from the same sender
+merged_conversation = merge_message_runs(filter_sensitive_info(conversation))
+
+# Process the filtered and merged conversation
+for message in merged_conversation:
+    print(f"{message.__class__.__name__}: {message.content}")
+
+# Business implication: Banks can maintain conversation context while
+# protecting sensitive customer information and improving response quality</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="tag-container">
+                            <span class="tag tag-predefined">Predefined</span>
+                            <span class="tag tag-custom">Custom</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data Transformation Section -->
+            <div class="section" id="transformation">
+                <div class="section-header">
+                    <h2>4.3 Data Transformation</h2>
+                    <p>Convert data into formats optimized for machine learning and analysis</p>
+                    <div class="relationship">Control</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <h3 class="card-title">Embedding Models</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Embedding models convert text and other data into numerical representations that capture semantic meaning, enabling machines to understand and process language in a way that reflects human comprehension.</p>
+                        
+                        <div class="tabs">
+                            <div class="tab active" onclick="openTab(event, 'embedding-use-cases')">Business Use Cases</div>
+                            <div class="tab" onclick="openTab(event, 'embedding-problems')">Problems Solved</div>
+                            <div class="tab" onclick="openTab(event, 'embedding-impact')">Impact of Absence</div>
+                            <div class="tab" onclick="openTab(event, 'embedding-knowledge')">In-depth Knowledge</div>
+                        </div>
+                        
+                        <div id="embedding-use-cases" class="tab-content active">
+                            <div class="business-case">
+                                <h4>Healthcare Industry</h4>
+                                <p>A medical research organization uses embedding models to convert clinical notes and research papers into vector representations. This enables them to identify similar patient cases, discover potential drug interactions, and accelerate medical literature review by finding semantically related studies across millions of documents.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Banking Sector</h4>
+                                <p>A financial institution employs embedding models to analyze customer communications and transaction descriptions. By converting these texts into vectors, they can detect unusual patterns that might indicate fraud, identify customers with similar financial needs for targeted product offerings, and automate compliance monitoring by flagging communications that require regulatory review.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Retail Industry</h4>
+                                <p>An e-commerce platform utilizes embedding models to understand product descriptions and customer reviews. This allows them to create more accurate product recommendations, improve search functionality by understanding user intent beyond simple keyword matching, and automatically categorize products based on their semantic characteristics rather than just predefined categories.</p>
+                            </div>
+                        </div>
+                        
+                        <div id="embedding-problems" class="tab-content">
+                            <p>Embedding models solve several critical business challenges:</p>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-check-circle"></i> <strong>Semantic Understanding:</strong> Enables machines to comprehend meaning and context in text rather than just matching keywords</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Similarity Detection:</strong> Identifies semantically related content across different documents or communications</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Information Retrieval:</strong> Improves search and recommendation systems by understanding user intent</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Classification Automation:</strong> Enables automatic categorization of content based on meaning rather than predefined rules</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Knowledge Discovery:</strong> Uncovers hidden relationships and patterns in large text collections</li>
+                            </ul>
+                        </div>
+                        
+                        <div id="embedding-impact" class="tab-content">
+                            <p>Without embedding models, businesses would face:</p>
+                            <div class="impact-grid">
+                                <div class="impact-card">
+                                    <h4>Limited Text Understanding</h4>
+                                    <p>Systems would only understand text at a superficial level, missing nuance, context, and semantic relationships that are crucial for accurate analysis and decision-making.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Ineffective Search and Recommendations</h4>
+                                    <p>Search systems would rely solely on keyword matching, failing to deliver relevant results when users use different terminology or when concepts are related but not identical.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Manual Classification Efforts</h4>
+                                    <p>Businesses would need to invest heavily in manual classification and tagging of content, as automated systems couldn't understand meaning well enough to categorize accurately.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Missed Insights</h4>
+                                    <p>Hidden relationships and patterns in text data would remain undiscovered, preventing businesses from leveraging valuable insights that could drive innovation and competitive advantage.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="embedding-knowledge" class="tab-content">
+                            <p>Embedding models transform text into high-dimensional vectors where semantically similar items are located close to each other in vector space. These representations capture nuanced meaning and context:</p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Using embeddings for healthcare document similarity</div>
+                                    <button class="code-copy">Copy</button>
+                                </div>
+                                <pre><code>from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+
+# Initialize the embedding model
+embeddings = OpenAIEmbeddings()
+
+# Sample medical documents
+medical_docs = [
+    "Patient presents with chest pain, shortness of breath, and fatigue. "
+    "ECG shows ST-segment elevation. Diagnosis: Acute myocardial infarction.",
+    
+    "65-year-old male with history of hypertension reports chest discomfort "
+    "and dizziness. Cardiac enzymes elevated. Treatment: Aspirin, nitroglycerin.",
+    
+    "Patient complains of abdominal pain, nausea, and vomiting. "
+    "Physical examination reveals right lower quadrant tenderness. "
+    "Diagnosis: Acute appendicitis.",
+    
+    "Young adult with sudden onset severe headache, photophobia, and neck stiffness. "
+    "CT scan shows subarachnoid hemorrhage. Immediate neurosurgical consultation required."
+]
+
+# Create embeddings for the documents
+doc_embeddings = embeddings.embed_documents(medical_docs)
+
+# Function to find most similar documents
+def find_similar_docs(query, docs, embeddings, top_k=2):
+    query_embedding = embeddings.embed_query(query)
+    
+    # Calculate cosine similarity between query and all documents
+    similarities = cosine_similarity([query_embedding], doc_embeddings)[0]
+    
+    # Get indices of top_k most similar documents
+    top_indices = np.argsort(similarities)[::-1][:top_k]
+    
+    return [(docs[i], similarities[i]) for i in top_indices]
+
+# Example query
+query = "Patient with heart attack symptoms and ECG changes"
+similar_docs = find_similar_docs(query, medical_docs, embeddings)
+
+print(f"Query: {query}\n")
+print("Most similar documents:")
+for doc, similarity in similar_docs:
+    print(f"Similarity: {similarity:.4f}")
+    print(f"Document: {doc}\n")
+
+# Business implication: Healthcare providers can quickly find similar patient cases,
+# treatment approaches, and relevant research, improving diagnosis and treatment decisions</code></pre>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Custom embedding class for banking transactions</div>
+                                    <button class="code-copy">Copy</button>
+                                </div>
+                                <pre><code>from langchain.embeddings.base import Embeddings
+from typing import List
+import numpy as np
+
+class TransactionEmbeddings(Embeddings):
+    """Custom embeddings for banking transaction descriptions"""
+    
+    def __init__(self, base_embeddings):
+        self.base_embeddings = base_embeddings
+        # Transaction-specific features to enhance semantic understanding
+        self.amount_buckets = {
+            'small': (0, 100),
+            'medium': (100, 1000),
+            'large': (1000, 10000),
+            'very_large': (10000, float('inf'))
+        }
+        self.transaction_types = {
+            'purchase': ['purchase', 'buy', 'charge', 'payment'],
+            'withdrawal': ['withdrawal', 'atm', 'cash'],
+            'transfer': ['transfer', 'send', 'move'],
+            'deposit': ['deposit', 'credit', 'add']
+        }
+    
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        # Get base embeddings
+        base_embeddings = self.base_embeddings.embed_documents(texts)
+        
+        # Enhance with transaction-specific features
+        enhanced_embeddings = []
+        for i, text in enumerate(texts):
+            # Extract transaction features
+            amount_category = self._extract_amount_category(text)
+            transaction_type = self._extract_transaction_type(text)
+            
+            # Create feature vector
+            features = self._create_feature_vector(amount_category, transaction_type)
+            
+            # Combine with base embedding
+            enhanced = np.concatenate([base_embeddings[i], features])
+            enhanced_embeddings.append(enhanced.tolist())
+        
+        return enhanced_embeddings
+    
+    def embed_query(self, text: str) -> List[float]:
+        # Same logic as embed_documents but for a single text
+        base_embedding = self.base_embeddings.embed_query(text)
+        amount_category = self._extract_amount_category(text)
+        transaction_type = self._extract_transaction_type(text)
+        features = self._create_feature_vector(amount_category, transaction_type)
+        enhanced = np.concatenate([base_embedding, features])
+        return enhanced.tolist()
+    
+    def _extract_amount_category(self, text):
+        # Extract amount from text and categorize
+        # Simplified for example
+        if '$' in text:
+            amount_str = text.split('$')[1].split()[0]
+            try:
+                amount = float(amount_str.replace(',', ''))
+                for category, (min_amt, max_amt) in self.amount_buckets.items():
+                    if min_amt <= amount < max_amt:
+                        return category
+            except:
+                pass
+        return 'unknown'
+    
+    def _extract_transaction_type(self, text):
+        # Determine transaction type from keywords
+        text_lower = text.lower()
+        for trans_type, keywords in self.transaction_types.items():
+            if any(keyword in text_lower for keyword in keywords):
+                return trans_type
+        return 'other'
+    
+    def _create_feature_vector(self, amount_category, transaction_type):
+        # Create one-hot encoded feature vector
+        amount_features = [1 if cat == amount_category else 0 
+                          for cat in self.amount_buckets.keys()]
+        type_features = [1 if t_type == transaction_type else 0 
+                        for t_type in self.transaction_types.keys()]
+        return amount_features + type_features
+
+# Usage example
+from langchain.embeddings import OpenAIEmbeddings
+
+base_embeddings = OpenAIEmbeddings()
+transaction_embeddings = TransactionEmbeddings(base_embeddings)
+
+# Sample transaction descriptions
+transactions = [
+    "Purchase at Amazon for $45.99",
+    "ATM withdrawal of $200",
+    "Transfer to savings account: $1,500",
+    "Deposit from paycheck: $3,200.50"
+]
+
+# Create enhanced embeddings
+transaction_vectors = transaction_embeddings.embed_documents(transactions)
+
+# Business implication: Banks can better detect unusual patterns, 
+# categorize transactions more accurately, and identify potential 
+# fraud by using embeddings that understand both semantic meaning 
+# and transaction-specific features</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="tag-container">
+                            <span class="tag tag-predefined">Predefined</span>
+                            <span class="tag tag-custom">Custom</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-vector-square"></i>
+                        </div>
+                        <h3 class="card-title">Vector Representations</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Vector representations are numerical encodings of data that capture semantic meaning and relationships, enabling efficient similarity searches, clustering, and machine learning applications.</p>
+                        
+                        <div class="tabs">
+                            <div class="tab active" onclick="openTab(event, 'vector-use-cases')">Business Use Cases</div>
+                            <div class="tab" onclick="openTab(event, 'vector-problems')">Problems Solved</div>
+                            <div class="tab" onclick="openTab(event, 'vector-impact')">Impact of Absence</div>
+                            <div class="tab" onclick="openTab(event, 'vector-knowledge')">In-depth Knowledge</div>
+                        </div>
+                        
+                        <div id="vector-use-cases" class="tab-content active">
+                            <div class="business-case">
+                                <h4>Logistics Industry</h4>
+                                <p>A global shipping company uses vector representations to encode shipment information, including routes, delivery times, and handling requirements. By storing these vectors in a specialized database, they can quickly identify similar shipments, optimize routing based on historical patterns, and predict potential delays by comparing current shipments with past similar scenarios.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Healthcare Sector</h4>
+                                <p>A hospital network employs vector representations for patient records, treatment plans, and medical research. This enables them to find patients with similar conditions and treatment responses, identify effective treatment protocols for complex cases, and accelerate clinical research by quickly locating relevant patient populations for studies.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Retail Industry</h4>
+                                <p>An e-commerce platform utilizes vector representations for products, customer preferences, and browsing behavior. By comparing these vectors, they can deliver highly personalized product recommendations, identify trending items across similar customer segments, and optimize inventory management by predicting demand based on similarity to historical patterns.</p>
+                            </div>
+                        </div>
+                        
+                        <div id="vector-problems" class="tab-content">
+                            <p>Vector representations solve several critical business challenges:</p>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-check-circle"></i> <strong>Similarity Search:</strong> Enables efficient finding of similar items across large datasets</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Pattern Recognition:</strong> Uncovers hidden relationships and patterns in complex data</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Personalization:</strong> Facilitates customized recommendations and experiences based on similarity</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Predictive Analytics:</strong> Enables prediction of future outcomes based on similarity to historical patterns</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Knowledge Organization:</strong> Creates structured representations of unstructured information</li>
+                            </ul>
+                        </div>
+                        
+                        <div id="vector-impact" class="tab-content">
+                            <p>Without vector representations, businesses would face:</p>
+                            <div class="impact-grid">
+                                <div class="impact-card">
+                                    <h4>Inefficient Similarity Searches</h4>
+                                    <p>Finding similar items would require slow, brute-force comparisons across entire datasets, making real-time recommendations and searches impractical at scale.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Limited Pattern Recognition</h4>
+                                    <p>Businesses would struggle to identify meaningful patterns in complex data, missing opportunities for optimization, innovation, and competitive advantage.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Generic Customer Experiences</h4>
+                                    <p>Personalization would be limited to simple rule-based systems rather than nuanced understanding of individual preferences and behaviors.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Manual Knowledge Organization</h4>
+                                    <p>Organizations would rely heavily on manual categorization and tagging of information, a process that's expensive, time-consuming, and often inconsistent.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="vector-knowledge" class="tab-content">
+                            <p>Vector representations transform complex data into numerical formats that preserve semantic relationships. These vectors can be stored in specialized databases for efficient similarity searches and analysis:</p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Vector database for logistics optimization</div>
+                                    <button class="code-copy">Copy</button>
+                                </div>
+                                <pre><code>from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+import numpy as np
+
+# Initialize embeddings
+embeddings = OpenAIEmbeddings()
+
+# Sample shipment data with descriptions
+shipments = [
+    {
+        "id": "SH-001",
+        "description": "Electronics shipment from Shanghai to Los Angeles, priority delivery, temperature sensitive",
+        "origin": "Shanghai",
+        "destination": "Los Angeles",
+        "weight": 1200,
+        "priority": "high",
+        "special_handling": ["temperature_controlled"]
+    },
+    {
+        "id": "SH-002", 
+        "description": "Automotive parts from Detroit to Mexico City, standard delivery, hazardous materials",
+        "origin": "Detroit",
+        "destination": "Mexico City",
+        "weight": 3500,
+        "priority": "medium",
+        "special_handling": ["hazardous"]
+    },
+    {
+        "id": "SH-003",
+        "description": "Pharmaceuticals from Mumbai to Frankfurt, express delivery, temperature sensitive, high value",
+        "origin": "Mumbai",
+        "destination": "Frankfurt",
+        "weight": 800,
+        "priority": "high",
+        "special_handling": ["temperature_controlled", "high_value"]
+    },
+    {
+        "id": "SH-004",
+        "description": "Electronics shipment from Shenzhen to Chicago, standard delivery, temperature sensitive",
+        "origin": "Shenzhen",
+        "destination": "Chicago",
+        "weight": 1500,
+        "priority": "medium",
+        "special_handling": ["temperature_controlled"]
+    }
+]
+
+# Create documents for vector storage
+documents = [f"{s['id']}: {s['description']}" for s in shipments]
+metadatas = [{
+    "id": s["id"],
+    "origin": s["origin"],
+    "destination": s["destination"],
+    "weight": s["weight"],
+    "priority": s["priority"],
+    "special_handling": s["special_handling"]
+} for s in shipments]
+
+# Create vector store
+vector_store = FAISS.from_texts(documents, embeddings, metadatas=metadatas)
+
+# Function to find similar shipments
+def find_similar_shipments(query, k=2):
+    results = vector_store.similarity_search(query, k=k)
+    return [{"id": doc.metadata["id"], "description": doc.page_content} for doc in results]
+
+# Example queries
+new_shipment = "Electronics from Beijing to New York, priority delivery, temperature sensitive"
+similar = find_similar_shipments(new_shipment)
+
+print(f"New shipment: {new_shipment}\n")
+print("Similar shipments:")
+for shipment in similar:
+    print(f"- {shipment['id']}: {shipment['description']}")
+
+# Business implication: Logistics companies can optimize routing, 
+# handling procedures, and delivery estimates by identifying similar 
+# historical shipments and their outcomes</code></pre>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Vector similarity for retail product recommendations</div>
+                                    <button class="code-copy">Copy</button>
+                                </div>
+                                <pre><code>from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import Chroma
+import pandas as pd
+
+# Initialize embeddings
+embeddings = OpenAIEmbeddings()
+
+# Sample product data
+products = [
+    {
+        "id": "P-1001",
+        "name": "Wireless Bluetooth Headphones",
+        "description": "High-quality wireless headphones with noise cancellation, 30-hour battery life, and comfortable over-ear design",
+        "category": "Electronics",
+        "price": 149.99,
+        "brand": "AudioTech"
+    },
+    {
+        "id": "P-1002",
+        "name": "Smart Fitness Tracker",
+        "description": "Waterproof fitness tracker with heart rate monitoring, GPS, and 7-day battery life",
+        "category": "Electronics",
+        "price": 89.99,
+        "brand": "FitLife"
+    },
+    {
+        "id": "P-1003",
+        "name": "Premium Wireless Earbuds",
+        "description": "True wireless earbuds with active noise cancellation, wireless charging case, and 24-hour battery life",
+        "category": "Electronics",
+        "price": 179.99,
+        "brand": "SoundPro"
+    },
+    {
+        "id": "P-1004",
+        "name": "Running Shoes",
+        "description": "Lightweight running shoes with extra cushioning, breathable mesh, and durable rubber sole",
+        "category": "Footwear",
+        "price": 129.99,
+        "brand": "RunFast"
+    }
+]
+
+# Create documents for vector storage
+documents = [f"{p['id']}: {p['name']} - {p['description']}" for p in products]
+metadatas = [{
+    "id": p["id"],
+    "name": p["name"],
+    "category": p["category"],
+    "price": p["price"],
+    "brand": p["brand"]
+} for p in products]
+
+# Create vector store using Chroma for better metadata filtering
+vector_store = Chroma.from_texts(documents, embeddings, metadatas=metadatas)
+
+# Function to get product recommendations
+def get_recommendations(query, category=None, max_price=None, k=3):
+    # Create filter dictionary based on parameters
+    filter_dict = {}
+    if category:
+        filter_dict["category"] = category
+    if max_price:
+        filter_dict["price"] = {"$lte": max_price}
+    
+    # Search with filters if provided
+    if filter_dict:
+        results = vector_store.similarity_search(query, k=k, filter=filter_dict)
+    else:
+        results = vector_store.similarity_search(query, k=k)
+    
+    return [{
+        "id": doc.metadata["id"],
+        "name": doc.metadata["name"],
+        "category": doc.metadata["category"],
+        "price": doc.metadata["price"],
+        "brand": doc.metadata["brand"]
+    } for doc in results]
+
+# Example queries
+query1 = "Wireless audio with long battery life"
+recommendations1 = get_recommendations(query1)
+
+print(f"Query: {query1}")
+print("Recommendations:")
+for product in recommendations1:
+    print(f"- {product['name']} (${product['price']})")
+
+# Example with filters
+query2 = "Comfortable athletic wear"
+recommendations2 = get_recommendations(query2, category="Footwear", max_price=150)
+
+print(f"\nQuery: {query2} (Footwear, max $150)")
+print("Recommendations:")
+for product in recommendations2:
+    print(f"- {product['name']} (${product['price']})")
+
+# Business implication: Retailers can provide highly relevant product
+# recommendations by understanding the semantic similarity between
+# products and customer queries, improving conversion rates and customer satisfaction</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="tag-container">
+                            <span class="tag tag-predefined">Predefined</span>
+                            <span class="tag tag-custom">Custom</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3 class="card-title">Embedding Caching</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Embedding caching stores previously computed embeddings to avoid redundant calculations, significantly improving performance and reducing costs in applications that frequently process the same or similar text.</p>
+                        
+                        <div class="tabs">
+                            <div class="tab active" onclick="openTab(event, 'cache-use-cases')">Business Use Cases</div>
+                            <div class="tab" onclick="openTab(event, 'cache-problems')">Problems Solved</div>
+                            <div class="tab" onclick="openTab(event, 'cache-impact')">Impact of Absence</div>
+                            <div class="tab" onclick="openTab(event, 'cache-knowledge')">In-depth Knowledge</div>
+                        </div>
+                        
+                        <div id="cache-use-cases" class="tab-content active">
+                            <div class="business-case">
+                                <h4>Banking Sector</h4>
+                                <p>A financial institution implements embedding caching for their customer service chatbot that handles thousands of inquiries daily. By caching embeddings for common questions and responses, they reduced API calls to their embedding model by 70%, resulting in significant cost savings and faster response times during peak usage periods.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Retail Industry</h4>
+                                <p>An e-commerce platform uses embedding caching for their product recommendation system. Since product descriptions change infrequently but are accessed millions of times daily, caching embeddings reduced their computational overhead by 65% while maintaining recommendation accuracy, allowing them to serve more customers with the same infrastructure.</p>
+                            </div>
+                            
+                            <div class="business-case">
+                                <h4>Healthcare Industry</h4>
+                                <p>A medical research organization employs embedding caching for their literature search system. Research papers and clinical notes are processed once, and their embeddings are cached for future searches. This approach reduced their processing time for complex queries from minutes to seconds, enabling researchers to iterate more quickly in their investigations.</p>
+                            </div>
+                        </div>
+                        
+                        <div id="cache-problems" class="tab-content">
+                            <p>Embedding caching solves several critical business challenges:</p>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-check-circle"></i> <strong>Computational Cost:</strong> Reduces expensive API calls to embedding models by reusing previously computed results</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Response Time:</strong> Improves application performance by eliminating redundant embedding calculations</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Resource Utilization:</strong> Optimizes infrastructure usage by reducing computational load</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Scalability:</strong> Enables systems to handle higher volumes of requests without proportional increases in computing resources</li>
+                                <li><i class="fas fa-check-circle"></i> <strong>Rate Limiting:</strong> Mitigates issues with API rate limits from embedding service providers</li>
+                            </ul>
+                        </div>
+                        
+                        <div id="cache-impact" class="tab-content">
+                            <p>Without embedding caching, businesses would face:</p>
+                            <div class="impact-grid">
+                                <div class="impact-card">
+                                    <h4>Excessive Costs</h4>
+                                    <p>Organizations would incur significantly higher expenses from embedding API calls, especially for applications that process the same content repeatedly, making advanced AI features financially prohibitive for many use cases.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Poor User Experience</h4>
+                                    <p>Applications would suffer from slow response times as they wait for embedding calculations to complete, leading to user frustration, abandoned sessions, and reduced engagement.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>Limited Scalability</h4>
+                                    <p>Systems would struggle to handle increased user loads, as each additional request would require additional computational resources rather than leveraging cached results.</p>
+                                </div>
+                                <div class="impact-card">
+                                    <h4>API Rate Limit Issues</h4>
+                                    <p>Applications would frequently hit rate limits imposed by embedding service providers, causing service interruptions and requiring complex request management strategies.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="cache-knowledge" class="tab-content">
+                            <p>Embedding caching systems store previously computed embeddings along with their source text, allowing for quick retrieval when the same text is encountered again. Various caching strategies can be employed based on the specific application requirements:</p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Simple in-memory embedding cache for banking applications</div>
+                                    <button class="code-copy">Copy</button>
+                                </div>
+                                <pre><code>from langchain.embeddings import OpenAIEmbeddings
+from langchain.cache import InMemoryCache
+import langchain
+from langchain.globals import set_llm_cache
+import time
+import hashlib
+
+# Set up caching for embeddings
+langchain.llm_cache = InMemoryCache()
+
+class CachedEmbeddings:
+    """Wrapper for embedding models with caching functionality"""
+    
+    def __init__(self, embeddings):
+        self.embeddings = embeddings
+        self.cache = {}  # Simple in-memory cache
+    
+    def _get_cache_key(self, text):
+        # Create a hash of the text to use as cache key
+        return hashlib.md5(text.encode()).hexdigest()
+    
+    def embed_documents(self, texts):
+        results = []
+        cache_hits = 0
+        
+        for text in texts:
+            cache_key = self._get_cache_key(text)
+            
+            # Check if embedding is in cache
+            if cache_key in self.cache:
+                results.append(self.cache[cache_key])
+                cache_hits += 1
+            else:
+                # Compute embedding and store in cache
+                embedding = self.embeddings.embed_query(text)
+                self.cache[cache_key] = embedding
+                results.append(embedding)
+        
+        print(f"Cache hit rate: {cache_hits}/{len(texts)} ({cache_hits/len(texts)*100:.1f}%)")
+        return results
+    
+    def embed_query(self, text):
+        cache_key = self._get_cache_key(text)
+        
+        # Check if embedding is in cache
+        if cache_key in self.cache:
+            print("Cache hit!")
+            return self.cache[cache_key]
+        else:
+            print("Cache miss - computing embedding")
+            # Compute embedding and store in cache
+            embedding = self.embeddings.embed_query(text)
+            self.cache[cache_key] = embedding
+            return embedding
+
+# Initialize with caching
+base_embeddings = OpenAIEmbeddings()
+cached_embeddings = CachedEmbeddings(base_embeddings)
+
+# Sample banking queries
+banking_queries = [
+    "What is the interest rate for a home loan?",
+    "How do I check my account balance?",
+    "What is the interest rate for a home loan?",  # Duplicate to test cache
+    "How do I report a fraudulent transaction?",
+    "What are the fees for international transfers?",
+    "How do I check my account balance?",  # Duplicate to test cache
+]
+
+# Process queries with timing
+print("Processing banking queries with caching:")
+start_time = time.time()
+for query in banking_queries:
+    embedding = cached_embeddings.embed_query(query)
+    print(f"Processed: {query[:30]}...")
+end_time = time.time()
+
+print(f"\nTotal time with caching: {end_time - start_time:.4f} seconds")
+
+# Business implication: Banks can reduce API costs and improve response times
+# for customer service applications by caching embeddings for common queries</code></pre>
+                            </div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="code-title">Redis-based embedding cache for retail product catalog</div>
+                                    <button class="code-copy">Copy</button>
+                                </div>
+                                <pre><code>import redis
+import json
+import pickle
+from langchain.embeddings import OpenAIEmbeddings
+import hashlib
+
+class RedisEmbeddingCache:
+    """Redis-based embedding cache for distributed applications"""
+    
+    def __init__(self, host='localhost', port=6379, db=0, ttl=86400):
+        """
+        Initialize Redis cache with TTL (time-to-live) in seconds
+        Default TTL is 24 hours (86400 seconds)
+        """
+        self.redis_client = redis.StrictRedis(host=host, port=port, db=db)
+        self.ttl = ttl
+        self.embeddings = OpenAIEmbeddings()
+    
+    def _get_cache_key(self, text):
+        # Create a hash of the text to use as cache key
+        return hashlib.md5(text.encode()).hexdigest()
+    
+    def get_embedding(self, text):
+        cache_key = self._get_cache_key(text)
+        
+        # Try to get from cache
+        cached_result = self.redis_client.get(cache_key)
+        if cached_result:
+            print("Cache hit!")
+            return pickle.loads(cached_result)
+        
+        # Cache miss - compute and store
+        print("Cache miss - computing embedding")
+        embedding = self.embeddings.embed_query(text)
+        
+        # Store in Redis with TTL
+        self.redis_client.setex(
+            name=cache_key,
+            value=pickle.dumps(embedding),
+            time=self.ttl
+        )
+        
+        return embedding
+    
+    def batch_get_embeddings(self, texts):
+        """Get embeddings for multiple texts with batch processing"""
+        results = []
+        cache_hits = 0
+        
+        # First, check cache for all texts
+        cache_keys = [self._get_cache_key(text) for text in texts]
+        cached_results = self.redis_client.mget(cache_keys)
+        
+        # Process each text
+        for i, text in enumerate(texts):
+            if cached_results[i]:
+                # Cache hit
+                results.append(pickle.loads(cached_results[i]))
+                cache_hits += 1
+            else:
+                # Cache miss
+                embedding = self.embeddings.embed_query(text)
+                results.append(embedding)
+                
+                # Store in cache
+                self.redis_client.setex(
+                    name=cache_keys[i],
+                    value=pickle.dumps(embedding),
+                    time=self.ttl
+                )
+        
+        print(f"Batch cache hit rate: {cache_hits}/{len(texts)} ({cache_hits/len(texts)*100:.1f}%)")
+        return results
+    
+    def clear_cache(self):
+        """Clear all embeddings from cache"""
+        # This is a simplified approach - in production, you might want
+        # to be more selective about what to clear
+        keys = self.redis_client.keys("*")
+        if keys:
+            self.redis_client.delete(*keys)
+        print("Cache cleared")
+
+# Initialize Redis cache
+embedding_cache = RedisEmbeddingCache(ttl=3600)  # 1 hour TTL
+
+# Sample product descriptions
+product_descriptions = [
+    "Wireless Bluetooth headphones with noise cancellation and 30-hour battery life",
+    "Smart fitness tracker with heart rate monitoring and GPS",
+    "Premium wireless earbuds with active noise cancellation",
+    "Wireless Bluetooth headphones with noise cancellation and 30-hour battery life",  # Duplicate
+    "Lightweight running shoes with extra cushioning",
+    "Smart fitness tracker with heart rate monitoring and GPS",  # Duplicate
+]
+
+# Process product descriptions with caching
+print("Processing product descriptions with Redis cache:")
+embeddings = embedding_cache.batch_get_embeddings(product_descriptions)
+
+# Business implication: E-commerce platforms can efficiently handle
+# large product catalogs by caching embeddings, reducing costs and
+# improving recommendation system performance</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="tag-container">
+                            <span class="tag tag-predefined">Predefined</span>
+                            <span class="tag tag-custom">Custom</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">Data Management Framework</div>
+                <ul class="footer-links">
+                    <li><a href="#ingestion">Data Ingestion</a></li>
+                    <li><a href="#processing">Data Processing</a></li>
+                    <li><a href="#transformation">Data Transformation</a></li>
+                </ul>
+            </div>
+            <div class="copyright">
+                &copy; 2023 Data Management Framework. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Tab functionality
+        function openTab(evt, tabName) {
+            // Hide all tab content
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            // Remove active class from all tabs
+            const tabs = document.getElementsByClassName("tab");
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            
+            // Show specific tab content
+            document.getElementById(tabName).classList.add("active");
+            
+            // Add active class to button that opened the tab
+            evt.currentTarget.classList.add("active");
+        }
+        
+        // Copy code functionality
+        document.querySelectorAll('.code-copy').forEach(button => {
+            button.addEventListener('click', () => {
+                const codeBlock = button.closest('.code-block');
+                const code = codeBlock.querySelector('pre code').textContent;
+                
+                navigator.clipboard.writeText(code).then(() => {
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                });
+            });
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
