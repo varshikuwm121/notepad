@@ -3,25 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Code Editor</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/monokai.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/foldgutter.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closetag.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/foldcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/foldgutter.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/brace-fold.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/xml-fold.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/search/search.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/search/searchcursor.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/dialog/dialog.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/dialog/dialog.min.css">
+    <title>Notepad++ Advanced - Web Edition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -29,754 +12,3602 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #2d2d30;
+            --bg-secondary: #1e1e1e;
+            --bg-tertiary: #252526;
+            --text-primary: #d4d4d4;
+            --text-secondary: #969696;
+            --accent: #007acc;
+            --accent-hover: #005a9e;
+            --border: #3e3e42;
+            --selection: #264f78;
+            --line-number: #858585;
+            --scrollbar: #424242;
+            --scrollbar-hover: #4f4f4f;
+            --status-bar: #007acc;
+            --tab-active: #1e1e1e;
+            --tab-inactive: #2d2d30;
+            --tab-hover: #353535;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f3f3f3;
+            --bg-tertiary: #e8e8e8;
+            --text-primary: #000000;
+            --text-secondary: #616161;
+            --accent: #007acc;
+            --accent-hover: #005a9e;
+            --border: #e0e0e0;
+            --selection: #add6ff;
+            --line-number: #858585;
+            --scrollbar: #bdbdbd;
+            --scrollbar-hover: #9e9e9e;
+            --status-bar: #007acc;
+            --tab-active: #ffffff;
+            --tab-inactive: #f3f3f3;
+            --tab-hover: #e8e8e8;
+        }
+
         body {
-            font-family: 'Consolas', 'Monaco', 'Lucida Console', monospace;
-            background: #1e1e1e;
-            color: #d4d4d4;
-            height: 100vh;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             overflow: hidden;
+            user-select: none;
         }
 
-        .editor-container {
-            display: flex;
-            height: 100vh;
-            flex-direction: column;
-        }
-
+        /* Menu Bar */
         .menu-bar {
-            background: #2d2d30;
-            border-bottom: 1px solid #3e3e42;
-            padding: 8px 12px;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0;
             display: flex;
             align-items: center;
-            gap: 20px;
+            height: 30px;
             font-size: 13px;
         }
 
         .menu-item {
-            padding: 6px 12px;
+            padding: 0 15px;
             cursor: pointer;
-            border-radius: 3px;
-            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            height: 100%;
+            transition: background-color 0.2s;
         }
 
         .menu-item:hover {
-            background: #37373d;
+            background-color: var(--bg-tertiary);
         }
 
-        .main-content {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
+        .menu-dropdown {
+            position: absolute;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1000;
+            min-width: 200px;
         }
 
-        .sidebar {
-            width: 250px;
-            background: #252526;
-            border-right: 1px solid #3e3e42;
-            display: flex;
-            flex-direction: column;
+        .menu-dropdown.active {
+            display: block;
         }
 
-        .sidebar-header {
-            padding: 12px;
-            background: #2d2d30;
-            border-bottom: 1px solid #3e3e42;
-            font-weight: bold;
-            font-size: 12px;
-            text-transform: uppercase;
-        }
-
-        .file-explorer {
-            flex: 1;
-            padding: 8px;
-            overflow-y: auto;
-        }
-
-        .file-item {
-            padding: 6px 8px;
+        .menu-dropdown-item {
+            padding: 8px 20px;
             cursor: pointer;
-            border-radius: 3px;
-            margin: 2px 0;
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 13px;
+            justify-content: space-between;
+            transition: background-color 0.2s;
         }
 
-        .file-item:hover {
-            background: #37373d;
+        .menu-dropdown-item:hover {
+            background-color: var(--accent);
+            color: white;
         }
 
-        .file-item.active {
-            background: #094771;
-        }
-
-        .file-icon {
+        .menu-dropdown-item i {
+            margin-right: 8px;
             width: 16px;
-            height: 16px;
-            border-radius: 2px;
+        }
+
+        .menu-separator {
+            height: 1px;
+            background-color: var(--border);
+            margin: 4px 0;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background-color: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            padding: 5px 10px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: bold;
+            gap: 10px;
+            height: 35px;
         }
 
-        .file-icon.html { background: #e34c26; color: white; }
-        .file-icon.js { background: #f7df1e; color: black; }
-        .file-icon.css { background: #1572b6; color: white; }
-        .file-icon.txt { background: #6d6d6d; color: white; }
-
-        .editor-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+        .toolbar-btn {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 3px;
+            transition: all 0.2s;
+            font-size: 14px;
         }
 
+        .toolbar-btn:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .toolbar-btn:active {
+            transform: scale(0.95);
+        }
+
+        .toolbar-separator {
+            width: 1px;
+            height: 20px;
+            background-color: var(--border);
+        }
+
+        /* Tab Bar */
         .tab-bar {
-            background: #2d2d30;
-            border-bottom: 1px solid #3e3e42;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
             display: flex;
+            align-items: center;
+            height: 35px;
             overflow-x: auto;
+            overflow-y: hidden;
         }
 
         .tab {
-            padding: 10px 16px;
-            background: #2d2d30;
-            border-right: 1px solid #3e3e42;
+            background-color: var(--tab-inactive);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            padding: 8px 15px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 13px;
             min-width: 120px;
+            max-width: 200px;
+            transition: all 0.2s;
             position: relative;
         }
 
         .tab.active {
-            background: #1e1e1e;
-            border-bottom: 2px solid #007acc;
+            background-color: var(--tab-active);
+            border-bottom: 2px solid var(--accent);
         }
 
-        .tab:hover {
-            background: #37373d;
+        .tab:hover:not(.active) {
+            background-color: var(--tab-hover);
         }
 
-        .tab.active:hover {
-            background: #1e1e1e;
+        .tab-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 13px;
         }
 
         .tab-close {
-            margin-left: auto;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 16px;
-            line-height: 1;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 2px;
+            transition: background-color 0.2s;
         }
 
         .tab-close:hover {
-            background: #e81123;
+            background-color: var(--accent);
             color: white;
         }
 
-        .editor-wrapper {
-            flex: 1;
+        /* Editor Container */
+        .editor-container {
+            display: flex;
+            height: calc(100vh - 135px);
             position: relative;
         }
 
-        .CodeMirror {
-            height: 100%;
-            font-family: 'Consolas', 'Monaco', 'Lucida Console', monospace;
+        /* Line Numbers */
+        .line-numbers {
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 10px 10px 10px 5px;
+            text-align: right;
+            color: var(--line-number);
             font-size: 14px;
             line-height: 1.5;
+            user-select: none;
+            overflow: hidden;
+            min-width: 50px;
         }
 
+        /* Text Editor */
+        .text-editor {
+            flex: 1;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            border: none;
+            outline: none;
+            padding: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            overflow: auto;
+            white-space: pre;
+            word-wrap: normal;
+            font-family: inherit;
+        }
+
+        .text-editor::selection {
+            background-color: var(--selection);
+        }
+
+        /* Status Bar */
         .status-bar {
-            background: #007acc;
-            color: white;
-            padding: 4px 12px;
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            height: 25px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
             font-size: 12px;
+            color: var(--text-secondary);
+            justify-content: space-between;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-separator {
+            width: 1px;
+            height: 12px;
+            background-color: var(--border);
+        }
+
+        /* Find/Replace Panel */
+        .find-replace-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-top: none;
+            padding: 10px;
+            display: none;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .find-replace-panel.active {
+            display: block;
+        }
+
+        .find-replace-input {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .find-replace-input input {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 4px 8px;
+            font-size: 13px;
+            width: 200px;
+        }
+
+        .find-replace-input input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .find-replace-input label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            min-width: 60px;
+        }
+
+        .find-replace-buttons {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .find-replace-btn {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+
+        .find-replace-btn:hover {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        /* Go To Line Dialog */
+        .dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            padding: 20px;
+            display: none;
+            z-index: 1000;
+            border-radius: 5px;
+        }
+
+        .dialog.active {
+            display: block;
+        }
+
+        .dialog-header {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .dialog-content {
+            margin-bottom: 15px;
+        }
+
+        .dialog-input {
+            width: 100%;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .dialog-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .dialog-btn {
+            padding: 6px 16px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+
+        .dialog-btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .dialog-btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .dialog-btn-secondary {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .dialog-btn-secondary:hover {
+            background-color: var(--bg-primary);
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background-color: var(--bg-secondary);
+            border-left: 1px solid var(--border);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .settings-panel.active {
+            right: 0;
+        }
+
+        .settings-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .toolbar {
-            background: #2d2d30;
-            border-bottom: 1px solid #3e3e42;
-            padding: 8px 12px;
+        .settings-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .settings-close {
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .settings-close:hover {
+            color: var(--text-primary);
+        }
+
+        .settings-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-section-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .settings-option {
+            margin-bottom: 15px;
+        }
+
+        .settings-label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+        }
+
+        .settings-select,
+        .settings-input {
+            width: 100%;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 6px 10px;
+            font-size: 13px;
+        }
+
+        .settings-checkbox {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
 
-        .toolbar button {
-            background: #0e639c;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 3px;
+        .settings-checkbox input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
             cursor: pointer;
-            font-size: 12px;
         }
 
-        .toolbar button:hover {
-            background: #1177bb;
+        /* Syntax Highlighting */
+        .syntax-html { color: #0000ff; }
+        .syntax-tag { color: #800000; }
+        .syntax-attribute { color: #ff0000; }
+        .syntax-value { color: #0000ff; }
+        .syntax-comment { color: #008000; font-style: italic; }
+        .syntax-string { color: #a31515; }
+        .syntax-number { color: #098658; }
+        .syntax-keyword { color: #0000ff; }
+        .syntax-function { color: #795e26; }
+        .syntax-variable { color: #001080; }
+        .syntax-operator { color: #000000; }
+        .syntax-bracket { color: #000000; }
+        .syntax-css-property { color: #ff0000; }
+        .syntax-css-value { color: #0000ff; }
+        .syntax-js-keyword { color: #0000ff; }
+        .syntax-js-function { color: #795e26; }
+        .syntax-js-string { color: #a31515; }
+        .syntax-js-comment { color: #008000; font-style: italic; }
+        .syntax-js-number { color: #098658; }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 14px;
+            height: 14px;
         }
 
-        .toolbar select {
-            background: #3c3c3c;
-            color: white;
-            border: 1px solid #555;
-            padding: 4px 8px;
-            border-radius: 3px;
-            font-size: 12px;
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
         }
 
-        .new-file-btn {
-            background: #16825d;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 3px;
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar);
+            border-radius: 7px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--scrollbar-hover);
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1001;
+            min-width: 180px;
+        }
+
+        .context-menu.active {
+            display: block;
+        }
+
+        .context-menu-item {
+            padding: 8px 20px;
             cursor: pointer;
-            font-size: 11px;
-            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            transition: background-color 0.2s;
         }
 
-        .new-file-btn:hover {
-            background: #1e9a6a;
+        .context-menu-item:hover {
+            background-color: var(--accent);
+            color: white;
         }
 
-        .resizer {
-            width: 4px;
-            background: #3e3e42;
-            cursor: col-resize;
-            user-select: none;
+        .context-menu-separator {
+            height: 1px;
+            background-color: var(--border);
+            margin: 4px 0;
         }
 
-        .resizer:hover {
-            background: #007acc;
-        }
-
-        .minimap {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
+        /* Split View */
+        .split-view {
+            display: flex;
+            width: 100%;
             height: 100%;
-            background: rgba(45, 45, 48, 0.8);
+        }
+
+        .split-pane {
+            flex: 1;
+            position: relative;
+            border-right: 1px solid var(--border);
+        }
+
+        .split-pane:last-child {
+            border-right: none;
+        }
+
+        .split-resizer {
+            width: 4px;
+            background-color: var(--border);
+            cursor: col-resize;
+            position: relative;
+        }
+
+        .split-resizer:hover {
+            background-color: var(--accent);
+        }
+
+        /* Macro Recording Indicator */
+        .macro-indicator {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            background-color: #ff4444;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: none;
+            animation: pulse 1s infinite;
+        }
+
+        .macro-indicator.active {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* File Drop Zone */
+        .drop-zone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 122, 204, 0.1);
+            border: 3px dashed var(--accent);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .drop-zone.active {
+            display: flex;
+        }
+
+        .drop-zone-text {
+            font-size: 24px;
+            color: var(--accent);
+            text-align: center;
+        }
+
+        /* Loading Indicator */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 1002;
+            display: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .tooltip.active {
+            display: block;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 12px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1003;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .notification.active {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Plugin Manager */
+        .plugin-manager {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            width: 600px;
+            height: 400px;
+            display: none;
+            z-index: 1004;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            border-radius: 5px;
             overflow: hidden;
+        }
+
+        .plugin-manager.active {
+            display: block;
+        }
+
+        .plugin-manager-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .plugin-manager-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .plugin-manager-close {
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-secondary);
+        }
+
+        .plugin-manager-content {
+            height: calc(100% - 120px);
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .plugin-item {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+        }
+
+        .plugin-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .plugin-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .plugin-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .plugin-description {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .plugin-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .plugin-btn {
+            padding: 4px 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+
+        .plugin-btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .plugin-btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .plugin-btn-secondary {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .plugin-btn-secondary:hover {
+            background-color: var(--bg-primary);
+        }
+
+        /* Encoding Selector */
+        .encoding-selector {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 20px;
+            display: none;
+            z-index: 1005;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            border-radius: 5px;
+        }
+
+        .encoding-selector.active {
+            display: block;
+        }
+
+        .encoding-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .encoding-item {
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-radius: 3px;
+        }
+
+        .encoding-item:hover {
+            background-color: var(--bg-tertiary);
+        }
+
+        .encoding-item.selected {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        /* Minimap */
+        .minimap {
+            position: fixed;
+            right: 10px;
+            top: 100px;
+            width: 150px;
+            height: 300px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            display: none;
+            z-index: 100;
+            overflow: hidden;
+            border-radius: 3px;
+        }
+
+        .minimap.active {
+            display: block;
+        }
+
+        .minimap-content {
             font-size: 2px;
-            line-height: 2px;
+            line-height: 1.2;
+            color: var(--text-secondary);
+            padding: 5px;
+            transform-origin: top left;
+            transform: scale(0.1);
+            width: 1500px;
+            height: 3000px;
+        }
+
+        .minimap-viewport {
+            position: absolute;
+            background-color: rgba(0, 122, 204, 0.3);
+            border: 1px solid var(--accent);
+            pointer-events: none;
         }
     </style>
 </head>
-<body>
-    <div class="editor-container">
-        <div class="menu-bar">
-            <div class="menu-item" onclick="newFile()">File</div>
-            <div class="menu-item" onclick="showEditMenu()">Edit</div>
-            <div class="menu-item" onclick="showViewMenu()">View</div>
-            <div class="menu-item" onclick="runCode()">Run</div>
-            <div class="menu-item" onclick="showHelp()">Help</div>
+<body data-theme="dark">
+    <!-- Menu Bar -->
+    <div class="menu-bar">
+        <div class="menu-item" data-menu="file">
+            File <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
         </div>
-
-        <div class="toolbar">
-            <button onclick="newFile()">New File</button>
-            <button onclick="saveFile()">Save</button>
-            <button onclick="openFile()">Open</button>
-            <button onclick="runCode()">Run Code</button>
-            <select id="languageSelect" onchange="changeLanguage()">
-                <option value="htmlmixed">HTML</option>
-                <option value="javascript">JavaScript</option>
-                <option value="css">CSS</option>
-                <option value="xml">XML</option>
-            </select>
-            <select id="themeSelect" onchange="changeTheme()">
-                <option value="monokai">Monokai</option>
-                <option value="default">Default</option>
-                <option value="material">Material</option>
-            </select>
+        <div class="menu-item" data-menu="edit">
+            Edit <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
         </div>
+        <div class="menu-item" data-menu="search">
+            Search <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+        </div>
+        <div class="menu-item" data-menu="view">
+            View <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+        </div>
+        <div class="menu-item" data-menu="encoding">
+            Encoding <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+        </div>
+        <div class="menu-item" data-menu="language">
+            Language <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+        </div>
+        <div class="menu-item" data-menu="settings">
+            Settings <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+        </div>
+        <div class="menu-item" data-menu="macros">
+            Macros <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+        </div>
+        <div class="menu-item" data-menu="plugins">
+            Plugins <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+        </div>
+        <div class="menu-item" data-menu="help">
+            Help <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+        </div>
+    </div>
 
-        <div class="main-content">
-            <div class="sidebar">
-                <div class="sidebar-header">Explorer</div>
-                <div class="file-explorer" id="fileExplorer">
-                    <div class="file-item active" onclick="openTab('index.html', 'htmlmixed')">
-                        <div class="file-icon html">H</div>
-                        index.html
-                    </div>
-                    <div class="file-item" onclick="openTab('script.js', 'javascript')">
-                        <div class="file-icon js">JS</div>
-                        script.js
-                    </div>
-                    <div class="file-item" onclick="openTab('style.css', 'css')">
-                        <div class="file-icon css">CSS</div>
-                        style.css
-                    </div>
-                </div>
-                <button class="new-file-btn" onclick="createNewFile()">+ New File</button>
+    <!-- File Menu Dropdown -->
+    <div class="menu-dropdown" id="file-menu">
+        <div class="menu-dropdown-item" data-action="new">
+            <i class="fas fa-file"></i> New <span>Ctrl+N</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="open">
+            <i class="fas fa-folder-open"></i> Open <span>Ctrl+O</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="open-folder">
+            <i class="fas fa-folder"></i> Open Folder
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="save">
+            <i class="fas fa-save"></i> Save <span>Ctrl+S</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="save-as">
+            <i class="fas fa-save"></i> Save As <span>Ctrl+Alt+S</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="save-all">
+            <i class="fas fa-save"></i> Save All
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="close">
+            <i class="fas fa-times"></i> Close <span>Ctrl+W</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="close-all">
+            <i class="fas fa-times"></i> Close All
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="print">
+            <i class="fas fa-print"></i> Print <span>Ctrl+P</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="exit">
+            <i class="fas fa-sign-out-alt"></i> Exit
+        </div>
+    </div>
+
+    <!-- Edit Menu Dropdown -->
+    <div class="menu-dropdown" id="edit-menu">
+        <div class="menu-dropdown-item" data-action="undo">
+            <i class="fas fa-undo"></i> Undo <span>Ctrl+Z</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="redo">
+            <i class="fas fa-redo"></i> Redo <span>Ctrl+Y</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="cut">
+            <i class="fas fa-cut"></i> Cut <span>Ctrl+X</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="copy">
+            <i class="fas fa-copy"></i> Copy <span>Ctrl+C</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="paste">
+            <i class="fas fa-paste"></i> Paste <span>Ctrl+V</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="delete">
+            <i class="fas fa-trash"></i> Delete <span>Del</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="select-all">
+            <i class="fas fa-select-all"></i> Select All <span>Ctrl+A</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="select-line">
+            <i class="fas fa-grip-lines"></i> Select Line <span>Ctrl+L</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="duplicate-line">
+            <i class="fas fa-copy"></i> Duplicate Line <span>Ctrl+D</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="delete-line">
+            <i class="fas fa-trash"></i> Delete Line <span>Ctrl+Shift+L</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="move-line-up">
+            <i class="fas fa-arrow-up"></i> Move Line Up <span>Alt+Up</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="move-line-down">
+            <i class="fas fa-arrow-down"></i> Move Line Down <span>Alt+Down</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="toggle-comment">
+            <i class="fas fa-comment"></i> Toggle Comment <span>Ctrl+/</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="toggle-block-comment">
+            <i class="fas fa-comment-slash"></i> Toggle Block Comment <span>Ctrl+Shift+/</span>
+        </div>
+    </div>
+
+    <!-- Search Menu Dropdown -->
+    <div class="menu-dropdown" id="search-menu">
+        <div class="menu-dropdown-item" data-action="find">
+            <i class="fas fa-search"></i> Find <span>Ctrl+F</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="find-in-files">
+            <i class="fas fa-file-search"></i> Find in Files <span>Ctrl+Shift+F</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="replace">
+            <i class="fas fa-exchange-alt"></i> Replace <span>Ctrl+H</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="replace-in-files">
+            <i class="fas fa-file-exchange-alt"></i> Replace in Files <span>Ctrl+Shift+H</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="go-to-line">
+            <i class="fas fa-crosshairs"></i> Go to Line <span>Ctrl+G</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="go-to-bracket">
+            <i class="fas fa-brackets-curly"></i> Go to Matching Bracket <span>Ctrl+B</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="next-result">
+            <i class="fas fa-arrow-down"></i> Find Next <span>F3</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="previous-result">
+            <i class="fas fa-arrow-up"></i> Find Previous <span>Shift+F3</span>
+        </div>
+    </div>
+
+    <!-- View Menu Dropdown -->
+    <div class="menu-dropdown" id="view-menu">
+        <div class="menu-dropdown-item" data-action="toggle-word-wrap">
+            <i class="fas fa-text-width"></i> Word Wrap
+        </div>
+        <div class="menu-dropdown-item" data-action="toggle-line-numbers">
+            <i class="fas fa-list-ol"></i> Line Numbers
+        </div>
+        <div class="menu-dropdown-item" data-action="toggle-minimap">
+            <i class="fas fa-map"></i> Minimap
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="zoom-in">
+            <i class="fas fa-search-plus"></i> Zoom In <span>Ctrl++</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="zoom-out">
+            <i class="fas fa-search-minus"></i> Zoom Out <span>Ctrl+-</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="reset-zoom">
+            <i class="fas fa-compress"></i> Reset Zoom <span>Ctrl+0</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="split-view">
+            <i class="fas fa-columns"></i> Split View
+        </div>
+        <div class="menu-dropdown-item" data-action="toggle-fullscreen">
+            <i class="fas fa-expand"></i> Fullscreen <span>F11</span>
+        </div>
+    </div>
+
+    <!-- Encoding Menu Dropdown -->
+    <div class="menu-dropdown" id="encoding-menu">
+        <div class="menu-dropdown-item" data-action="convert-utf8">
+            <i class="fas fa-exchange-alt"></i> Convert to UTF-8
+        </div>
+        <div class="menu-dropdown-item" data-action="convert-utf16">
+            <i class="fas fa-exchange-alt"></i> Convert to UTF-16
+        </div>
+        <div class="menu-dropdown-item" data-action="convert-ascii">
+            <i class="fas fa-exchange-alt"></i> Convert to ASCII
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="encoding-settings">
+            <i class="fas fa-cog"></i> Encoding Settings
+        </div>
+    </div>
+
+    <!-- Language Menu Dropdown -->
+    <div class="menu-dropdown" id="language-menu">
+        <div class="menu-dropdown-item" data-language="normal">
+            <i class="fas fa-file"></i> Normal Text
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-language="html">
+            <i class="fab fa-html5"></i> HTML
+        </div>
+        <div class="menu-dropdown-item" data-language="css">
+            <i class="fab fa-css3-alt"></i> CSS
+        </div>
+        <div class="menu-dropdown-item" data-language="javascript">
+            <i class="fab fa-js"></i> JavaScript
+        </div>
+        <div class="menu-dropdown-item" data-language="json">
+            <i class="fas fa-code"></i> JSON
+        </div>
+        <div class="menu-dropdown-item" data-language="xml">
+            <i class="fas fa-code"></i> XML
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-language="python">
+            <i class="fab fa-python"></i> Python
+        </div>
+        <div class="menu-dropdown-item" data-language="java">
+            <i class="fab fa-java"></i> Java
+        </div>
+        <div class="menu-dropdown-item" data-language="c">
+            <i class="fas fa-code"></i> C
+        </div>
+        <div class="menu-dropdown-item" data-language="cpp">
+            <i class="fas fa-code"></i> C++
+        </div>
+        <div class="menu-dropdown-item" data-language="csharp">
+            <i class="fas fa-code"></i> C#
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-language="php">
+            <i class="fab fa-php"></i> PHP
+        </div>
+        <div class="menu-dropdown-item" data-language="ruby">
+            <i class="fas fa-gem"></i> Ruby
+        </div>
+        <div class="menu-dropdown-item" data-language="go">
+            <i class="fas fa-code"></i> Go
+        </div>
+        <div class="menu-dropdown-item" data-language="rust">
+            <i class="fas fa-code"></i> Rust
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-language="sql">
+            <i class="fas fa-database"></i> SQL
+        </div>
+        <div class="menu-dropdown-item" data-language="markdown">
+            <i class="fab fa-markdown"></i> Markdown
+        </div>
+        <div class="menu-dropdown-item" data-language="yaml">
+            <i class="fas fa-code"></i> YAML
+        </div>
+    </div>
+
+    <!-- Settings Menu Dropdown -->
+    <div class="menu-dropdown" id="settings-menu">
+        <div class="menu-dropdown-item" data-action="preferences">
+            <i class="fas fa-cog"></i> Preferences
+        </div>
+        <div class="menu-dropdown-item" data-action="style-configurator">
+            <i class="fas fa-palette"></i> Style Configurator
+        </div>
+        <div class="menu-dropdown-item" data-action="shortcut-mapper">
+            <i class="fas fa-keyboard"></i> Shortcut Mapper
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="import-settings">
+            <i class="fas fa-file-import"></i> Import Settings
+        </div>
+        <div class="menu-dropdown-item" data-action="export-settings">
+            <i class="fas fa-file-export"></i> Export Settings
+        </div>
+    </div>
+
+    <!-- Macros Menu Dropdown -->
+    <div class="menu-dropdown" id="macros-menu">
+        <div class="menu-dropdown-item" data-action="start-recording">
+            <i class="fas fa-circle"></i> Start Recording
+        </div>
+        <div class="menu-dropdown-item" data-action="stop-recording">
+            <i class="fas fa-stop"></i> Stop Recording
+        </div>
+        <div class="menu-dropdown-item" data-action="playback">
+            <i class="fas fa-play"></i> Playback
+        </div>
+        <div class="menu-dropdown-item" data-action="save-macro">
+            <i class="fas fa-save"></i> Save Current Recorded Macro
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="run-multiple">
+            <i class="fas fa-play-circle"></i> Run a Macro Multiple Times
+        </div>
+        <div class="menu-dropdown-item" data-action="edit-macros">
+            <i class="fas fa-edit"></i> Edit Macros
+        </div>
+    </div>
+
+    <!-- Plugins Menu Dropdown -->
+    <div class="menu-dropdown" id="plugins-menu">
+        <div class="menu-dropdown-item" data-action="plugin-admin">
+            <i class="fas fa-plug"></i> Plugins Admin
+        </div>
+        <div class="menu-dropdown-item" data-action="open-plugins-folder">
+            <i class="fas fa-folder-open"></i> Open Plugins Folder
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="plugin-manager">
+            <i class="fas fa-cogs"></i> Plugin Manager
+        </div>
+    </div>
+
+    <!-- Help Menu Dropdown -->
+    <div class="menu-dropdown" id="help-menu">
+        <div class="menu-dropdown-item" data-action="help-contents">
+            <i class="fas fa-question-circle"></i> Help Contents <span>F1</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="command-list">
+            <i class="fas fa-list"></i> Command List
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="about">
+            <i class="fas fa-info-circle"></i> About
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <button class="toolbar-btn" data-action="new" title="New File">
+            <i class="fas fa-file"></i>
+        </button>
+        <button class="toolbar-btn" data-action="open" title="Open File">
+            <i class="fas fa-folder-open"></i>
+        </button>
+        <button class="toolbar-btn" data-action="save" title="Save File">
+            <i class="fas fa-save"></i>
+        </button>
+        <button class="toolbar-btn" data-action="save-all" title="Save All Files">
+            <i class="fas fa-save"></i>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn" data-action="undo" title="Undo">
+            <i class="fas fa-undo"></i>
+        </button>
+        <button class="toolbar-btn" data-action="redo" title="Redo">
+            <i class="fas fa-redo"></i>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn" data-action="cut" title="Cut">
+            <i class="fas fa-cut"></i>
+        </button>
+        <button class="toolbar-btn" data-action="copy" title="Copy">
+            <i class="fas fa-copy"></i>
+        </button>
+        <button class="toolbar-btn" data-action="paste" title="Paste">
+            <i class="fas fa-paste"></i>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn" data-action="find" title="Find">
+            <i class="fas fa-search"></i>
+        </button>
+        <button class="toolbar-btn" data-action="replace" title="Replace">
+            <i class="fas fa-exchange-alt"></i>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn" data-action="zoom-in" title="Zoom In">
+            <i class="fas fa-search-plus"></i>
+        </button>
+        <button class="toolbar-btn" data-action="zoom-out" title="Zoom Out">
+            <i class="fas fa-search-minus"></i>
+        </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn" data-action="split-view" title="Split View">
+            <i class="fas fa-columns"></i>
+        </button>
+        <button class="toolbar-btn" data-action="toggle-fullscreen" title="Fullscreen">
+            <i class="fas fa-expand"></i>
+        </button>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar" id="tab-bar">
+        <!-- Tabs will be dynamically added here -->
+    </div>
+
+    <!-- Editor Container -->
+    <div class="editor-container" id="editor-container">
+        <div class="line-numbers" id="line-numbers">1</div>
+        <textarea class="text-editor" id="text-editor" spellcheck="false"></textarea>
+    </div>
+
+    <!-- Find/Replace Panel -->
+    <div class="find-replace-panel" id="find-replace-panel">
+        <div class="find-replace-input">
+            <label>Find:</label>
+            <input type="text" id="find-input" placeholder="Search for...">
+            <button class="find-replace-btn" id="find-case-sensitive">Aa</button>
+            <button class="find-replace-btn" id="find-whole-word">W</button>
+            <button class="find-replace-btn" id="find-regex">.*</button>
+        </div>
+        <div class="find-replace-input">
+            <label>Replace:</label>
+            <input type="text" id="replace-input" placeholder="Replace with...">
+        </div>
+        <div class="find-replace-buttons">
+            <button class="find-replace-btn" id="find-next">Find Next</button>
+            <button class="find-replace-btn" id="find-previous">Find Previous</button>
+            <button class="find-replace-btn" id="replace-btn">Replace</button>
+            <button class="find-replace-btn" id="replace-all">Replace All</button>
+            <button class="find-replace-btn" id="close-find">Close</button>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-item">
+            <span id="cursor-position">Ln 1, Col 1</span>
+            <div class="status-separator"></div>
+            <span id="file-type">Normal Text</span>
+            <div class="status-separator"></div>
+            <span id="encoding">UTF-8</span>
+            <div class="status-separator"></div>
+            <span id="line-ending">CRLF</span>
+        </div>
+        <div class="status-item">
+            <span id="zoom-level">100%</span>
+        </div>
+    </div>
+
+    <!-- Go To Line Dialog -->
+    <div class="dialog" id="goto-dialog">
+        <div class="dialog-header">Go to Line</div>
+        <div class="dialog-content">
+            <input type="number" class="dialog-input" id="goto-input" placeholder="Enter line number" min="1">
+        </div>
+        <div class="dialog-buttons">
+            <button class="dialog-btn dialog-btn-secondary" id="goto-cancel">Cancel</button>
+            <button class="dialog-btn dialog-btn-primary" id="goto-ok">Go</button>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settings-panel">
+        <div class="settings-header">
+            <div class="settings-title">Preferences</div>
+            <div class="settings-close" id="settings-close">
+                <i class="fas fa-times"></i>
             </div>
-
-            <div class="resizer" onmousedown="initResize(event)"></div>
-
-            <div class="editor-area">
-                <div class="tab-bar" id="tabBar">
-                    <div class="tab active" data-file="index.html">
-                        <div class="file-icon html">H</div>
-                        index.html
-                        <span class="tab-close" onclick="closeTab(event, 'index.html')">&times;</span>
-                    </div>
+        </div>
+        <div class="settings-section">
+            <div class="settings-section-title">General</div>
+            <div class="settings-option">
+                <label class="settings-label">Theme</label>
+                <select class="settings-select" id="theme-select">
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                </select>
+            </div>
+            <div class="settings-option">
+                <label class="settings-label">Font Family</label>
+                <select class="settings-select" id="font-family-select">
+                    <option value="'Consolas', 'Monaco', 'Courier New', monospace">Consolas</option>
+                    <option value="'Courier New', monospace">Courier New</option>
+                    <option value="'Monaco', monospace">Monaco</option>
+                    <option value="'Source Code Pro', monospace">Source Code Pro</option>
+                    <option value="'Fira Code', monospace">Fira Code</option>
+                </select>
+            </div>
+            <div class="settings-option">
+                <label class="settings-label">Font Size</label>
+                <input type="number" class="settings-input" id="font-size-input" value="14" min="8" max="72">
+            </div>
+            <div class="settings-option">
+                <div class="settings-checkbox">
+                    <input type="checkbox" id="word-wrap-checkbox" checked>
+                    <label for="word-wrap-checkbox">Word Wrap</label>
                 </div>
-                
-                <div class="editor-wrapper">
-                    <div id="editor"></div>
+            </div>
+            <div class="settings-option">
+                <div class="settings-checkbox">
+                    <input type="checkbox" id="line-numbers-checkbox" checked>
+                    <label for="line-numbers-checkbox">Show Line Numbers</label>
+                </div>
+            </div>
+            <div class="settings-option">
+                <div class="settings-checkbox">
+                    <input type="checkbox" id="minimap-checkbox">
+                    <label for="minimap-checkbox">Show Minimap</label>
                 </div>
             </div>
         </div>
-
-        <div class="status-bar">
-            <div>
-                <span id="cursorPos">Line 1, Column 1</span>
-                <span style="margin-left: 20px;">UTF-8</span>
+        <div class="settings-section">
+            <div class="settings-section-title">Editor</div>
+            <div class="settings-option">
+                <div class="settings-checkbox">
+                    <input type="checkbox" id="auto-indent-checkbox" checked>
+                    <label for="auto-indent-checkbox">Auto Indent</label>
+                </div>
             </div>
-            <div>
-                <span id="currentLanguage">HTML</span>
+            <div class="settings-option">
+                <div class="settings-checkbox">
+                    <input type="checkbox" id="bracket-matching-checkbox" checked>
+                    <label for="bracket-matching-checkbox">Bracket Matching</label>
+                </div>
+            </div>
+            <div class="settings-option">
+                <div class="settings-checkbox">
+                    <input type="checkbox" id="highlight-current-line-checkbox" checked>
+                    <label for="highlight-current-line-checkbox">Highlight Current Line</label>
+                </div>
+            </div>
+            <div class="settings-option">
+                <div class="settings-checkbox">
+                    <input type="checkbox" id="show-whitespace-checkbox">
+                    <label for="show-whitespace-checkbox">Show Whitespace</label>
+                </div>
+            </div>
+            <div class="settings-option">
+                <div class="settings-checkbox">
+                    <input type="checkbox" id="show-invisibles-checkbox">
+                    <label for="show-invisibles-checkbox">Show Invisibles</label>
+                </div>
+            </div>
+        </div>
+        <div class="settings-section">
+            <div class="settings-section-title">File</div>
+            <div class="settings-option">
+                <label class="settings-label">Default Encoding</label>
+                <select class="settings-select" id="encoding-select">
+                    <option value="utf-8">UTF-8</option>
+                    <option value="utf-16">UTF-16</option>
+                    <option value="ascii">ASCII</option>
+                    <option value="iso-8859-1">ISO-8859-1</option>
+                </select>
+            </div>
+            <div class="settings-option">
+                <label class="settings-label">Line Ending</label>
+                <select class="settings-select" id="line-ending-select">
+                    <option value="crlf">Windows (CRLF)</option>
+                    <option value="lf">Unix (LF)</option>
+                    <option value="cr">Mac (CR)</option>
+                </select>
+            </div>
+            <div class="settings-option">
+                <div class="settings-checkbox">
+                    <input type="checkbox" id="auto-save-checkbox">
+                    <label for="auto-save-checkbox">Auto Save</label>
+                </div>
+            </div>
+            <div class="settings-option">
+                <label class="settings-label">Auto Save Interval (seconds)</label>
+                <input type="number" class="settings-input" id="auto-save-interval" value="30" min="5" max="300">
+            </div>
+        </div>
+        <div class="settings-section">
+            <div class="settings-section-title">Advanced</div>
+            <div class="settings-option">
+                <div class="settings-checkbox">
+                    <input type="checkbox" id="enable-plugins-checkbox" checked>
+                    <label for="enable-plugins-checkbox">Enable Plugins</label>
+                </div>
+            </div>
+            <div class="settings-option">
+                <div class="settings-checkbox">
+                    <input type="checkbox" id="enable-macros-checkbox" checked>
+                    <label for="enable-macros-checkbox">Enable Macros</label>
+                </div>
+            </div>
+            <div class="settings-option">
+                <div class="settings-checkbox">
+                    <input type="checkbox" id="enable-regex-checkbox" checked>
+                    <label for="enable-regex-checkbox">Enable Regex Search</label>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="context-menu">
+        <div class="context-menu-item" data-action="cut">
+            <i class="fas fa-cut"></i> Cut
+        </div>
+        <div class="context-menu-item" data-action="copy">
+            <i class="fas fa-copy"></i> Copy
+        </div>
+        <div class="context-menu-item" data-action="paste">
+            <i class="fas fa-paste"></i> Paste
+        </div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item" data-action="select-all">
+            <i class="fas fa-select-all"></i> Select All
+        </div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item" data-action="find">
+            <i class="fas fa-search"></i> Find
+        </div>
+        <div class="context-menu-item" data-action="go-to-line">
+            <i class="fas fa-crosshairs"></i> Go to Line
+        </div>
+    </div>
+
+    <!-- Plugin Manager -->
+    <div class="plugin-manager" id="plugin-manager">
+        <div class="plugin-manager-header">
+            <div class="plugin-manager-title">Plugin Manager</div>
+            <div class="plugin-manager-close" id="plugin-manager-close">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+        <div class="plugin-manager-content" id="plugin-list">
+            <!-- Plugin items will be dynamically added here -->
+        </div>
+    </div>
+
+    <!-- Encoding Selector -->
+    <div class="dialog" id="encoding-selector">
+        <div class="dialog-header">Select Encoding</div>
+        <div class="dialog-content">
+            <div class="encoding-list" id="encoding-list">
+                <div class="encoding-item" data-encoding="utf-8">UTF-8</div>
+                <div class="encoding-item" data-encoding="utf-16">UTF-16</div>
+                <div class="encoding-item" data-encoding="utf-16le">UTF-16 LE</div>
+                <div class="encoding-item" data-encoding="utf-16be">UTF-16 BE</div>
+                <div class="encoding-item" data-encoding="ascii">ASCII</div>
+                <div class="encoding-item" data-encoding="iso-8859-1">ISO-8859-1</div>
+                <div class="encoding-item" data-encoding="windows-1252">Windows-1252</div>
+                <div class="encoding-item" data-encoding="gbk">GBK</div>
+                <div class="encoding-item" data-encoding="big5">Big5</div>
+                <div class="encoding-item" data-encoding="shift_jis">Shift JIS</div>
+                <div class="encoding-item" data-encoding="euc-jp">EUC-JP</div>
+                <div class="encoding-item" data-encoding="euc-kr">EUC-KR</div>
+            </div>
+        </div>
+        <div class="dialog-buttons">
+            <button class="dialog-btn dialog-btn-secondary" id="encoding-cancel">Cancel</button>
+            <button class="dialog-btn dialog-btn-primary" id="encoding-ok">OK</button>
+        </div>
+    </div>
+
+    <!-- Minimap -->
+    <div class="minimap" id="minimap">
+        <div class="minimap-content" id="minimap-content"></div>
+        <div class="minimap-viewport" id="minimap-viewport"></div>
+    </div>
+
+    <!-- Macro Recording Indicator -->
+    <div class="macro-indicator" id="macro-indicator">
+        <i class="fas fa-circle" style="margin-right: 5px;"></i> Recording Macro
+    </div>
+
+    <!-- Drop Zone -->
+    <div class="drop-zone" id="drop-zone">
+        <div class="drop-zone-text">
+            <i class="fas fa-cloud-upload-alt" style="font-size: 48px; margin-bottom: 10px;"></i><br>
+            Drop files here to open
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
 
     <script>
-        let editor;
-        let openTabs = {};
-        let activeTab = 'index.html';
-        let fileCounter = 1;
-
-        // Sample files content
-        const sampleFiles = {
-            'index.html': `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Web Page</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Welcome to My Web Page</h1>
-        <p>This is a sample HTML page with advanced features.</p>
-        <button onclick="showMessage()">Click Me!</button>
-        <div id="output"></div>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>`,
-            'script.js': `// Advanced JavaScript features
-function showMessage() {
-    const output = document.getElementById('output');
-    const messages = [
-        'Hello from JavaScript!',
-        'This editor supports syntax highlighting!',
-        'Code folding and auto-completion work too!',
-        'Try exploring the features!'
-    ];
-    
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    output.innerHTML = \`<p style="color: #007acc; margin-top: 10px;">\${randomMessage}</p>\`;
-}
-
-// ES6+ Features
-const modernJS = {
-    async fetchData(url) {
-        try {
-            const response = await fetch(url);
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    },
-    
-    processArray: (arr) => arr.map(item => item * 2).filter(item => item > 10),
-    
-    debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
+        // Global variables
+        let tabs = [];
+        let activeTabIndex = 0;
+        let isSplitView = false;
+        let macroRecording = false;
+        let macroActions = [];
+        let settings = {
+            theme: 'dark',
+            fontFamily: "'Consolas', 'Monaco', 'Courier New', monospace",
+            fontSize: 14,
+            wordWrap: true,
+            showLineNumbers: true,
+            showMinimap: false,
+            autoIndent: true,
+            bracketMatching: true,
+            highlightCurrentLine: true,
+            showWhitespace: false,
+            showInvisibles: false,
+            defaultEncoding: 'utf-8',
+            lineEnding: 'crlf',
+            autoSave: false,
+            autoSaveInterval: 30,
+            enablePlugins: true,
+            enableMacros: true,
+            enableRegex: true
         };
-    }
-};
 
-// Event listener for dynamic content
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Advanced Code Editor loaded successfully!');
-});`,
-            'style.css': `/* Advanced CSS with modern features */
-:root {
-    --primary-color: #007acc;
-    --secondary-color: #1e1e1e;
-    --text-color: #d4d4d4;
-    --border-radius: 8px;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #1e1e1e 0%, #2d2d30 100%);
-    color: var(--text-color);
-    min-height: 100vh;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
-    text-align: center;
-}
-
-h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    background: linear-gradient(45deg, var(--primary-color), #00d4ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-p {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 30px;
-    opacity: 0.9;
-}
-
-button {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 122, 204, 0.3);
-}
-
-button:hover {
-    background: #1177bb;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 122, 204, 0.4);
-}
-
-#output {
-    margin-top: 20px;
-    padding: 20px;
-    border-radius: var(--border-radius);
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .container {
-        padding: 20px 15px;
-    }
-    
-    h1 {
-        font-size: 2rem;
-    }
-}`
-        };
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEditor();
+            initializeEventListeners();
+            loadSettings();
+            createNewTab();
+            updateUI();
+        });
 
         // Initialize editor
-        function initEditor() {
-            editor = CodeMirror(document.getElementById('editor'), {
-                value: sampleFiles['index.html'],
-                mode: 'htmlmixed',
-                theme: 'monokai',
-                lineNumbers: true,
-                autoCloseBrackets: true,
-                autoCloseTags: true,
-                foldGutter: true,
-                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-                extraKeys: {
-                    "Ctrl-Space": "autocomplete",
-                    "Ctrl-F": "findPersistent",
-                    "Ctrl-H": "replace",
-                    "F11": function(cm) {
-                        cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-                    },
-                    "Esc": function(cm) {
-                        if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
-                    }
-                },
-                indentUnit: 2,
-                tabSize: 2,
-                lineWrapping: true,
-                matchBrackets: true,
-                styleActiveLine: true
-            });
-
-            // Update cursor position
-            editor.on('cursorActivity', function() {
-                const cursor = editor.getCursor();
-                document.getElementById('cursorPos').textContent = 
-                    `Line ${cursor.line + 1}, Column ${cursor.ch + 1}`;
-            });
-
-            // Store initial tab
-            openTabs['index.html'] = {
-                content: sampleFiles['index.html'],
-                mode: 'htmlmixed'
-            };
-        }
-
-        function openTab(filename, mode) {
-            // Update active tab in sidebar
-            document.querySelectorAll('.file-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            event.target.closest('.file-item').classList.add('active');
-
-            // Create tab if it doesn't exist
-            if (!openTabs[filename]) {
-                openTabs[filename] = {
-                    content: sampleFiles[filename] || `// New file: ${filename}\n`,
-                    mode: mode
-                };
-                createTab(filename);
-            }
-
-            // Switch to tab
-            switchTab(filename);
-        }
-
-        function createTab(filename) {
-            const tabBar = document.getElementById('tabBar');
-            const tab = document.createElement('div');
-            tab.className = 'tab';
-            tab.setAttribute('data-file', filename);
+        function initializeEditor() {
+            const editor = document.getElementById('text-editor');
+            const lineNumbers = document.getElementById('line-numbers');
             
-            const extension = filename.split('.').pop();
-            let iconClass = 'txt';
-            if (extension === 'html') iconClass = 'html';
-            else if (extension === 'js') iconClass = 'js';
-            else if (extension === 'css') iconClass = 'css';
+            // Update line numbers
+            editor.addEventListener('input', updateLineNumbers);
+            editor.addEventListener('scroll', syncScroll);
+            editor.addEventListener('keydown', handleKeyDown);
+            editor.addEventListener('keyup', handleKeyUp);
+            editor.addEventListener('mousedown', handleMouseDown);
+            editor.addEventListener('mouseup', handleMouseUp);
+            editor.addEventListener('contextmenu', handleContextMenu);
+            
+            // Handle cursor position
+            editor.addEventListener('click', updateCursorPosition);
+            editor.addEventListener('keyup', updateCursorPosition);
+            
+            // Handle drag and drop
+            document.addEventListener('dragover', handleDragOver);
+            document.addEventListener('drop', handleDrop);
+            
+            // Initialize minimap
+            if (settings.showMinimap) {
+                document.getElementById('minimap').classList.add('active');
+            }
+        }
 
-            tab.innerHTML = `
-                <div class="file-icon ${iconClass}">${iconClass.toUpperCase().substring(0, 2)}</div>
-                ${filename}
-                <span class="tab-close" onclick="closeTab(event, '${filename}')">&times;</span>
+        // Initialize event listeners
+        function initializeEventListeners() {
+            // Menu bar
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const menuName = this.dataset.menu;
+                    toggleMenu(menuName);
+                });
+            });
+            
+            // Menu dropdown items
+            document.querySelectorAll('.menu-dropdown-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const action = this.dataset.action;
+                    const language = this.dataset.language;
+                    
+                    if (action) {
+                        handleMenuAction(action);
+                    } else if (language) {
+                        setLanguage(language);
+                    }
+                    
+                    closeAllMenus();
+                });
+            });
+            
+            // Toolbar buttons
+            document.querySelectorAll('.toolbar-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const action = this.dataset.action;
+                    handleMenuAction(action);
+                });
+            });
+            
+            // Find/Replace panel
+            document.getElementById('find-next').addEventListener('click', findNext);
+            document.getElementById('find-previous').addEventListener('click', findPrevious);
+            document.getElementById('replace-btn').addEventListener('click', replace);
+            document.getElementById('replace-all').addEventListener('click', replaceAll);
+            document.getElementById('close-find').addEventListener('click', closeFindReplace);
+            
+            // Go to line dialog
+            document.getElementById('goto-ok').addEventListener('click', goToLine);
+            document.getElementById('goto-cancel').addEventListener('click', closeGoToDialog);
+            document.getElementById('goto-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') goToLine();
+            });
+            
+            // Settings panel
+            document.getElementById('settings-close').addEventListener('click', closeSettings);
+            
+            // Settings inputs
+            document.getElementById('theme-select').addEventListener('change', function() {
+                settings.theme = this.value;
+                applyTheme();
+            });
+            
+            document.getElementById('font-family-select').addEventListener('change', function() {
+                settings.fontFamily = this.value;
+                applyFontSettings();
+            });
+            
+            document.getElementById('font-size-input').addEventListener('change', function() {
+                settings.fontSize = parseInt(this.value);
+                applyFontSettings();
+            });
+            
+            document.getElementById('word-wrap-checkbox').addEventListener('change', function() {
+                settings.wordWrap = this.checked;
+                applyWordWrap();
+            });
+            
+            document.getElementById('line-numbers-checkbox').addEventListener('change', function() {
+                settings.showLineNumbers = this.checked;
+                toggleLineNumbers();
+            });
+            
+            document.getElementById('minimap-checkbox').addEventListener('change', function() {
+                settings.showMinimap = this.checked;
+                toggleMinimap();
+            });
+            
+            // Context menu
+            document.querySelectorAll('.context-menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const action = this.dataset.action;
+                    handleMenuAction(action);
+                    closeContextMenu();
+                });
+            });
+            
+            // Plugin manager
+            document.getElementById('plugin-manager-close').addEventListener('click', closePluginManager);
+            
+            // Encoding selector
+            document.getElementById('encoding-ok').addEventListener('click', applyEncoding);
+            document.getElementById('encoding-cancel').addEventListener('click', closeEncodingSelector);
+            
+            // Encoding list items
+            document.querySelectorAll('.encoding-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.encoding-item').forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+            
+            // Close menus when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.menu-item') && !e.target.closest('.menu-dropdown')) {
+                    closeAllMenus();
+                }
+                if (!e.target.closest('.context-menu')) {
+                    closeContextMenu();
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleGlobalKeydown);
+        }
+
+        // Create new tab
+        function createNewTab(fileName = null, content = '') {
+            const tabId = Date.now();
+            const tab = {
+                id: tabId,
+                name: fileName || `Untitled-${tabs.length + 1}`,
+                content: content,
+                language: 'normal',
+                encoding: settings.defaultEncoding,
+                modified: false,
+                path: null
+            };
+            
+            tabs.push(tab);
+            activeTabIndex = tabs.length - 1;
+            
+            // Create tab element
+            const tabBar = document.getElementById('tab-bar');
+            const tabElement = document.createElement('div');
+            tabElement.className = 'tab';
+            tabElement.dataset.tabId = tabId;
+            tabElement.innerHTML = `
+                <span class="tab-name">${tab.name}</span>
+                <span class="tab-close" data-tab-id="${tabId}">×</span>
             `;
             
-            tab.onclick = () => switchTab(filename);
-            tabBar.appendChild(tab);
-        }
-
-        function switchTab(filename) {
-            // Save current tab content
-            if (activeTab && openTabs[activeTab]) {
-                openTabs[activeTab].content = editor.getValue();
-            }
-
-            // Switch to new tab
-            activeTab = filename;
-            editor.setValue(openTabs[filename].content);
-            editor.setOption('mode', openTabs[filename].mode);
-
-            // Update UI
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
+            tabElement.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('tab-close')) {
+                    switchToTab(tabs.length - 1);
+                }
             });
-            document.querySelector(`[data-file="${filename}"]`).classList.add('active');
-
-            // Update language selector
-            document.getElementById('languageSelect').value = openTabs[filename].mode;
-            document.getElementById('currentLanguage').textContent = 
-                openTabs[filename].mode.toUpperCase();
+            
+            tabElement.querySelector('.tab-close').addEventListener('click', function(e) {
+                e.stopPropagation();
+                closeTab(tabId);
+            });
+            
+            tabBar.appendChild(tabElement);
+            
+            // Update active tab
+            updateActiveTab();
+            loadTabContent(tab);
+            
+            return tab;
         }
 
-        function closeTab(event, filename) {
-            event.stopPropagation();
+        // Switch to tab
+        function switchToTab(index) {
+            if (index >= 0 && index < tabs.length) {
+                activeTabIndex = index;
+                updateActiveTab();
+                loadTabContent(tabs[index]);
+            }
+        }
+
+        // Update active tab
+        function updateActiveTab() {
+            document.querySelectorAll('.tab').forEach((tab, index) => {
+                tab.classList.toggle('active', index === activeTabIndex);
+            });
+        }
+
+        // Load tab content
+        function loadTabContent(tab) {
+            const editor = document.getElementById('text-editor');
+            editor.value = tab.content;
+            updateLineNumbers();
+            updateCursorPosition();
+            updateStatusBar();
+            applySyntaxHighlighting();
+        }
+
+        // Close tab
+        function closeTab(tabId) {
+            const tabIndex = tabs.findIndex(tab => tab.id === tabId);
+            if (tabIndex === -1) return;
             
-            if (Object.keys(openTabs).length === 1) {
-                alert('Cannot close the last tab');
+            const tab = tabs[tabIndex];
+            
+            // Check if modified
+            if (tab.modified) {
+                if (!confirm(`Save changes to "${tab.name}" before closing?`)) {
+                    return;
+                }
+            }
+            
+            // Remove tab
+            tabs.splice(tabIndex, 1);
+            
+            // Remove tab element
+            const tabElement = document.querySelector(`[data-tab-id="${tabId}"]`);
+            if (tabElement) {
+                tabElement.remove();
+            }
+            
+            // Update active tab
+            if (tabs.length === 0) {
+                createNewTab();
+            } else if (activeTabIndex >= tabs.length) {
+                activeTabIndex = tabs.length - 1;
+            }
+            
+            updateActiveTab();
+            loadTabContent(tabs[activeTabIndex]);
+        }
+
+        // Update line numbers
+        function updateLineNumbers() {
+            const editor = document.getElementById('text-editor');
+            const lineNumbers = document.getElementById('line-numbers');
+            const lines = editor.value.split('\n').length;
+            
+            let lineNumbersHTML = '';
+            for (let i = 1; i <= lines; i++) {
+                lineNumbersHTML += i + '\n';
+            }
+            
+            lineNumbers.textContent = lineNumbersHTML;
+            
+            // Update minimap
+            if (settings.showMinimap) {
+                updateMinimap();
+            }
+        }
+
+        // Sync scroll between editor and line numbers
+        function syncScroll() {
+            const editor = document.getElementById('text-editor');
+            const lineNumbers = document.getElementById('line-numbers');
+            lineNumbers.scrollTop = editor.scrollTop;
+            
+            // Update minimap viewport
+            if (settings.showMinimap) {
+                updateMinimapViewport();
+            }
+        }
+
+        // Update cursor position
+        function updateCursorPosition() {
+            const editor = document.getElementById('text-editor');
+            const cursorPosition = editor.selectionStart;
+            const textBeforeCursor = editor.value.substring(0, cursorPosition);
+            const lines = textBeforeCursor.split('\n');
+            const currentLine = lines.length;
+            const currentColumn = lines[lines.length - 1].length + 1;
+            
+            document.getElementById('cursor-position').textContent = `Ln ${currentLine}, Col ${currentColumn}`;
+        }
+
+        // Update status bar
+        function updateStatusBar() {
+            const tab = tabs[activeTabIndex];
+            if (!tab) return;
+            
+            document.getElementById('file-type').textContent = getLanguageName(tab.language);
+            document.getElementById('encoding').textContent = tab.encoding.toUpperCase();
+            document.getElementById('line-ending').textContent = settings.lineEnding.toUpperCase();
+            document.getElementById('zoom-level').textContent = `${Math.round(settings.fontSize / 14 * 100)}%`;
+        }
+
+        // Handle menu actions
+        function handleMenuAction(action) {
+            switch (action) {
+                case 'new':
+                    createNewTab();
+                    break;
+                case 'open':
+                    openFile();
+                    break;
+                case 'save':
+                    saveFile();
+                    break;
+                case 'save-as':
+                    saveFileAs();
+                    break;
+                case 'save-all':
+                    saveAllFiles();
+                    break;
+                case 'close':
+                    if (tabs.length > 0) {
+                        closeTab(tabs[activeTabIndex].id);
+                    }
+                    break;
+                case 'close-all':
+                    closeAllTabs();
+                    break;
+                case 'exit':
+                    if (confirm('Are you sure you want to exit?')) {
+                        window.close();
+                    }
+                    break;
+                case 'undo':
+                    document.execCommand('undo');
+                    break;
+                case 'redo':
+                    document.execCommand('redo');
+                    break;
+                case 'cut':
+                    document.execCommand('cut');
+                    break;
+                case 'copy':
+                    document.execCommand('copy');
+                    break;
+                case 'paste':
+                    document.execCommand('paste');
+                    break;
+                case 'delete':
+                    const editor = document.getElementById('text-editor');
+                    const start = editor.selectionStart;
+                    const end = editor.selectionEnd;
+                    if (start !== end) {
+                        editor.value = editor.value.substring(0, start) + editor.value.substring(end);
+                        editor.selectionStart = start;
+                        editor.selectionEnd = start;
+                    }
+                    break;
+                case 'select-all':
+                    document.getElementById('text-editor').select();
+                    break;
+                case 'select-line':
+                    selectCurrentLine();
+                    break;
+                case 'duplicate-line':
+                    duplicateLine();
+                    break;
+                case 'delete-line':
+                    deleteLine();
+                    break;
+                case 'move-line-up':
+                    moveLine('up');
+                    break;
+                case 'move-line-down':
+                    moveLine('down');
+                    break;
+                case 'toggle-comment':
+                    toggleComment();
+                    break;
+                case 'toggle-block-comment':
+                    toggleBlockComment();
+                    break;
+                case 'find':
+                    showFindReplace();
+                    break;
+                case 'replace':
+                    showFindReplace(true);
+                    break;
+                case 'go-to-line':
+                    showGoToDialog();
+                    break;
+                case 'go-to-bracket':
+                    goToMatchingBracket();
+                    break;
+                case 'next-result':
+                    findNext();
+                    break;
+                case 'previous-result':
+                    findPrevious();
+                    break;
+                case 'toggle-word-wrap':
+                    settings.wordWrap = !settings.wordWrap;
+                    document.getElementById('word-wrap-checkbox').checked = settings.wordWrap;
+                    applyWordWrap();
+                    break;
+                case 'toggle-line-numbers':
+                    settings.showLineNumbers = !settings.showLineNumbers;
+                    document.getElementById('line-numbers-checkbox').checked = settings.showLineNumbers;
+                    toggleLineNumbers();
+                    break;
+                case 'toggle-minimap':
+                    settings.showMinimap = !settings.showMinimap;
+                    document.getElementById('minimap-checkbox').checked = settings.showMinimap;
+                    toggleMinimap();
+                    break;
+                case 'zoom-in':
+                    settings.fontSize = Math.min(settings.fontSize + 2, 72);
+                    document.getElementById('font-size-input').value = settings.fontSize;
+                    applyFontSettings();
+                    break;
+                case 'zoom-out':
+                    settings.fontSize = Math.max(settings.fontSize - 2, 8);
+                    document.getElementById('font-size-input').value = settings.fontSize;
+                    applyFontSettings();
+                    break;
+                case 'reset-zoom':
+                    settings.fontSize = 14;
+                    document.getElementById('font-size-input').value = settings.fontSize;
+                    applyFontSettings();
+                    break;
+                case 'split-view':
+                    toggleSplitView();
+                    break;
+                case 'toggle-fullscreen':
+                    toggleFullscreen();
+                    break;
+                case 'preferences':
+                    showSettings();
+                    break;
+                case 'plugin-manager':
+                    showPluginManager();
+                    break;
+                case 'start-recording':
+                    startMacroRecording();
+                    break;
+                case 'stop-recording':
+                    stopMacroRecording();
+                    break;
+                case 'playback':
+                    playbackMacro();
+                    break;
+                case 'about':
+                    showAbout();
+                    break;
+                default:
+                    console.log('Unhandled action:', action);
+            }
+        }
+
+        // Toggle menu
+        function toggleMenu(menuName) {
+            const menu = document.getElementById(`${menuName}-menu`);
+            const isActive = menu.classList.contains('active');
+            
+            closeAllMenus();
+            
+            if (!isActive) {
+                menu.classList.add('active');
+                
+                // Position menu
+                const menuItem = document.querySelector(`[data-menu="${menuName}"]`);
+                const rect = menuItem.getBoundingClientRect();
+                menu.style.top = `${rect.bottom}px`;
+                menu.style.left = `${rect.left}px`;
+            }
+        }
+
+        // Close all menus
+        function closeAllMenus() {
+            document.querySelectorAll('.menu-dropdown').forEach(menu => {
+                menu.classList.remove('active');
+            });
+        }
+
+        // Show/hide find/replace panel
+        function showFindReplace(showReplace = false) {
+            const panel = document.getElementById('find-replace-panel');
+            panel.classList.add('active');
+            
+            if (showReplace) {
+                panel.querySelector('.find-replace-input:nth-child(2)').style.display = 'flex';
+            } else {
+                panel.querySelector('.find-replace-input:nth-child(2)').style.display = 'none';
+            }
+            
+            document.getElementById('find-input').focus();
+        }
+
+        // Close find/replace panel
+        function closeFindReplace() {
+            document.getElementById('find-replace-panel').classList.remove('active');
+        }
+
+        // Find next occurrence
+        function findNext() {
+            const editor = document.getElementById('text-editor');
+            const findInput = document.getElementById('find-input');
+            const searchTerm = findInput.value;
+            
+            if (!searchTerm) return;
+            
+            const caseSensitive = document.getElementById('find-case-sensitive').classList.contains('active');
+            const wholeWord = document.getElementById('find-whole-word').classList.contains('active');
+            const useRegex = document.getElementById('find-regex').classList.contains('active');
+            
+            let searchRegex;
+            if (useRegex) {
+                searchRegex = new RegExp(searchTerm, caseSensitive ? 'g' : 'gi');
+            } else {
+                let pattern = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                if (wholeWord) {
+                    pattern = '\\b' + pattern + '\\b';
+                }
+                searchRegex = new RegExp(pattern, caseSensitive ? 'g' : 'gi');
+            }
+            
+            const text = editor.value;
+            const cursorPos = editor.selectionStart;
+            
+            searchRegex.lastIndex = cursorPos;
+            const match = searchRegex.exec(text);
+            
+            if (match) {
+                editor.selectionStart = match.index;
+                editor.selectionEnd = match.index + match[0].length;
+                editor.focus();
+                editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                // Wrap around
+                searchRegex.lastIndex = 0;
+                const wrapMatch = searchRegex.exec(text);
+                if (wrapMatch) {
+                    editor.selectionStart = wrapMatch.index;
+                    editor.selectionEnd = wrapMatch.index + wrapMatch[0].length;
+                    editor.focus();
+                    editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    showNotification('No matches found');
+                }
+            }
+        }
+
+        // Find previous occurrence
+        function findPrevious() {
+            const editor = document.getElementById('text-editor');
+            const findInput = document.getElementById('find-input');
+            const searchTerm = findInput.value;
+            
+            if (!searchTerm) return;
+            
+            const caseSensitive = document.getElementById('find-case-sensitive').classList.contains('active');
+            const wholeWord = document.getElementById('find-whole-word').classList.contains('active');
+            const useRegex = document.getElementById('find-regex').classList.contains('active');
+            
+            let searchRegex;
+            if (useRegex) {
+                searchRegex = new RegExp(searchTerm, caseSensitive ? 'g' : 'gi');
+            } else {
+                let pattern = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                if (wholeWord) {
+                    pattern = '\\b' + pattern + '\\b';
+                }
+                searchRegex = new RegExp(pattern, caseSensitive ? 'g' : 'gi');
+            }
+            
+            const text = editor.value;
+            const cursorPos = editor.selectionStart;
+            
+            let matches = [];
+            let match;
+            while ((match = searchRegex.exec(text)) !== null) {
+                matches.push(match);
+            }
+            
+            // Find the match before cursor
+            let prevMatch = null;
+            for (let i = matches.length - 1; i >= 0; i--) {
+                if (matches[i].index < cursorPos) {
+                    prevMatch = matches[i];
+                    break;
+                }
+            }
+            
+            if (prevMatch) {
+                editor.selectionStart = prevMatch.index;
+                editor.selectionEnd = prevMatch.index + prevMatch[0].length;
+                editor.focus();
+                editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (matches.length > 0) {
+                // Wrap around
+                const lastMatch = matches[matches.length - 1];
+                editor.selectionStart = lastMatch.index;
+                editor.selectionEnd = lastMatch.index + lastMatch[0].length;
+                editor.focus();
+                editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                showNotification('No matches found');
+            }
+        }
+
+        // Replace
+        function replace() {
+            const editor = document.getElementById('text-editor');
+            const findInput = document.getElementById('find-input');
+            const replaceInput = document.getElementById('replace-input');
+            const searchTerm = findInput.value;
+            const replaceTerm = replaceInput.value;
+            
+            if (!searchTerm) return;
+            
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selectedText = editor.value.substring(start, end);
+            
+            if (selectedText === searchTerm) {
+                editor.value = editor.value.substring(0, start) + replaceTerm + editor.value.substring(end);
+                editor.selectionStart = start;
+                editor.selectionEnd = start + replaceTerm.length;
+                findNext();
+            } else {
+                findNext();
+            }
+        }
+
+        // Replace all
+        function replaceAll() {
+            const editor = document.getElementById('text-editor');
+            const findInput = document.getElementById('find-input');
+            const replaceInput = document.getElementById('replace-input');
+            const searchTerm = findInput.value;
+            const replaceTerm = replaceInput.value;
+            
+            if (!searchTerm) return;
+            
+            const caseSensitive = document.getElementById('find-case-sensitive').classList.contains('active');
+            const wholeWord = document.getElementById('find-whole-word').classList.contains('active');
+            const useRegex = document.getElementById('find-regex').classList.contains('active');
+            
+            let searchRegex;
+            if (useRegex) {
+                searchRegex = new RegExp(searchTerm, caseSensitive ? 'g' : 'gi');
+            } else {
+                let pattern = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                if (wholeWord) {
+                    pattern = '\\b' + pattern + '\\b';
+                }
+                searchRegex = new RegExp(pattern, caseSensitive ? 'g' : 'gi');
+            }
+            
+            const originalText = editor.value;
+            const newText = originalText.replace(searchRegex, replaceTerm);
+            
+            if (originalText !== newText) {
+                editor.value = newText;
+                updateLineNumbers();
+                showNotification('Replaced all occurrences');
+            } else {
+                showNotification('No matches found');
+            }
+        }
+
+        // Show go to line dialog
+        function showGoToDialog() {
+            const dialog = document.getElementById('goto-dialog');
+            const input = document.getElementById('goto-input');
+            const editor = document.getElementById('text-editor');
+            const lines = editor.value.split('\n').length;
+            
+            input.max = lines;
+            input.value = '';
+            dialog.classList.add('active');
+            input.focus();
+        }
+
+        // Close go to line dialog
+        function closeGoToDialog() {
+            document.getElementById('goto-dialog').classList.remove('active');
+        }
+
+        // Go to line
+        function goToLine() {
+            const input = document.getElementById('goto-input');
+            const lineNumber = parseInt(input.value);
+            const editor = document.getElementById('text-editor');
+            const lines = editor.value.split('\n');
+            
+            if (lineNumber > 0 && lineNumber <= lines.length) {
+                let position = 0;
+                for (let i = 0; i < lineNumber - 1; i++) {
+                    position += lines[i].length + 1;
+                }
+                
+                editor.selectionStart = position;
+                editor.selectionEnd = position;
+                editor.focus();
+                editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                closeGoToDialog();
+            }
+        }
+
+        // Select current line
+        function selectCurrentLine() {
+            const editor = document.getElementById('text-editor');
+            const cursorPos = editor.selectionStart;
+            const text = editor.value;
+            
+            let start = cursorPos;
+            let end = cursorPos;
+            
+            // Find start of line
+            while (start > 0 && text[start - 1] !== '\n') {
+                start--;
+            }
+            
+            // Find end of line
+            while (end < text.length && text[end] !== '\n') {
+                end++;
+            }
+            
+            editor.selectionStart = start;
+            editor.selectionEnd = end;
+        }
+
+        // Duplicate line
+        function duplicateLine() {
+            const editor = document.getElementById('text-editor');
+            const cursorPos = editor.selectionStart;
+            const text = editor.value;
+            
+            let start = cursorPos;
+            let end = cursorPos;
+            
+            // Find start of line
+            while (start > 0 && text[start - 1] !== '\n') {
+                start--;
+            }
+            
+            // Find end of line
+            while (end < text.length && text[end] !== '\n') {
+                end++;
+            }
+            
+            const lineText = text.substring(start, end);
+            const newText = text.substring(0, end) + '\n' + lineText + text.substring(end);
+            
+            editor.value = newText;
+            updateLineNumbers();
+        }
+
+        // Delete line
+        function deleteLine() {
+            const editor = document.getElementById('text-editor');
+            const cursorPos = editor.selectionStart;
+            const text = editor.value;
+            
+            let start = cursorPos;
+            let end = cursorPos;
+            
+            // Find start of line
+            while (start > 0 && text[start - 1] !== '\n') {
+                start--;
+            }
+            
+            // Find end of line
+            while (end < text.length && text[end] !== '\n') {
+                end++;
+            }
+            
+            const newText = text.substring(0, start) + text.substring(end + (end < text.length ? 1 : 0));
+            
+            editor.value = newText;
+            updateLineNumbers();
+        }
+
+        // Move line
+        function moveLine(direction) {
+            const editor = document.getElementById('text-editor');
+            const cursorPos = editor.selectionStart;
+            const text = editor.value;
+            const lines = text.split('\n');
+            
+            let currentLine = 0;
+            let charPos = cursorPos;
+            
+            // Find current line
+            for (let i = 0; i < lines.length; i++) {
+                if (charPos <= lines[i].length) {
+                    currentLine = i;
+                    break;
+                }
+                charPos -= lines[i].length + 1;
+            }
+            
+            if ((direction === 'up' && currentLine === 0) || 
+                (direction === 'down' && currentLine === lines.length - 1)) {
                 return;
             }
-
-            delete openTabs[filename];
-            document.querySelector(`[data-file="${filename}"]`).remove();
-
-            if (activeTab === filename) {
-                const remainingTabs = Object.keys(openTabs);
-                switchTab(remainingTabs[0]);
-            }
-        }
-
-        function newFile() {
-            const filename = prompt('Enter filename:', `untitled${fileCounter++}.html`);
-            if (filename) {
-                openTab(filename, 'htmlmixed');
-                // Add to file explorer
-                const explorer = document.getElementById('fileExplorer');
-                const fileItem = document.createElement('div');
-                fileItem.className = 'file-item';
-                fileItem.onclick = () => openTab(filename, 'htmlmixed');
-                
-                const extension = filename.split('.').pop();
-                let iconClass = 'txt';
-                if (extension === 'html') iconClass = 'html';
-                else if (extension === 'js') iconClass = 'js';
-                else if (extension === 'css') iconClass = 'css';
-
-                fileItem.innerHTML = `
-                    <div class="file-icon ${iconClass}">${iconClass.toUpperCase().substring(0, 2)}</div>
-                    ${filename}
-                `;
-                explorer.appendChild(fileItem);
-            }
-        }
-
-        function saveFile() {
-            const content = editor.getValue();
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = activeTab;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function openFile() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.html,.js,.css,.txt';
-            input.onchange = function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const extension = file.name.split('.').pop();
-                        let mode = 'htmlmixed';
-                        if (extension === 'js') mode = 'javascript';
-                        else if (extension === 'css') mode = 'css';
-                        
-                        openTabs[file.name] = {
-                            content: e.target.result,
-                            mode: mode
-                        };
-                        createTab(file.name);
-                        switchTab(file.name);
-                    };
-                    reader.readAsText(file);
-                }
-            };
-            input.click();
-        }
-
-        function runCode() {
-            if (activeTab.endsWith('.html')) {
-                const newWindow = window.open('', '_blank');
-                newWindow.document.write(editor.getValue());
-                newWindow.document.close();
-            } else if (activeTab.endsWith('.js')) {
-                try {
-                    eval(editor.getValue());
-                } catch (error) {
-                    alert('JavaScript Error: ' + error.message);
-                }
-            } else {
-                alert('Cannot run this file type directly');
-            }
-        }
-
-        function changeLanguage() {
-            const mode = document.getElementById('languageSelect').value;
-            editor.setOption('mode', mode);
-            openTabs[activeTab].mode = mode;
-            document.getElementById('currentLanguage').textContent = mode.toUpperCase();
-        }
-
-        function changeTheme() {
-            const theme = document.getElementById('themeSelect').value;
-            editor.setOption('theme', theme);
-        }
-
-        function createNewFile() {
-            newFile();
-        }
-
-        function showEditMenu() {
-            alert('Edit menu: Ctrl+F (Find), Ctrl+H (Replace), Ctrl+Space (Autocomplete)');
-        }
-
-        function showViewMenu() {
-            alert('View menu: F11 (Fullscreen), Theme selection available in toolbar');
-        }
-
-        function showHelp() {
-            alert(`Advanced Code Editor Help:
             
-Keyboard Shortcuts:
-- Ctrl+F: Find
-- Ctrl+H: Find & Replace  
-- Ctrl+Space: Autocomplete
-- F11: Toggle Fullscreen
-- Ctrl+S: Save File
-- Ctrl+O: Open File
+            // Swap lines
+            if (direction === 'up') {
+                [lines[currentLine], lines[currentLine - 1]] = [lines[currentLine - 1], lines[currentLine]];
+            } else {
+                [lines[currentLine], lines[currentLine + 1]] = [lines[currentLine + 1], lines[currentLine]];
+            }
+            
+            editor.value = lines.join('\n');
+            updateLineNumbers();
+        }
+
+        // Toggle comment
+        function toggleComment() {
+            const editor = document.getElementById('text-editor');
+            const tab = tabs[activeTabIndex];
+            
+            if (!tab) return;
+            
+            let commentSymbol = '//';
+            if (tab.language === 'html' || tab.language === 'xml') {
+                commentSymbol = '<!--';
+            } else if (tab.language === 'css') {
+                commentSymbol = '/*';
+            } else if (tab.language === 'python' || tab.language === 'ruby') {
+                commentSymbol = '#';
+            }
+            
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selectedText = editor.value.substring(start, end);
+            
+            if (selectedText.startsWith(commentSymbol)) {
+                // Uncomment
+                const lines = selectedText.split('\n');
+                const uncommentedLines = lines.map(line => {
+                    if (line.trim().startsWith(commentSymbol)) {
+                        return line.replace(commentSymbol, '');
+                    }
+                    return line;
+                });
+                editor.value = editor.value.substring(0, start) + uncommentedLines.join('\n') + editor.value.substring(end);
+            } else {
+                // Comment
+                const lines = selectedText.split('\n');
+                const commentedLines = lines.map(line => commentSymbol + line);
+                editor.value = editor.value.substring(0, start) + commentedLines.join('\n') + editor.value.substring(end);
+            }
+            
+            updateLineNumbers();
+        }
+
+        // Toggle block comment
+        function toggleBlockComment() {
+            const editor = document.getElementById('text-editor');
+            const tab = tabs[activeTabIndex];
+            
+            if (!tab) return;
+            
+            let startComment = '/*';
+            let endComment = '*/';
+            
+            if (tab.language === 'html' || tab.language === 'xml') {
+                startComment = '<!--';
+                endComment = '-->';
+            }
+            
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selectedText = editor.value.substring(start, end);
+            
+            if (selectedText.startsWith(startComment) && selectedText.endsWith(endComment)) {
+                // Uncomment
+                const uncommentedText = selectedText.substring(startComment.length, selectedText.length - endComment.length);
+                editor.value = editor.value.substring(0, start) + uncommentedText + editor.value.substring(end);
+            } else {
+                // Comment
+                const commentedText = startComment + selectedText + endComment;
+                editor.value = editor.value.substring(0, start) + commentedText + editor.value.substring(end);
+            }
+        }
+
+        // Go to matching bracket
+        function goToMatchingBracket() {
+            const editor = document.getElementById('text-editor');
+            const cursorPos = editor.selectionStart;
+            const text = editor.value;
+            
+            const brackets = {
+                '(': ')',
+                '[': ']',
+                '{': '}',
+                ')': '(',
+                ']': '[',
+                '}': '{'
+            };
+            
+            const char = text[cursorPos - 1];
+            if (brackets[char]) {
+                let stack = 0;
+                let direction = char === '(' || char === '[' || char === '{' ? 1 : -1;
+                let searchChar = brackets[char];
+                
+                for (let i = cursorPos + direction; i >= 0 && i < text.length; i += direction) {
+                    if (text[i] === char) {
+                        stack++;
+                    } else if (text[i] === searchChar) {
+                        if (stack === 0) {
+                            editor.selectionStart = i;
+                            editor.selectionEnd = i + 1;
+                            editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            break;
+                        }
+                        stack--;
+                    }
+                }
+            }
+        }
+
+        // Apply theme
+        function applyTheme() {
+            document.body.dataset.theme = settings.theme;
+        }
+
+        // Apply font settings
+        function applyFontSettings() {
+            const editor = document.getElementById('text-editor');
+            const lineNumbers = document.getElementById('line-numbers');
+            
+            editor.style.fontSize = `${settings.fontSize}px`;
+            lineNumbers.style.fontSize = `${settings.fontSize}px`;
+            
+            editor.style.fontFamily = settings.fontFamily;
+            lineNumbers.style.fontFamily = settings.fontFamily;
+            
+            updateStatusBar();
+        }
+
+        // Apply word wrap
+        function applyWordWrap() {
+            const editor = document.getElementById('text-editor');
+            editor.style.whiteSpace = settings.wordWrap ? 'pre-wrap' : 'pre';
+            editor.style.wordWrap = settings.wordWrap ? 'break-word' : 'normal';
+        }
+
+        // Toggle line numbers
+        function toggleLineNumbers() {
+            const lineNumbers = document.getElementById('line-numbers');
+            lineNumbers.style.display = settings.showLineNumbers ? 'block' : 'none';
+        }
+
+        // Toggle minimap
+        function toggleMinimap() {
+            const minimap = document.getElementById('minimap');
+            if (settings.showMinimap) {
+                minimap.classList.add('active');
+                updateMinimap();
+            } else {
+                minimap.classList.remove('active');
+            }
+        }
+
+        // Update minimap
+        function updateMinimap() {
+            const editor = document.getElementById('text-editor');
+            const minimapContent = document.getElementById('minimap-content');
+            
+            minimapContent.textContent = editor.value;
+            updateMinimapViewport();
+        }
+
+        // Update minimap viewport
+        function updateMinimapViewport() {
+            const editor = document.getElementById('text-editor');
+            const minimapContent = document.getElementById('minimap-content');
+            const minimapViewport = document.getElementById('minimap-viewport');
+            
+            const scrollPercentage = editor.scrollTop / (editor.scrollHeight - editor.clientHeight);
+            const viewportHeight = (editor.clientHeight / editor.scrollHeight) * 100;
+            
+            minimapViewport.style.top = `${scrollPercentage * 100}%`;
+            minimapViewport.style.height = `${viewportHeight}%`;
+        }
+
+        // Toggle split view
+        function toggleSplitView() {
+            const container = document.getElementById('editor-container');
+            
+            if (!isSplitView) {
+                // Create split view
+                container.innerHTML = `
+                    <div class="split-view">
+                        <div class="split-pane">
+                            <div class="line-numbers">1</div>
+                            <textarea class="text-editor" spellcheck="false"></textarea>
+                        </div>
+                        <div class="split-resizer"></div>
+                        <div class="split-pane">
+                            <div class="line-numbers">1</div>
+                            <textarea class="text-editor" spellcheck="false"></textarea>
+                        </div>
+                    </div>
+                `;
+                
+                // Copy content to both panes
+                const panes = container.querySelectorAll('.text-editor');
+                panes.forEach(pane => {
+                    pane.value = tabs[activeTabIndex].content;
+                    pane.addEventListener('input', updateLineNumbers);
+                    pane.addEventListener('scroll', syncScroll);
+                    pane.addEventListener('keydown', handleKeyDown);
+                });
+                
+                isSplitView = true;
+            } else {
+                // Restore single view
+                container.innerHTML = `
+                    <div class="line-numbers" id="line-numbers">1</div>
+                    <textarea class="text-editor" id="text-editor" spellcheck="false"></textarea>
+                `;
+                
+                // Reinitialize editor
+                const editor = document.getElementById('text-editor');
+                editor.value = tabs[activeTabIndex].content;
+                editor.addEventListener('input', updateLineNumbers);
+                editor.addEventListener('scroll', syncScroll);
+                editor.addEventListener('keydown', handleKeyDown);
+                
+                isSplitView = false;
+            }
+            
+            updateLineNumbers();
+        }
+
+        // Toggle fullscreen
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Show settings
+        function showSettings() {
+            document.getElementById('settings-panel').classList.add('active');
+        }
+
+        // Close settings
+        function closeSettings() {
+            document.getElementById('settings-panel').classList.remove('active');
+            saveSettings();
+        }
+
+        // Show plugin manager
+        function showPluginManager() {
+            const pluginManager = document.getElementById('plugin-manager');
+            const pluginList = document.getElementById('plugin-list');
+            
+            // Sample plugins
+            const plugins = [
+                { name: 'Auto Complete', description: 'Provides code completion suggestions', enabled: true },
+                { name: 'File Explorer', description: 'Browse and manage files', enabled: false },
+                { name: 'Git Integration', description: 'Git version control integration', enabled: false },
+                { name: 'Terminal', description: 'Integrated terminal', enabled: false },
+                { name: 'Markdown Preview', description: 'Live preview for Markdown files', enabled: true },
+                { name: 'Color Picker', description: 'Color picker for CSS and design', enabled: false },
+                { name: 'Emmet', description: 'Emmet abbreviation support', enabled: true },
+                { name: 'Linting', description: 'Code linting and error checking', enabled: false }
+            ];
+            
+            pluginList.innerHTML = '';
+            plugins.forEach(plugin => {
+                const pluginItem = document.createElement('div');
+                pluginItem.className = 'plugin-item';
+                pluginItem.innerHTML = `
+                    <div class="plugin-item-header">
+                        <div class="plugin-name">${plugin.name}</div>
+                        <div class="plugin-status">${plugin.enabled ? 'Enabled' : 'Disabled'}</div>
+                    </div>
+                    <div class="plugin-description">${plugin.description}</div>
+                    <div class="plugin-actions">
+                        <button class="plugin-btn plugin-btn-primary">${plugin.enabled ? 'Disable' : 'Enable'}</button>
+                        <button class="plugin-btn plugin-btn-secondary">Configure</button>
+                    </div>
+                `;
+                pluginList.appendChild(pluginItem);
+            });
+            
+            pluginManager.classList.add('active');
+        }
+
+        // Close plugin manager
+        function closePluginManager() {
+            document.getElementById('plugin-manager').classList.remove('active');
+        }
+
+        // Start macro recording
+        function startMacroRecording() {
+            if (!settings.enableMacros) {
+                showNotification('Macros are disabled in settings');
+                return;
+            }
+            
+            macroRecording = true;
+            macroActions = [];
+            document.getElementById('macro-indicator').classList.add('active');
+            showNotification('Macro recording started');
+        }
+
+        // Stop macro recording
+        function stopMacroRecording() {
+            if (!macroRecording) return;
+            
+            macroRecording = false;
+            document.getElementById('macro-indicator').classList.remove('active');
+            showNotification('Macro recording stopped');
+        }
+
+        // Playback macro
+        function playbackMacro() {
+            if (macroActions.length === 0) {
+                showNotification('No macro recorded');
+                return;
+            }
+            
+            const editor = document.getElementById('text-editor');
+            let delay = 0;
+            
+            macroActions.forEach(action => {
+                setTimeout(() => {
+                    switch (action.type) {
+                        case 'insert':
+                            editor.value = editor.value.substring(0, action.position) + 
+                                         action.text + 
+                                         editor.value.substring(action.position);
+                            editor.selectionStart = action.position + action.text.length;
+                            editor.selectionEnd = action.position + action.text.length;
+                            break;
+                        case 'delete':
+                            editor.value = editor.value.substring(0, action.position) + 
+                                         editor.value.substring(action.position + action.length);
+                            editor.selectionStart = action.position;
+                            editor.selectionEnd = action.position;
+                            break;
+                        case 'move':
+                            editor.selectionStart = action.position;
+                            editor.selectionEnd = action.position;
+                            break;
+                    }
+                    updateLineNumbers();
+                }, delay);
+                delay += 50;
+            });
+        }
+
+        // Show about dialog
+        function showAbout() {
+            const aboutText = `Notepad++ Advanced - Web Edition
+Version 1.0.0
+
+A powerful text editor for the web, inspired by Notepad++.
 
 Features:
-- Syntax highlighting for HTML, CSS, JavaScript
-- Code folding
-- Auto-completion
-- Multiple tabs
-- File explorer
-- Line numbers
-- Bracket matching
-- Theme selection`);
+- Syntax highlighting for multiple languages
+- Multiple tabs and split view
+- Find and replace with regex support
+- Macros recording and playback
+- Customizable themes and settings
+- Plugin system
+- And much more!
+
+Created with HTML, CSS, and JavaScript.`;
+            
+            alert(aboutText);
         }
 
-        // Resize functionality
-        function initResize(event) {
-            const sidebar = document.querySelector('.sidebar');
-            const startX = event.clientX;
-            const startWidth = sidebar.offsetWidth;
-
-            function doResize(e) {
-                const newWidth = startWidth + (e.clientX - startX);
-                if (newWidth >= 200 && newWidth <= 400) {
-                    sidebar.style.width = newWidth + 'px';
+        // Handle keyboard shortcuts
+        function handleGlobalKeydown(e) {
+            // Ctrl/Cmd key
+            const ctrlKey = e.ctrlKey || e.metaKey;
+            
+            // Prevent default for handled shortcuts
+            if (ctrlKey || e.altKey) {
+                switch (e.key) {
+                    case 'n':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('new');
+                        }
+                        break;
+                    case 'o':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('open');
+                        }
+                        break;
+                    case 's':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            if (e.altKey) {
+                                handleMenuAction('save-as');
+                            } else {
+                                handleMenuAction('save');
+                            }
+                        }
+                        break;
+                    case 'w':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('close');
+                        }
+                        break;
+                    case 'z':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('undo');
+                        }
+                        break;
+                    case 'y':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('redo');
+                        }
+                        break;
+                    case 'x':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('cut');
+                        }
+                        break;
+                    case 'c':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('copy');
+                        }
+                        break;
+                    case 'v':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('paste');
+                        }
+                        break;
+                    case 'a':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('select-all');
+                        }
+                        break;
+                    case 'l':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('select-line');
+                        }
+                        break;
+                    case 'd':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('duplicate-line');
+                        }
+                        break;
+                    case 'f':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            if (e.shiftKey) {
+                                handleMenuAction('find-in-files');
+                            } else {
+                                handleMenuAction('find');
+                            }
+                        }
+                        break;
+                    case 'h':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            if (e.shiftKey) {
+                                handleMenuAction('replace-in-files');
+                            } else {
+                                handleMenuAction('replace');
+                            }
+                        }
+                        break;
+                    case 'g':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('go-to-line');
+                        }
+                        break;
+                    case 'b':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('go-to-bracket');
+                        }
+                        break;
+                    case '/':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            if (e.shiftKey) {
+                                handleMenuAction('toggle-block-comment');
+                            } else {
+                                handleMenuAction('toggle-comment');
+                            }
+                        }
+                        break;
+                    case '=':
+                    case '+':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('zoom-in');
+                        }
+                        break;
+                    case '-':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('zoom-out');
+                        }
+                        break;
+                    case '0':
+                        if (ctrlKey) {
+                            e.preventDefault();
+                            handleMenuAction('reset-zoom');
+                        }
+                        break;
                 }
             }
-
-            function stopResize() {
-                document.removeEventListener('mousemove', doResize);
-                document.removeEventListener('mouseup', stopResize);
+            
+            // Function keys
+            switch (e.key) {
+                case 'F1':
+                    e.preventDefault();
+                    handleMenuAction('help-contents');
+                    break;
+                case 'F3':
+                    e.preventDefault();
+                    if (e.shiftKey) {
+                        handleMenuAction('previous-result');
+                    } else {
+                        handleMenuAction('next-result');
+                    }
+                    break;
+                case 'F11':
+                    e.preventDefault();
+                    handleMenuAction('toggle-fullscreen');
+                    break;
             }
-
-            document.addEventListener('mousemove', doResize);
-            document.addEventListener('mouseup', stopResize);
+            
+            // Arrow keys with Alt
+            if (e.altKey) {
+                switch (e.key) {
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        handleMenuAction('move-line-up');
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        handleMenuAction('move-line-down');
+                        break;
+                }
+            }
+            
+            // Record macro actions
+            if (macroRecording && settings.enableMacros) {
+                const editor = document.getElementById('text-editor');
+                if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+                    macroActions.push({
+                        type: 'insert',
+                        position: editor.selectionStart,
+                        text: e.key
+                    });
+                } else if (e.key === 'Backspace') {
+                    macroActions.push({
+                        type: 'delete',
+                        position: editor.selectionStart - 1,
+                        length: 1
+                    });
+                } else if (e.key === 'Delete') {
+                    macroActions.push({
+                        type: 'delete',
+                        position: editor.selectionStart,
+                        length: 1
+                    });
+                } else if (e.key === 'Enter') {
+                    macroActions.push({
+                        type: 'insert',
+                        position: editor.selectionStart,
+                        text: '\n'
+                    });
+                }
+            }
         }
 
-        // Initialize the editor when page loads
-        window.onload = function() {
-            initEditor();
-        };
+        // Handle key down in editor
+        function handleKeyDown(e) {
+            const editor = document.getElementById('text-editor');
+            
+            // Auto-indent
+            if (settings.autoIndent && e.key === 'Enter') {
+                e.preventDefault();
+                const cursorPos = editor.selectionStart;
+                const textBefore = editor.value.substring(0, cursorPos);
+                const currentLine = textBefore.split('\n').pop();
+                const indent = currentLine.match(/^\s*/)[0];
+                
+                // Check if previous line ends with opening bracket
+                const prevLine = textBefore.split('\n')[textBefore.split('\n').length - 2] || '';
+                const hasOpeningBracket = /[\{\[\(]$/.test(prevLine.trim());
+                
+                const newIndent = hasOpeningBracket ? indent + '    ' : indent;
+                
+                editor.value = textBefore + '\n' + newIndent + editor.value.substring(cursorPos);
+                editor.selectionStart = cursorPos + 1 + newIndent.length;
+                editor.selectionEnd = cursorPos + 1 + newIndent.length;
+                updateLineNumbers();
+            }
+            
+            // Bracket matching
+            if (settings.bracketMatching) {
+                const brackets = {
+                    '(': ')',
+                    '[': ']',
+                    '{': '}',
+                    '"': '"',
+                    "'": "'",
+                    '`': '`'
+                };
+                
+                if (brackets[e.key]) {
+                    const cursorPos = editor.selectionStart;
+                    const textAfter = editor.value.substring(cursorPos);
+                    
+                    // Auto-close brackets
+                    if (e.key !== '"' && e.key !== "'" && e.key !== '`') {
+                        editor.value = editor.value.substring(0, cursorPos) + e.key + brackets[e.key] + textAfter;
+                        editor.selectionStart = cursorPos + 1;
+                        editor.selectionEnd = cursorPos + 1;
+                        updateLineNumbers();
+                        e.preventDefault();
+                    }
+                }
+            }
+        }
+
+        // Handle key up in editor
+        function handleKeyUp(e) {
+            applySyntaxHighlighting();
+        }
+
+        // Handle mouse down in editor
+        function handleMouseDown(e) {
+            // Handle minimap click
+            if (e.target.closest('#minimap')) {
+                const minimap = document.getElementById('minimap');
+                const rect = minimap.getBoundingClientRect();
+                const y = e.clientY - rect.top;
+                const percentage = y / rect.height;
+                
+                const editor = document.getElementById('text-editor');
+                editor.scrollTop = percentage * (editor.scrollHeight - editor.clientHeight);
+            }
+        }
+
+        // Handle mouse up in editor
+        function handleMouseUp(e) {
+            updateCursorPosition();
+        }
+
+        // Handle context menu
+        function handleContextMenu(e) {
+            e.preventDefault();
+            
+            const contextMenu = document.getElementById('context-menu');
+            contextMenu.style.left = `${e.pageX}px`;
+            contextMenu.style.top = `${e.pageY}px`;
+            contextMenu.classList.add('active');
+        }
+
+        // Close context menu
+        function closeContextMenu() {
+            document.getElementById('context-menu').classList.remove('active');
+        }
+
+        // Handle drag over
+        function handleDragOver(e) {
+            e.preventDefault();
+            document.getElementById('drop-zone').classList.add('active');
+        }
+
+        // Handle drop
+        function handleDrop(e) {
+            e.preventDefault();
+            document.getElementById('drop-zone').classList.remove('active');
+            
+            const files = e.dataTransfer.files;
+            for (let file of files) {
+                if (file.type.startsWith('text/') || file.name.endsWith('.txt') || 
+                    file.name.endsWith('.js') || file.name.endsWith('.html') || 
+                    file.name.endsWith('.css') || file.name.endsWith('.json') ||
+                    file.name.endsWith('.py') || file.name.endsWith('.java') ||
+                    file.name.endsWith('.cpp') || file.name.endsWith('.c')) {
+                    openFile(file);
+                }
+            }
+        }
+
+        // Open file
+        function openFile(file = null) {
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    const tab = createNewTab(file.name, content);
+                    
+                    // Detect language from file extension
+                    const extension = file.name.split('.').pop().toLowerCase();
+                    const languageMap = {
+                        'html': 'html',
+                        'htm': 'html',
+                        'css': 'css',
+                        'js': 'javascript',
+                        'json': 'json',
+                        'xml': 'xml',
+                        'py': 'python',
+                        'java': 'java',
+                        'c': 'c',
+                        'cpp': 'cpp',
+                        'h': 'cpp',
+                        'cs': 'csharp',
+                        'php': 'php',
+                        'rb': 'ruby',
+                        'go': 'go',
+                        'rs': 'rust',
+                        'sql': 'sql',
+                        'md': 'markdown',
+                        'yaml': 'yaml',
+                        'yml': 'yaml'
+                    };
+                    
+                    tab.language = languageMap[extension] || 'normal';
+                    tab.path = file.name;
+                    
+                    updateStatusBar();
+                    applySyntaxHighlighting();
+                };
+                reader.readAsText(file);
+            } else {
+                // Create file input for file selection
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.txt,.js,.html,.css,.json,.xml,.py,.java,.cpp,.c,.cs,.php,.rb,.go,.rs,.sql,.md,.yaml,.yml';
+                input.onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        openFile(file);
+                    }
+                };
+                input.click();
+            }
+        }
+
+        // Save file
+        function saveFile() {
+            const tab = tabs[activeTabIndex];
+            if (!tab) return;
+            
+            if (tab.path) {
+                // In a real application, this would save to the file system
+                showNotification(`File "${tab.name}" saved`);
+                tab.modified = false;
+            } else {
+                saveFileAs();
+            }
+        }
+
+        // Save file as
+        function saveFileAs() {
+            const tab = tabs[activeTabIndex];
+            if (!tab) return;
+            
+            const fileName = prompt('Enter file name:', tab.name);
+            if (fileName) {
+                tab.name = fileName;
+                tab.path = fileName;
+                tab.modified = false;
+                
+                // Update tab name
+                const tabElement = document.querySelector(`[data-tab-id="${tab.id}"] .tab-name`);
+                if (tabElement) {
+                    tabElement.textContent = fileName;
+                }
+                
+                showNotification(`File saved as "${fileName}"`);
+            }
+        }
+
+        // Save all files
+        function saveAllFiles() {
+            let savedCount = 0;
+            tabs.forEach(tab => {
+                if (tab.modified) {
+                    tab.modified = false;
+                    savedCount++;
+                }
+            });
+            
+            if (savedCount > 0) {
+                showNotification(`${savedCount} file(s) saved`);
+            } else {
+                showNotification('No files to save');
+            }
+        }
+
+        // Close all tabs
+        function closeAllTabs() {
+            if (confirm('Close all tabs? Unsaved changes will be lost.')) {
+                tabs = [];
+                activeTabIndex = 0;
+                document.getElementById('tab-bar').innerHTML = '';
+                createNewTab();
+            }
+        }
+
+        // Set language
+        function setLanguage(language) {
+            const tab = tabs[activeTabIndex];
+            if (tab) {
+                tab.language = language;
+                updateStatusBar();
+                applySyntaxHighlighting();
+            }
+        }
+
+        // Get language name
+        function getLanguageName(language) {
+            const languageNames = {
+                'normal': 'Normal Text',
+                'html': 'HTML',
+                'css': 'CSS',
+                'javascript': 'JavaScript',
+                'json': 'JSON',
+                'xml': 'XML',
+                'python': 'Python',
+                'java': 'Java',
+                'c': 'C',
+                'cpp': 'C++',
+                'csharp': 'C#',
+                'php': 'PHP',
+                'ruby': 'Ruby',
+                'go': 'Go',
+                'rust': 'Rust',
+                'sql': 'SQL',
+                'markdown': 'Markdown',
+                'yaml': 'YAML'
+            };
+            
+            return languageNames[language] || 'Normal Text';
+        }
+
+        // Apply syntax highlighting
+        function applySyntaxHighlighting() {
+            const editor = document.getElementById('text-editor');
+            const tab = tabs[activeTabIndex];
+            
+            if (!tab || tab.language === 'normal') return;
+            
+            // This is a simplified syntax highlighting implementation
+            // In a real application, you would use a proper syntax highlighting library
+            
+            let highlightedText = editor.value;
+            
+            switch (tab.language) {
+                case 'html':
+                    highlightedText = highlightHTML(highlightedText);
+                    break;
+                case 'css':
+                    highlightedText = highlightCSS(highlightedText);
+                    break;
+                case 'javascript':
+                    highlightedText = highlightJavaScript(highlightedText);
+                    break;
+                case 'json':
+                    highlightedText = highlightJSON(highlightedText);
+                    break;
+                case 'python':
+                    highlightedText = highlightPython(highlightedText);
+                    break;
+                case 'java':
+                case 'cpp':
+                case 'csharp':
+                case 'c':
+                    highlightedText = highlightCLike(highlightedText);
+                    break;
+            }
+            
+            // Note: In a real implementation, you would use a contenteditable div
+            // with innerHTML to display the highlighted text while maintaining the
+            // ability to edit. For this demo, we'll keep it simple.
+        }
+
+        // HTML syntax highlighting
+        function highlightHTML(text) {
+            // Comments
+            text = text.replace(/<!--[\s\S]*?-->/g, '<span class="syntax-comment">$&</span>');
+            
+            // Tags
+            text = text.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, function(match) {
+                return match.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)/, '<span class="syntax-tag">$&</span>')
+                           .replace(/([a-zA-Z-]+)\s*=\s*("[^"]*"|'[^']*')/g, '<span class="syntax-attribute">$1</span>=<span class="syntax-value">$2</span>');
+            });
+            
+            return text;
+        }
+
+        // CSS syntax highlighting
+        function highlightCSS(text) {
+            // Comments
+            text = text.replace(/\/\*[\s\S]*?\*\//g, '<span class="syntax-comment">$&</span>');
+            
+            // Selectors and properties
+            text = text.replace(/([a-zA-Z-]+)\s*:/g, '<span class="syntax-css-property">$1</span>:');
+            text = text.replace(/:\s*([^;]+);/g, ': <span class="syntax-css-value">$1</span>;');
+            
+            return text;
+        }
+
+        // JavaScript syntax highlighting
+        function highlightJavaScript(text) {
+            // Comments
+            text = text.replace(/\/\/.*$/gm, '<span class="syntax-js-comment">$&</span>');
+            text = text.replace(/\/\*[\s\S]*?\*\//g, '<span class="syntax-js-comment">$&</span>');
+            
+            // Strings
+            text = text.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, '<span class="syntax-js-string">$&</span>');
+            
+            // Numbers
+            text = text.replace(/\b\d+\.?\d*\b/g, '<span class="syntax-js-number">$&</span>');
+            
+            // Keywords
+            const keywords = ['function', 'var', 'let', 'const', 'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break', 'continue', 'return', 'try', 'catch', 'finally', 'throw', 'new', 'this', 'class', 'extends', 'super', 'import', 'export', 'default', 'async', 'await'];
+            keywords.forEach(keyword => {
+                const regex = new RegExp(`\\b${keyword}\\b`, 'g');
+                text = text.replace(regex, '<span class="syntax-js-keyword">$&</span>');
+            });
+            
+            return text;
+        }
+
+        // JSON syntax highlighting
+        function highlightJSON(text) {
+            try {
+                const obj = JSON.parse(text);
+                return highlightJavaScript(text);
+            } catch (e) {
+                return text;
+            }
+        }
+
+        // Python syntax highlighting
+        function highlightPython(text) {
+            // Comments
+            text = text.replace(/#.*$/gm, '<span class="syntax-comment">$&</span>');
+            
+            // Strings
+            text = text.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|["'](?:(?=(\\?))\2.)*?\1)/g, '<span class="syntax-string">$&</span>');
+            
+            // Numbers
+            text = text.replace(/\b\d+\.?\d*\b/g, '<span class="syntax-number">$&</span>');
+            
+            // Keywords
+            const keywords = ['def', 'class', 'if', 'elif', 'else', 'for', 'while', 'try', 'except', 'finally', 'with', 'as', 'import', 'from', 'return', 'yield', 'raise', 'break', 'continue', 'pass', 'lambda', 'and', 'or', 'not', 'in', 'is', 'None', 'True', 'False'];
+            keywords.forEach(keyword => {
+                const regex = new RegExp(`\\b${keyword}\\b`, 'g');
+                text = text.replace(regex, '<span class="syntax-keyword">$&</span>');
+            });
+            
+            return text;
+        }
+
+        // C-like syntax highlighting
+        function highlightCLike(text) {
+            // Comments
+            text = text.replace(/\/\/.*$/gm, '<span class="syntax-comment">$&</span>');
+            text = text.replace(/\/\*[\s\S]*?\*\//g, '<span class="syntax-comment">$&</span>');
+            
+            // Strings
+            text = text.replace(/(["'])(?:(?=(\\?))\2.)*?\1/g, '<span class="syntax-string">$&</span>');
+            
+            // Numbers
+            text = text.replace(/\b\d+\.?\d*\b/g, '<span class="syntax-number">$&</span>');
+            
+            // Keywords
+            const keywords = ['if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break', 'continue', 'return', 'try', 'catch', 'finally', 'throw', 'new', 'this', 'class', 'public', 'private', 'protected', 'static', 'void', 'int', 'float', 'double', 'char', 'bool', 'true', 'false', 'null', 'sizeof', 'typedef', 'struct', 'union', 'enum', 'const', 'extern', 'volatile', 'register', 'auto', 'static', 'inline', 'virtual', 'override', 'final', 'explicit', 'operator', 'template', 'typename', 'namespace', 'using', 'friend', 'asm', 'catch', 'class', 'const_cast', 'delete', 'dynamic_cast', 'explicit', 'export', 'false', 'friend', 'inline', 'mutable', 'namespace', 'new', 'operator', 'private', 'protected', 'public', 'reinterpret_cast', 'static_cast', 'template', 'this', 'throw', 'true', 'try', 'typeid', 'typename', 'using', 'virtual', 'wchar_t'];
+            keywords.forEach(keyword => {
+                const regex = new RegExp(`\\b${keyword}\\b`, 'g');
+                text = text.replace(regex, '<span class="syntax-keyword">$&</span>');
+            });
+            
+            return text;
+        }
+
+        // Show encoding selector
+        function showEncodingSelector() {
+            document.getElementById('encoding-selector').classList.add('active');
+        }
+
+        // Close encoding selector
+        function closeEncodingSelector() {
+            document.getElementById('encoding-selector').classList.remove('active');
+        }
+
+        // Apply encoding
+        function applyEncoding() {
+            const selectedEncoding = document.querySelector('.encoding-item.selected');
+            if (selectedEncoding) {
+                const encoding = selectedEncoding.dataset.encoding;
+                const tab = tabs[activeTabIndex];
+                if (tab) {
+                    tab.encoding = encoding;
+                    updateStatusBar();
+                    showNotification(`Encoding changed to ${encoding.toUpperCase()}`);
+                }
+            }
+            closeEncodingSelector();
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('active');
+            
+            setTimeout(() => {
+                notification.classList.remove('active');
+            }, 3000);
+        }
+
+        // Load settings
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('notepadpp-settings');
+            if (savedSettings) {
+                settings = JSON.parse(savedSettings);
+                
+                // Apply settings
+                document.getElementById('theme-select').value = settings.theme;
+                document.getElementById('font-family-select').value = settings.fontFamily;
+                document.getElementById('font-size-input').value = settings.fontSize;
+                document.getElementById('word-wrap-checkbox').checked = settings.wordWrap;
+                document.getElementById('line-numbers-checkbox').checked = settings.showLineNumbers;
+                document.getElementById('minimap-checkbox').checked = settings.showMinimap;
+                document.getElementById('auto-indent-checkbox').checked = settings.autoIndent;
+                document.getElementById('bracket-matching-checkbox').checked = settings.bracketMatching;
+                document.getElementById('highlight-current-line-checkbox').checked = settings.highlightCurrentLine;
+                document.getElementById('show-whitespace-checkbox').checked = settings.showWhitespace;
+                document.getElementById('show-invisibles-checkbox').checked = settings.showInvisibles;
+                document.getElementById('encoding-select').value = settings.defaultEncoding;
+                document.getElementById('line-ending-select').value = settings.lineEnding;
+                document.getElementById('auto-save-checkbox').checked = settings.autoSave;
+                document.getElementById('auto-save-interval').value = settings.autoSaveInterval;
+                document.getElementById('enable-plugins-checkbox').checked = settings.enablePlugins;
+                document.getElementById('enable-macros-checkbox').checked = settings.enableMacros;
+                document.getElementById('enable-regex-checkbox').checked = settings.enableRegex;
+                
+                applyTheme();
+                applyFontSettings();
+                applyWordWrap();
+                toggleLineNumbers();
+                toggleMinimap();
+            }
+        }
+
+        // Save settings
+        function saveSettings() {
+            localStorage.setItem('notepadpp-settings', JSON.stringify(settings));
+        }
+
+        // Update UI
+        function updateUI() {
+            updateLineNumbers();
+            updateCursorPosition();
+            updateStatusBar();
+        }
+
+        // Auto-save functionality
+        setInterval(() => {
+            if (settings.autoSave && tabs.length > 0) {
+                const tab = tabs[activeTabIndex];
+                if (tab && tab.modified) {
+                    saveFile();
+                }
+            }
+        }, settings.autoSaveInterval * 1000);
+
+        // Initialize find/replace buttons
+        document.getElementById('find-case-sensitive').addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+
+        document.getElementById('find-whole-word').addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+
+        document.getElementById('find-regex').addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+
+        // Add tooltip functionality
+        document.querySelectorAll('[title]').forEach(element => {
+            element.addEventListener('mouseenter', function(e) {
+                const tooltip = document.getElementById('tooltip');
+                tooltip.textContent = this.title;
+                tooltip.style.left = `${e.pageX + 10}px`;
+                tooltip.style.top = `${e.pageY - 30}px`;
+                tooltip.classList.add('active');
+            });
+            
+            element.addEventListener('mouseleave', function() {
+                document.getElementById('tooltip').classList.remove('active');
+            });
+        });
+
+        // Initialize with a welcome message
+        window.addEventListener('load', () => {
+            const welcomeText = `Welcome to Notepad++ Advanced - Web Edition!
+
+This is a powerful text editor inspired by Notepad++, built with HTML, CSS, and JavaScript.
+
+Features:
+• Multiple tabs support
+• Syntax highlighting for various languages
+• Find and replace with regex support
+• Macros recording and playback
+• Customizable themes and settings
+• Split view mode
+• Minimap
+• And much more!
+
+Getting Started:
+1. Create a new file (Ctrl+N)
+2. Open an existing file (Ctrl+O)
+3. Choose a language from the Language menu
+4. Start typing!
+
+Keyboard Shortcuts:
+• Ctrl+N - New file
+• Ctrl+O - Open file
+• Ctrl+S - Save file
+• Ctrl+F - Find
+• Ctrl+H - Replace
+• Ctrl+G - Go to line
+• F11 - Fullscreen
+
+Enjoy coding!`;
+            
+            if (tabs.length === 1 && tabs[0].content === '') {
+                tabs[0].content = welcomeText;
+                loadTabContent(tabs[0]);
+            }
+        });
     </script>
 </body>
 </html>
