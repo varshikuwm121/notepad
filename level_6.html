@@ -1,1 +1,3570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangChain Level 6: Tool Integration & Actions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --dark-color: #2b2d42;
+            --light-color: #f8f9fa;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7ff;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 1.5rem;
+            height: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .level-badge {
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .component-card {
+            margin-bottom: 2rem;
+        }
+        
+        .component-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .component-title i {
+            margin-right: 0.5rem;
+        }
+        
+        .section-title {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        pre {
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .business-use-case {
+            background-color: rgba(76, 201, 240, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .problems-solved {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid var(--success-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .impact-absent {
+            background-color: rgba(244, 67, 54, 0.1);
+            border-left: 4px solid var(--danger-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .tech-insight {
+            background-color: rgba(63, 55, 201, 0.05);
+            border-left: 4px solid var(--secondary-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tag-predefined {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: var(--success-color);
+        }
+        
+        .tag-custom {
+            background-color: rgba(255, 152, 0, 0.2);
+            color: var(--warning-color);
+        }
+        
+        .tag-foundation {
+            background-color: rgba(67, 97, 238, 0.2);
+            color: var(--primary-color);
+        }
+        
+        .tag-execution {
+            background-color: rgba(156, 39, 176, 0.2);
+            color: #9c27b0;
+        }
+        
+        .tag-control {
+            background-color: rgba(3, 169, 244, 0.2);
+            color: #03a9f4;
+        }
+        
+        .tag-interface {
+            background-color: rgba(255, 87, 34, 0.2);
+            color: #ff5722;
+        }
+        
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-color);
+        }
+        
+        .nav-pills .nav-link {
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+        }
+        
+        .nav-pills .nav-link:hover {
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+        
+        .subcomponent {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px dashed #dee2e6;
+        }
+        
+        .subcomponent:last-child {
+            border-bottom: none;
+        }
+        
+        .toc-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .toc-list li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .toc-list a {
+            color: var(--primary-color);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+        
+        .toc-list a:hover {
+            background-color: rgba(67, 97, 238, 0.1);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <span class="level-badge">Level 6</span>
+                    <h1 class="display-4 fw-bold">Tool Integration & Actions</h1>
+                    <p class="lead">Extending model capabilities through tool integration and advanced action execution</p>
+                    <p>Building on Level 3, this module explores how to enhance language models with external tools and actions to solve complex business problems.</p>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-tools fa-10x opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Main Content -->
+    <div class="container mb-5">
+        <div class="row">
+            <!-- Table of Contents -->
+            <div class="col-lg-3 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Table of Contents</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="toc-list">
+                            <li><a href="#61-tool-fundamentals">6.1 Tool Fundamentals</a></li>
+                            <li><a href="#62-tool-execution">6.2 Tool Execution</a></li>
+                            <li><a href="#63-advanced-tool-features">6.3 Advanced Tool Features</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-lg-9">
+                <!-- 6.1 Tool Fundamentals -->
+                <div id="61-tool-fundamentals" class="component-card">
+                    <h2 class="component-title"><i class="fas fa-cog"></i> 6.1 Tool Fundamentals</h2>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0">Tool Creation, Built-in Tools & Toolkits, Tool Schemas & Descriptions</h4>
+                        </div>
+                        <div class="card-body">
+                            <p>Tool Fundamentals form the basis for extending language model capabilities with external functions and resources. This section covers how to create custom tools, leverage built-in tools, and properly structure tool schemas for effective integration.</p>
+                            
+                            <!-- Tool Creation -->
+                            <div class="subcomponent">
+                                <h5><i class="fas fa-hammer"></i> Tool Creation</h5>
+                                
+                                <div class="business-use-case">
+                                    <p><strong>✅ Business Use Case:</strong> In the banking sector, a loan approval assistant needs to access real-time customer credit scores and account balances. Using LangChain's tool creation capabilities, developers can build custom tools that securely connect to the bank's internal APIs to retrieve this information while maintaining proper authentication and data governance.</p>
+                                </div>
+                                
+                                <div class="problems-solved">
+                                    <p><strong>❌ Problems Solved:</strong> Solves the challenge of extending LLM capabilities beyond their training data by enabling access to real-time, proprietary, or domain-specific information. It addresses the need for secure, controlled access to external systems while maintaining a consistent interface for the language model.</p>
+                                </div>
+                                
+                                <div class="impact-absent">
+                                    <p><strong>⚠️ Impact if Absent:</strong> Without tool creation capabilities, language models would be limited to their pre-trained knowledge, unable to access current data or perform specific business functions. In banking, this would mean loan officers couldn't get real-time credit assessments, leading to slower decision-making and potentially outdated information being used for critical financial decisions.</p>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap mb-3">
+                                    <span class="tag tag-custom">Custom</span>
+                                    <span class="tag tag-foundation">Foundation</span>
+                                </div>
+                                
+                                <div class="tech-insight">
+                                    <p><strong>🧠 In-depth Technical Insight:</strong> Tool creation in LangChain primarily uses the <code>@tool</code> decorator to convert Python functions into tools that language models can call. This decorator automatically generates the necessary schema and handles type conversion. For banking applications, tools can be designed with proper authentication, error handling, and data validation.</p>
+                                    
+                                    <pre><code class="language-python">
+from langchain_core.tools import tool
+import requests
+from typing import Optional
+
+@tool
+def get_customer_credit_score(customer_id: str, api_key: str) -> int:
+    """
+    Retrieves the current credit score for a banking customer.
+    
+    Args:
+        customer_id: The unique identifier for the customer
+        api_key: Secure API key for authentication
+        
+    Returns:
+        The customer's current credit score (300-850)
+    """
+    # In a real implementation, this would make a secure API call
+    # to the bank's credit scoring system
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    response = requests.post(
+        "https://api.bankingsystem.com/credit-score",
+        json={"customer_id": customer_id},
+        headers=headers
+    )
+    
+    if response.status_code != 200:
+        raise Exception(f"API Error: {response.status_code}")
+        
+    return response.json().get("credit_score")
+
+# The tool can now be used by an agent
+print(get_customer_credit_score.name)
+print(get_customer_credit_score.description)
+print(get_customer_credit_score.args)
+                                    </code></pre>
+                                    
+                                    <p>The <code>@tool</code> decorator automatically extracts the function name, docstring, and parameter types to create a structured schema that the language model can understand. This allows the model to determine when and how to use the tool based on user requests.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Built-in Tools & Toolkits -->
+                            <div class="subcomponent">
+                                <h5><i class="fas fa-toolbox"></i> Built-in Tools & Toolkits</h5>
+                                
+                                <div class="business-use-case">
+                                    <p><strong>✅ Business Use Case:</strong> In healthcare, a patient management system needs to process various types of information: searching medical databases, calculating medication dosages, and scheduling appointments. LangChain's built-in tools and toolkits provide pre-built functionality for these common operations, allowing developers to quickly assemble a comprehensive medical assistant without reinventing the wheel for each capability.</p>
+                                </div>
+                                
+                                <div class="problems-solved">
+                                    <p><strong>❌ Problems Solved:</strong> Addresses the need for rapid development by providing ready-to-use implementations of common tools. It solves the problem of consistency and reliability in tool implementation, as built-in tools are tested and optimized by the LangChain community. In healthcare, this ensures that critical functions like dosage calculations follow established medical standards.</p>
+                                </div>
+                                
+                                <div class="impact-absent">
+                                    <p><strong>⚠️ Impact if Absent:</strong> Without built-in tools and toolkits, developers would need to create every tool from scratch, significantly increasing development time and the potential for errors. In healthcare, this could lead to inconsistent implementations of critical functions like drug interaction checks, potentially jeopardizing patient safety through calculation errors or outdated medical information.</p>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap mb-3">
+                                    <span class="tag tag-predefined">Predefined</span>
+                                    <span class="tag tag-foundation">Foundation</span>
+                                </div>
+                                
+                                <div class="tech-insight">
+                                    <p><strong>🧠 In-depth Technical Insight:</strong> LangChain provides numerous built-in tools and toolkits for common operations. Toolkits are collections of related tools designed to work together for specific domains. For healthcare applications, developers can leverage these pre-built components and customize them as needed.</p>
+                                    
+                                    <pre><code class="language-python">
+from langchain_community.agent_toolkits import SQLDatabaseToolkit
+from langchain_community.utilities import SQLDatabase
+from langchain_core.tools import Tool
+from langchain_openai import ChatOpenAI
+
+# Connect to a healthcare database
+db = SQLDatabase.from_uri("sqlite:///healthcare.db")
+llm = ChatOpenAI(model="gpt-4")
+
+# Create a toolkit for SQL operations
+toolkit = SQLDatabaseToolkit(db=db, llm=llm)
+sql_tools = toolkit.get_tools()
+
+# Create a custom medication dosage calculator tool
+def calculate_medication_dosage(
+    patient_weight_kg: float, 
+    medication_mg_per_kg: float,
+    max_dosage_mg: Optional[float] = None
+) -> float:
+    """
+    Calculate the appropriate medication dosage based on patient weight.
+    
+    Args:
+        patient_weight_kg: Patient's weight in kilograms
+        medication_mg_per_kg: Medication dosage in mg per kg of body weight
+        max_dosage_mg: Optional maximum dosage limit in mg
+        
+    Returns:
+        Calculated dosage in milligrams
+    """
+    dosage = patient_weight_kg * medication_mg_per_kg
+    
+    if max_dosage_mg and dosage > max_dosage_mg:
+        dosage = max_dosage_mg
+        
+    return round(dosage, 2)
+
+# Convert the function to a tool
+dosage_tool = Tool(
+    name="medication_dosage_calculator",
+    func=calculate_medication_dosage,
+    description="Calculate medication dosage based on patient weight"
+)
+
+# Combine built-in and custom tools
+all_tools = sql_tools + [dosage_tool]
+
+# Now these tools can be used by an agent
+for tool in all_tools:
+    print(f"Tool: {tool.name}")
+    print(f"Description: {tool.description}")
+    print("-" * 50)
+                                    </code></pre>
+                                    
+                                    <p>Built-in toolkits like SQLDatabaseToolkit provide a set of related tools that work together seamlessly. This modular approach allows developers to mix and match tools from different sources while maintaining a consistent interface for the language model to interact with.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Tool Schemas & Descriptions -->
+                            <div class="subcomponent">
+                                <h5><i class="fas fa-project-diagram"></i> Tool Schemas & Descriptions</h5>
+                                
+                                <div class="business-use-case">
+                                    <p><strong>✅ Business Use Case:</strong> In retail inventory management, an AI assistant needs to interact with multiple systems: checking stock levels, processing orders, and updating supplier information. Well-defined tool schemas and descriptions ensure the language model understands exactly when and how to use each tool, preventing errors like attempting to check inventory for a product that doesn't exist or updating supplier information without proper authorization.</p>
+                                </div>
+                                
+                                <div class="problems-solved">
+                                    <p><strong>❌ Problems Solved:</strong> Addresses the challenge of clear communication between the language model and tools by providing structured schemas and descriptive text. It solves the problem of tool misuse by ensuring the model understands the purpose, parameters, and limitations of each tool. In retail, this prevents costly errors like incorrect inventory updates or order processing mistakes.</p>
+                                </div>
+                                
+                                <div class="impact-absent">
+                                    <p><strong>⚠️ Impact if Absent:</strong> Without proper tool schemas and descriptions, language models would struggle to understand when and how to use tools effectively. In retail, this could lead to incorrect tool calls, such as attempting to process returns for items not in inventory or updating pricing without understanding the business rules, resulting in financial losses and customer dissatisfaction.</p>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap mb-3">
+                                    <span class="tag tag-predefined">Predefined</span>
+                                    <span class="tag tag-interface">Interface</span>
+                                </div>
+                                
+                                <div class="tech-insight">
+                                    <p><strong>🧠 In-depth Technical Insight:</strong> Tool schemas in LangChain define the structure of inputs and outputs for tools, while descriptions provide natural language explanations of what tools do and when to use them. These elements are critical for helping language models understand and properly utilize tools.</p>
+                                    
+                                    <pre><code class="language-python">
+from langchain_core.tools import tool
+from typing import Optional, List
+from pydantic import BaseModel, Field
+
+# Define a detailed schema for inventory checking
+class InventoryCheckSchema(BaseModel):
+    """Schema for checking inventory levels of products."""
+    product_ids: List[str] = Field(
+        description="List of product IDs to check inventory for"
+    )
+    warehouse_id: Optional[str] = Field(
+        default=None,
+        description="Optional warehouse ID to check specific warehouse inventory"
+    )
+    include_reserved: bool = Field(
+        default=False,
+        description="Whether to include items reserved for existing orders"
+    )
+
+# Create a tool with a detailed schema and description
+@tool(args_schema=InventoryCheckSchema)
+def check_inventory_levels(product_ids: List[str], warehouse_id: Optional[str] = None, include_reserved: bool = False) -> dict:
+    """
+    Check current inventory levels for specified products.
+    
+    This tool provides real-time inventory data across the retail network,
+    allowing for accurate stock assessments and reorder decisions.
+    
+    Args:
+        product_ids: List of product IDs to check inventory for
+        warehouse_id: Optional warehouse ID to check specific warehouse inventory
+        include_reserved: Whether to include items reserved for existing orders
+        
+    Returns:
+        Dictionary mapping product IDs to inventory counts
+    """
+    # In a real implementation, this would query the inventory database
+    inventory_data = {}
+    
+    for product_id in product_ids:
+        # Simulate database query
+        if warehouse_id:
+            # Query specific warehouse
+            stock_level = _query_warehouse_inventory(product_id, warehouse_id)
+        else:
+            # Query all warehouses
+            stock_level = _query_global_inventory(product_id)
+            
+        if not include_reserved:
+            reserved = _get_reserved_stock(product_id)
+            stock_level -= reserved
+            
+        inventory_data[product_id] = max(0, stock_level)  # Ensure non-negative
+    
+    return inventory_data
+
+# Helper functions (would be implemented in a real system)
+def _query_warehouse_inventory(product_id, warehouse_id):
+    # Simulated database query
+    return 42  # Example value
+
+def _query_global_inventory(product_id):
+    # Simulated database query
+    return 125  # Example value
+
+def _get_reserved_stock(product_id):
+    # Simulated database query
+    return 15  # Example value
+
+# Examine the tool's schema
+print("Tool Name:", check_inventory_levels.name)
+print("\nTool Description:")
+print(check_inventory_levels.description)
+print("\nTool Schema:")
+print(check_inventory_levels.args_schema.schema_json(indent=2))
+                                    </code></pre>
+                                    
+                                    <p>The tool schema provides a structured definition of the expected inputs, including types, defaults, and descriptions. This information helps the language model understand how to properly call the tool. The description provides context about when to use the tool and what it does, enabling more intelligent tool selection.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6.2 Tool Execution -->
+                <div id="62-tool-execution" class="component-card">
+                    <h2 class="component-title"><i class="fas fa-play-circle"></i> 6.2 Tool Execution</h2>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0">Tool Calling Workflows, Tool Output Handling, Runtime Values & Secrets, Tool Error Management, Human-in-the-Loop</h4>
+                        </div>
+                        <div class="card-body">
+                            <p>Tool Execution encompasses the complete lifecycle of tool usage within a language model system, from initial invocation through result processing and error handling. This section covers the mechanisms that ensure reliable, secure, and effective tool execution in business applications.</p>
+                            
+                            <!-- Tool Calling Workflows -->
+                            <div class="subcomponent">
+                                <h5><i class="fas fa-sitemap"></i> Tool Calling Workflows</h5>
+                                
+                                <div class="business-use-case">
+                                    <p><strong>✅ Business Use Case:</strong> In logistics, a shipment tracking system needs to coordinate multiple tools: checking carrier APIs, updating internal databases, and notifying customers. A well-designed tool calling workflow ensures these operations happen in the correct sequence, with proper error handling and data flow between steps, enabling end-to-end shipment visibility from warehouse to customer.</p>
+                                </div>
+                                
+                                <div class="problems-solved">
+                                    <p><strong>❌ Problems Solved:</strong> Addresses the complexity of coordinating multiple tools in a logical sequence. It solves the problem of state management between tool calls, data transformation, and conditional execution paths. In logistics, this ensures that shipment status updates trigger appropriate notifications and database updates without manual intervention.</p>
+                                </div>
+                                
+                                <div class="impact-absent">
+                                    <p><strong>⚠️ Impact if Absent:</strong> Without structured tool calling workflows, systems would struggle with complex multi-step operations. In logistics, this could result in incomplete tracking updates, delayed notifications, or inconsistent data across systems, leading to customer dissatisfaction, operational inefficiencies, and increased costs from manual intervention.</p>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap mb-3">
+                                    <span class="tag tag-custom">Custom</span>
+                                    <span class="tag tag-execution">Execution</span>
+                                </div>
+                                
+                                <div class="tech-insight">
+                                    <p><strong>🧠 In-depth Technical Insight:</strong> Tool calling workflows in LangChain define how tools are invoked, how their outputs are processed, and how the overall execution flow is managed. These workflows can be simple linear sequences or complex branching logic based on intermediate results.</p>
+                                    
+                                    <pre><code class="language-python">
+from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
+from langchain_core.tools import tool
+from langchain_openai import ChatOpenAI
+from typing import Dict, List, Optional
+import json
+
+# Define tools for logistics workflow
+@tool
+def check_carrier_api(tracking_number: str, carrier: str) -> Dict:
+    """
+    Check shipment status with carrier's API.
+    
+    Args:
+        tracking_number: The shipment tracking number
+        carrier: The carrier code (UPS, FedEx, DHL, etc.)
+        
+    Returns:
+        Dictionary with shipment status and location data
+    """
+    # In a real implementation, this would call the carrier's API
+    # Simulated response
+    return {
+        "tracking_number": tracking_number,
+        "status": "in_transit",
+        "location": "Chicago, IL Distribution Center",
+        "estimated_delivery": "2023-06-15",
+        "last_update": "2023-06-12T14:30:00Z"
+    }
+
+@tool
+def update_internal_database(tracking_data: Dict) -> bool:
+    """
+    Update the internal logistics database with new shipment information.
+    
+    Args:
+        tracking_data: Shipment data from carrier API
+        
+    Returns:
+        True if update was successful, False otherwise
+    """
+    # In a real implementation, this would update the database
+    print(f"Updating database with tracking data: {tracking_data}")
+    return True
+
+@tool
+def notify_customer(shipment_id: str, status: str, estimated_delivery: str) -> bool:
+    """
+    Send a notification to the customer about their shipment status.
+    
+    Args:
+        shipment_id: Internal shipment identifier
+        status: Current shipment status
+        estimated_delivery: Estimated delivery date
+        
+    Returns:
+        True if notification was sent successfully, False otherwise
+    """
+    # In a real implementation, this would send an email/SMS
+    print(f"Notifying customer about shipment {shipment_id}: {status}, ETA: {estimated_delivery}")
+    return True
+
+# Create a model with tool binding
+llm = ChatOpenAI(model="gpt-4")
+llm_with_tools = llm.bind_tools([check_carrier_api, update_internal_database, notify_customer])
+
+# Define the workflow function
+def execute_logistics_workflow(tracking_number: str, carrier: str, shipment_id: str):
+    """
+    Execute the complete logistics workflow for tracking a shipment.
+    """
+    # Initial message to start the workflow
+    messages = [HumanMessage(
+        content=f"Track shipment {tracking_number} with {carrier} and update our systems. Internal shipment ID is {shipment_id}."
+    )]
+    
+    # Step 1: Check carrier API
+    print("Step 1: Checking carrier API...")
+    ai_msg = llm_with_tools.invoke(messages)
+    messages.append(ai_msg)
+    
+    # Execute the tool call
+    tool_calls = ai_msg.tool_calls
+    if tool_calls:
+        for tool_call in tool_calls:
+            selected_tool = {
+                "check_carrier_api": check_carrier_api,
+                "update_internal_database": update_internal_database,
+                "notify_customer": notify_customer
+            }[tool_call["name"].lower()]
+            
+            tool_output = selected_tool.invoke(tool_call["args"])
+            messages.append(ToolMessage(tool_output, tool_call_id=tool_call["id"]))
+    
+    # Step 2: Update internal database and notify customer
+    print("\nStep 2: Processing results and updating systems...")
+    ai_msg = llm_with_tools.invoke(messages)
+    messages.append(ai_msg)
+    
+    # Execute any remaining tool calls
+    tool_calls = ai_msg.tool_calls
+    if tool_calls:
+        for tool_call in tool_calls:
+            selected_tool = {
+                "check_carrier_api": check_carrier_api,
+                "update_internal_database": update_internal_database,
+                "notify_customer": notify_customer
+            }[tool_call["name"].lower()]
+            
+            tool_output = selected_tool.invoke(tool_call["args"])
+            messages.append(ToolMessage(tool_output, tool_call_id=tool_call["id"]))
+    
+    # Get final response
+    final_response = llm_with_tools.invoke(messages)
+    print("\nFinal result:")
+    print(final_response.content)
+    
+    return final_response.content
+
+# Execute the workflow
+result = execute_logistics_workflow(
+    tracking_number="1Z9999W99999999999",
+    carrier="UPS",
+    shipment_id="SH-789456"
+)
+                                    </code></pre>
+                                    
+                                    <p>This workflow demonstrates a multi-step process where the language model first calls the carrier API to get shipment information, then uses that information to update the internal database and notify the customer. The workflow maintains context between steps through the messages list, ensuring that each tool call has access to the results of previous calls.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Tool Output Handling -->
+                            <div class="subcomponent">
+                                <h5><i class="fas fa-exchange-alt"></i> Tool Output Handling</h5>
+                                
+                                <div class="business-use-case">
+                                    <p><strong>✅ Business Use Case:</strong> In banking, a loan application system needs to process outputs from multiple tools: credit checks, income verification, and risk assessment. Effective tool output handling transforms these diverse data formats into a unified decision framework, enabling loan officers to quickly evaluate applications based on comprehensive, standardized information.</p>
+                                </div>
+                                
+                                <div class="problems-solved">
+                                    <p><strong>❌ Problems Solved:</strong> Addresses the challenge of processing and normalizing outputs from different tools that may return data in various formats. It solves the problem of extracting relevant information from tool outputs and transforming it into a usable format for subsequent operations or user presentation. In banking, this ensures consistent decision-making regardless of the underlying data sources.</p>
+                                </div>
+                                
+                                <div class="impact-absent">
+                                    <p><strong>⚠️ Impact if Absent:</strong> Without proper tool output handling, systems would struggle to process and integrate information from different tools. In banking, this could lead to inconsistent loan evaluations, overlooked risk factors, or delays in processing applications, resulting in poor customer experience and potential compliance issues.</p>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap mb-3">
+                                    <span class="tag tag-custom">Custom</span>
+                                    <span class="tag tag-execution">Execution</span>
+                                </div>
+                                
+                                <div class="tech-insight">
+                                    <p><strong>🧠 In-depth Technical Insight:</strong> Tool output handling in LangChain involves processing the results returned by tools, extracting relevant information, and formatting it appropriately for the language model or user. This may include parsing structured data, handling errors, and transforming outputs into consistent formats.</p>
+                                    
+                                    <pre><code class="language-python">
+from langchain_core.tools import tool
+from langchain_core.messages import ToolMessage
+from typing import Dict, List, Union, Optional
+import json
+import re
+from datetime import datetime
+
+# Define tools that return different output formats
+@tool
+def check_credit_score(customer_id: str) -> Dict:
+    """
+    Check customer's credit score from credit bureau.
+    
+    Args:
+        customer_id: Unique customer identifier
+        
+    Returns:
+        Dictionary with credit score and factors
+    """
+    # In a real implementation, this would call a credit bureau API
+    return {
+        "customer_id": customer_id,
+        "score": 742,
+        "factors": [
+            {"factor": "length_of_credit_history", "impact": "positive"},
+            {"factor": "payment_history", "impact": "positive"},
+            {"factor": "credit_utilization", "impact": "neutral"}
+        ],
+        "last_updated": "2023-06-10T14:30:00Z"
+    }
+
+@tool
+def verify_income(customer_id: str) -> str:
+    """
+    Verify customer's income through payroll system.
+    
+    Args:
+        customer_id: Unique customer identifier
+        
+    Returns:
+        Plain text response with income verification details
+    """
+    # In a real implementation, this would connect to payroll systems
+    return f"Income verification for customer {customer_id}: Annual salary of $85,000 confirmed through direct deposit records. Employment status: Full-time, verified with employer ABC Corp."
+
+@tool
+def assess_risk(customer_data: Dict) -> Dict:
+    """
+    Assess loan risk based on customer data.
+    
+    Args:
+        customer_data: Combined customer information
+        
+    Returns:
+        Dictionary with risk assessment and recommendation
+    """
+    # In a real implementation, this would use a risk model
+    credit_score = customer_data.get("credit_score", 0)
+    annual_income = customer_data.get("annual_income", 0)
+    
+    # Simple risk calculation for demonstration
+    risk_score = max(0, min(100, 100 - (credit_score / 10) - (annual_income / 2000)))
+    
+    if risk_score < 30:
+        recommendation = "Approve"
+    elif risk_score < 60:
+        recommendation = "Review"
+    else:
+        recommendation = "Decline"
+        
+    return {
+        "risk_score": risk_score,
+        "recommendation": recommendation,
+        "factors": [
+            "Credit score: " + str(credit_score),
+            "Income level: " + str(annual_income)
+        ]
+    }
+
+# Function to handle different tool output formats
+def process_tool_outputs(tool_outputs: List[Union[Dict, str]]) -> Dict:
+    """
+    Process outputs from multiple tools and create a unified customer profile.
+    
+    Args:
+        tool_outputs: List of outputs from various tools
+        
+    Returns:
+        Unified customer data dictionary
+    """
+    customer_data = {
+        "credit_score": None,
+        "annual_income": None,
+        "risk_assessment": None
+    }
+    
+    # Process each tool output
+    for output in tool_outputs:
+        if isinstance(output, dict):
+            # Handle structured data (credit check)
+            if "score" in output:
+                customer_data["credit_score"] = output["score"]
+                customer_data["credit_factors"] = output.get("factors", [])
+            
+            # Handle risk assessment
+            if "risk_score" in output:
+                customer_data["risk_assessment"] = output
+                
+        elif isinstance(output, str):
+            # Handle unstructured text (income verification)
+            # Extract income using regex
+            income_match = re.search(r'\$([0-9,]+)', output)
+            if income_match:
+                income_str = income_match.group(1).replace(',', '')
+                customer_data["annual_income"] = int(income_str)
+                
+            # Extract employment status
+            if "Full-time" in output:
+                customer_data["employment_status"] = "Full-time"
+            elif "Part-time" in output:
+                customer_data["employment_status"] = "Part-time"
+            else:
+                customer_data["employment_status"] = "Unknown"
+    
+    return customer_data
+
+# Simulate a loan application workflow
+def process_loan_application(customer_id: str):
+    """
+    Process a loan application by calling multiple tools and handling their outputs.
+    """
+    # Step 1: Call the tools
+    credit_data = check_credit_score.invoke({"customer_id": customer_id})
+    income_text = verify_income.invoke({"customer_id": customer_id})
+    
+    # Step 2: Process the outputs
+    processed_data = process_tool_outputs([credit_data, income_text])
+    
+    # Step 3: Use processed data for risk assessment
+    risk_assessment = assess_risk.invoke({"customer_data": processed_data})
+    
+    # Step 4: Format final results
+    result = {
+        "customer_id": customer_id,
+        "credit_score": processed_data.get("credit_score"),
+        "annual_income": processed_data.get("annual_income"),
+        "employment_status": processed_data.get("employment_status"),
+        "risk_score": risk_assessment.get("risk_score"),
+        "recommendation": risk_assessment.get("recommendation"),
+        "timestamp": datetime.now().isoformat()
+    }
+    
+    return result
+
+# Execute the loan application process
+application_result = process_loan_application("CUST-789456")
+print("Loan Application Result:")
+print(json.dumps(application_result, indent=2))
+                                    </code></pre>
+                                    
+                                    <p>This example demonstrates how to handle different types of tool outputs: structured data from the credit check, unstructured text from income verification, and how to process and combine these outputs to create a unified customer profile. The <code>process_tool_outputs</code> function handles the normalization of different data formats, extracting key information regardless of the original structure.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Runtime Values & Secrets -->
+                            <div class="subcomponent">
+                                <h5><i class="fas fa-key"></i> Runtime Values & Secrets</h5>
+                                
+                                <div class="business-use-case">
+                                    <p><strong>✅ Business Use Case:</strong> In healthcare, a patient records system needs to access sensitive information including API keys for medical databases, authentication tokens for hospital systems, and encryption keys for patient data. Runtime values and secrets management ensures these credentials are securely handled during tool execution without being exposed in logs or code, maintaining HIPAA compliance and patient privacy.</p>
+                                </div>
+                                
+                                <div class="problems-solved">
+                                    <p><strong>❌ Problems Solved:</strong> Addresses the security challenge of managing sensitive information like API keys, passwords, and tokens that tools need at runtime. It solves the problem of keeping credentials out of source code while making them available to tools when needed. In healthcare, this ensures compliance with regulations like HIPAA while enabling access to necessary systems.</p>
+                                </div>
+                                
+                                <div class="impact-absent">
+                                    <p><strong>⚠️ Impact if Absent:</strong> Without proper runtime values and secrets management, sensitive credentials would need to be hardcoded or stored insecurely, creating significant security risks. In healthcare, this could lead to data breaches, HIPAA violations, and compromised patient information, resulting in legal penalties and loss of trust.</p>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap mb-3">
+                                    <span class="tag tag-predefined">Predefined</span>
+                                    <span class="tag tag-control">Control</span>
+                                </div>
+                                
+                                <div class="tech-insight">
+                                    <p><strong>🧠 In-depth Technical Insight:</strong> Runtime values and secrets in LangChain provide mechanisms for securely managing sensitive information that tools need to access external systems. This includes API keys, authentication tokens, and other credentials that should not be hardcoded in the application.</p>
+                                    
+                                    <pre><code class="language-python">
+import os
+from langchain_core.tools import tool
+from langchain_openai import ChatOpenAI
+from langchain_core.runnables.config import RunnableConfig
+import requests
+from typing import Optional, Dict
+
+# Method 1: Using environment variables
+# Set these in your environment, not in code
+# os.environ["HEALTHCARE_API_KEY"] = "your-api-key-here"
+# os.environ["DB_CONNECTION_STRING"] = "your-connection-string-here"
+
+@tool
+def fetch_patient_records(patient_id: str, config: Optional[RunnableConfig] = None) -> Dict:
+    """
+    Fetch patient records from the healthcare database.
+    
+    Args:
+        patient_id: Unique patient identifier
+        config: Optional runtime configuration containing secrets
+        
+    Returns:
+        Dictionary containing patient records
+    """
+    # Get API key from environment or runtime config
+    api_key = os.environ.get("HEALTHCARE_API_KEY")
+    
+    # If config is provided and contains secrets, use those instead
+    if config and config.get("secrets"):
+        api_key = config.get("secrets").get("HEALTHCARE_API_KEY", api_key)
+    
+    if not api_key:
+        raise ValueError("Healthcare API key not found in environment or runtime config")
+    
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    # In a real implementation, this would make an API call
+    # response = requests.get(
+    #     f"https://api.healthcare-system.com/patients/{patient_id}",
+    #     headers=headers
+    # )
+    # return response.json()
+    
+    # Simulated response for demonstration
+    return {
+        "patient_id": patient_id,
+        "name": "John Doe",
+        "date_of_birth": "1980-05-15",
+        "allergies": ["Penicillin", "Latex"],
+        "medications": [
+            {"name": "Lisinopril", "dosage": "10mg", "frequency": "Daily"},
+            {"name": "Atorvastatin", "dosage": "20mg", "frequency": "Daily"}
+        ],
+        "last_visit": "2023-05-20"
+    }
+
+# Method 2: Using a secrets management service
+class SecretsManager:
+    """A simple secrets manager for demonstration."""
+    
+    def __init__(self):
+        self.secrets = {}
+    
+    def add_secret(self, key: str, value: str):
+        """Add a secret to the manager."""
+        self.secrets[key] = value
+    
+    def get_secret(self, key: str) -> Optional[str]:
+        """Get a secret from the manager."""
+        return self.secrets.get(key)
+
+# Create a secrets manager and add some secrets
+secrets_manager = SecretsManager()
+secrets_manager.add_secret("DB_CONNECTION_STRING", "postgresql://user:password@localhost/healthcare_db")
+secrets_manager.add_secret("ENCRYPTION_KEY", "a-very-secure-encryption-key")
+
+@tool
+def update_patient_record(patient_id: str, update_data: Dict, config: Optional[RunnableConfig] = None) -> bool:
+    """
+    Update patient records in the healthcare database.
+    
+    Args:
+        patient_id: Unique patient identifier
+        update_data: Dictionary containing fields to update
+        config: Optional runtime configuration containing secrets
+        
+    Returns:
+        True if update was successful, False otherwise
+    """
+    # Get database connection string from secrets manager
+    db_connection = secrets_manager.get_secret("DB_CONNECTION_STRING")
+    
+    if not db_connection:
+        raise ValueError("Database connection string not found")
+    
+    # Get encryption key for sensitive data
+    encryption_key = secrets_manager.get_secret("ENCRYPTION_KEY")
+    
+    if not encryption_key:
+        raise ValueError("Encryption key not found")
+    
+    # In a real implementation, this would connect to the database
+    # and update the patient record, encrypting sensitive fields
+    
+    print(f"Updating record for patient {patient_id} with data: {update_data}")
+    print(f"Using database connection: {db_connection[:20]}...")
+    print(f"Using encryption key: {encryption_key[:10]}...")
+    
+    return True
+
+# Method 3: Using LangChain's built-in secrets handling
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.runnables.config import get_secrets_from_config
+
+def create_secrets_aware_tool():
+    """Create a tool that is aware of runtime secrets."""
+    
+    @tool
+    def prescription_lookup(drug_name: str, config: Optional[RunnableConfig] = None) -> Dict:
+        """
+        Look up prescription information for a drug.
+        
+        Args:
+            drug_name: Name of the drug to look up
+            config: Optional runtime configuration containing secrets
+            
+        Returns:
+            Dictionary containing drug information
+        """
+        # Extract secrets from config
+        secrets = get_secrets_from_config(config) or {}
+        
+        # Get API key from secrets or environment
+        api_key = secrets.get("PRESCRIPTION_API_KEY") or os.environ.get("PRESCRIPTION_API_KEY")
+        
+        if not api_key:
+            raise ValueError("Prescription API key not found")
+        
+        # In a real implementation, this would call a prescription API
+        return {
+            "drug_name": drug_name,
+            "dosage_forms": ["Tablet", "Capsule"],
+            "common_dosages": ["10mg", "20mg", "40mg"],
+            "side_effects": ["Headache", "Nausea", "Dizziness"],
+            "interactions": ["NSAIDs", "Alcohol"]
+        }
+    
+    return prescription_lookup
+
+# Example usage with runtime configuration
+prescription_tool = create_secrets_aware_tool()
+
+# Create a config with secrets
+runtime_config = RunnableConfig(
+    secrets={
+        "PRESCRIPTION_API_KEY": "runtime-prescription-api-key"
+    }
+)
+
+# Use the tool with the runtime config
+drug_info = prescription_tool.invoke(
+    {"drug_name": "Lisinopril"},
+    config=runtime_config
+)
+
+print("Prescription Information:")
+print(drug_info)
+                                    </code></pre>
+                                    
+                                    <p>This example demonstrates three approaches to managing runtime values and secrets in LangChain tools: using environment variables, implementing a custom secrets manager, and leveraging LangChain's built-in secrets handling through the configuration object. Each approach provides a way to keep sensitive information out of source code while making it available to tools at runtime.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Tool Error Management -->
+                            <div class="subcomponent">
+                                <h5><i class="fas fa-exclamation-triangle"></i> Tool Error Management</h5>
+                                
+                                <div class="business-use-case">
+                                    <p><strong>✅ Business Use Case:</strong> In retail, an inventory management system relies on multiple tools to check stock levels, process orders, and update supplier information. Effective tool error management ensures that when one tool fails (e.g., a supplier API is temporarily unavailable), the system gracefully handles the error, provides meaningful feedback, and continues functioning where possible, minimizing disruption to operations.</p>
+                                </div>
+                                
+                                <div class="problems-solved">
+                                    <p><strong>❌ Problems Solved:</strong> Addresses the challenge of handling failures in tool execution, including network issues, API errors, and invalid inputs. It solves the problem of cascading failures where one tool's error causes the entire workflow to fail. In retail, this ensures that temporary issues with one supplier don't prevent processing orders from other suppliers.</p>
+                                </div>
+                                
+                                <div class="impact-absent">
+                                    <p><strong>⚠️ Impact if Absent:</strong> Without proper tool error management, systems would be brittle and prone to complete failure when individual tools encounter issues. In retail, this could lead to order processing failures, inventory inconsistencies, and poor customer experiences, potentially resulting in lost sales and damage to the brand's reputation.</p>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap mb-3">
+                                    <span class="tag tag-custom">Custom</span>
+                                    <span class="tag tag-control">Control</span>
+                                </div>
+                                
+                                <div class="tech-insight">
+                                    <p><strong>🧠 In-depth Technical Insight:</strong> Tool error management in LangChain involves handling exceptions, implementing retry logic, providing fallback mechanisms, and ensuring meaningful error reporting. This allows systems to remain robust even when individual tools fail.</p>
+                                    
+                                    <pre><code class="language-python">
+from langchain_core.tools import tool
+from langchain_core.messages import ToolMessage
+from typing import Dict, Optional, Union
+import requests
+import time
+from functools import wraps
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Custom exceptions for tool errors
+class ToolTimeoutError(Exception):
+    """Raised when a tool times out."""
+    pass
+
+class ToolRateLimitError(Exception):
+    """Raised when a tool hits a rate limit."""
+    pass
+
+class ToolAuthenticationError(Exception):
+    """Raised when a tool fails authentication."""
+    pass
+
+# Decorator for retry logic
+def retry_tool(max_retries=3, backoff_factor=1):
+    """
+    Decorator to retry tool execution on failure with exponential backoff.
+    
+    Args:
+        max_retries: Maximum number of retries
+        backoff_factor: Factor for exponential backoff
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            retries = 0
+            while retries < max_retries:
+                try:
+                    return func(*args, **kwargs)
+                except requests.exceptions.RequestException as e:
+                    retries += 1
+                    if retries >= max_retries:
+                        raise ToolTimeoutError(f"Tool failed after {max_retries} retries: {str(e)}")
+                    
+                    wait_time = backoff_factor * (2 ** (retries - 1))
+                    logger.warning(f"Tool failed, retrying in {wait_time} seconds... (Attempt {retries}/{max_retries})")
+                    time.sleep(wait_time)
+            return None
+        return wrapper
+    return decorator
+
+# Tool with error handling
+@tool
+@retry_tool(max_retries=3)
+def check_inventory_api(product_id: str, api_key: str) -> Dict:
+    """
+    Check inventory levels through the supplier API.
+    
+    Args:
+        product_id: Product identifier
+        api_key: API key for authentication
+        
+    Returns:
+        Dictionary with inventory information
+        
+    Raises:
+        ToolAuthenticationError: If authentication fails
+        ToolRateLimitError: If rate limit is exceeded
+        ToolTimeoutError: If the request times out
+    """
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    try:
+        # In a real implementation, this would make an API call
+        # response = requests.get(
+        #     f"https://api.supplier.com/inventory/{product_id}",
+        #     headers=headers,
+        #     timeout=10
+        # )
+        # response.raise_for_status()
+        # return response.json()
+        
+        # Simulate API response for demonstration
+        if product_id == "ERROR-401":
+            raise requests.exceptions.HTTPError("401 Client Error: Unauthorized", response=None)
+        elif product_id == "ERROR-429":
+            raise requests.exceptions.HTTPError("429 Client Error: Too Many Requests", response=None)
+        elif product_id == "ERROR-TIMEOUT":
+            raise requests.exceptions.Timeout("Request timed out")
+        
+        # Normal response
+        return {
+            "product_id": product_id,
+            "quantity": 42,
+            "locations": [
+                {"warehouse": "A", "quantity": 25},
+                {"warehouse": "B", "quantity": 17}
+            ],
+            "last_updated": "2023-06-12T14:30:00Z"
+        }
+        
+    except requests.exceptions.HTTPError as e:
+        status_code = int(str(e).split()[1])
+        if status_code == 401:
+            raise ToolAuthenticationError("Authentication failed with supplier API")
+        elif status_code == 429:
+            raise ToolRateLimitError("Rate limit exceeded with supplier API")
+        else:
+            raise
+    except requests.exceptions.Timeout:
+        raise ToolTimeoutError("Request to supplier API timed out")
+
+# Tool with fallback mechanism
+@tool
+def get_product_info(product_id: str, use_cache: bool = True) -> Dict:
+    """
+    Get product information with fallback to cache if API fails.
+    
+    Args:
+        product_id: Product identifier
+        use_cache: Whether to use cached data if available
+        
+    Returns:
+        Dictionary with product information
+    """
+    # Try to get fresh data from API
+    try:
+        # In a real implementation, this would call the product API
+        # product_data = _call_product_api(product_id)
+        # return product_data
+        
+        # Simulate API call
+        if product_id == "FAIL-API":
+            raise Exception("API call failed")
+        
+        # Normal response
+        return {
+            "product_id": product_id,
+            "name": "Premium Widget",
+            "price": 19.99,
+            "description": "A high-quality widget for all your needs",
+            "category": "Widgets",
+            "source": "api"
+        }
+        
+    except Exception as e:
+        logger.warning(f"API call failed for product {product_id}: {str(e)}")
+        
+        # Fallback to cache if enabled
+        if use_cache:
+            logger.info(f"Using cached data for product {product_id}")
+            # In a real implementation, this would get data from cache
+            # cached_data = _get_cached_product_data(product_id)
+            # if cached_data:
+            #     cached_data["source"] = "cache"
+            #     return cached_data
+            
+            # Simulate cached data
+            return {
+                "product_id": product_id,
+                "name": "Premium Widget",
+                "price": 19.99,
+                "description": "A high-quality widget for all your needs",
+                "category": "Widgets",
+                "source": "cache",
+                "cached_at": "2023-06-10T09:15:00Z"
+            }
+        
+        # No fallback available
+        raise Exception(f"Failed to get product information for {product_id} and no cache available")
+
+# Error handling wrapper for tool execution
+def execute_tool_with_error_handling(tool_func, tool_args):
+    """
+    Execute a tool with comprehensive error handling.
+    
+    Args:
+        tool_func: The tool function to execute
+        tool_args: Arguments for the tool
+        
+    Returns:
+        ToolMessage with result or error information
+    """
+    try:
+        result = tool_func.invoke(tool_args)
+        return ToolMessage(
+            content=str(result),
+            status="success"
+        )
+    except ToolAuthenticationError as e:
+        logger.error(f"Authentication error in tool {tool_func.name}: {str(e)}")
+        return ToolMessage(
+            content=f"Authentication failed: {str(e)}",
+            status="error",
+            additional_kwargs={"error_type": "authentication"}
+        )
+    except ToolRateLimitError as e:
+        logger.error(f"Rate limit error in tool {tool_func.name}: {str(e)}")
+        return ToolMessage(
+            content=f"Rate limit exceeded: {str(e)}",
+            status="error",
+            additional_kwargs={"error_type": "rate_limit"}
+        )
+    except ToolTimeoutError as e:
+        logger.error(f"Timeout error in tool {tool_func.name}: {str(e)}")
+        return ToolMessage(
+            content=f"Request timed out: {str(e)}",
+            status="error",
+            additional_kwargs={"error_type": "timeout"}
+        )
+    except Exception as e:
+        logger.error(f"Unexpected error in tool {tool_func.name}: {str(e)}")
+        return ToolMessage(
+            content=f"Unexpected error: {str(e)}",
+            status="error",
+            additional_kwargs={"error_type": "unexpected"}
+        )
+
+# Example usage
+print("Testing tool with successful execution:")
+result = execute_tool_with_error_handling(
+    check_inventory_api,
+    {"product_id": "PROD-12345", "api_key": "test-key"}
+)
+print(f"Status: {result.status}")
+print(f"Content: {result.content}\n")
+
+print("Testing tool with authentication error:")
+result = execute_tool_with_error_handling(
+    check_inventory_api,
+    {"product_id": "ERROR-401", "api_key": "test-key"}
+)
+print(f"Status: {result.status}")
+print(f"Content: {result.content}")
+print(f"Error type: {result.additional_kwargs.get('error_type')}\n")
+
+print("Testing tool with fallback mechanism:")
+result = execute_tool_with_error_handling(
+    get_product_info,
+    {"product_id": "FAIL-API", "use_cache": True}
+)
+print(f"Status: {result.status}")
+print(f"Content: {result.content}\n")
+                                    </code></pre>
+                                    
+                                    <p>This example demonstrates comprehensive error management for LangChain tools, including custom exceptions, retry logic with exponential backoff, fallback mechanisms, and structured error reporting. The <code>execute_tool_with_error_handling</code> function provides a wrapper that catches different types of errors and returns appropriate ToolMessage objects with error information, allowing the system to continue functioning even when individual tools fail.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Human-in-the-Loop -->
+                            <div class="subcomponent">
+                                <h5><i class="fas fa-user-check"></i> Human-in-the-Loop</h5>
+                                
+                                <div class="business-use-case">
+                                    <p><strong>✅ Business Use Case:</strong> In banking, a loan approval system can automatically process applications that meet clear criteria but requires human review for edge cases or high-value loans. Human-in-the-loop functionality allows the system to pause execution, gather necessary information from loan officers, and incorporate their decisions before proceeding, balancing efficiency with risk management.</p>
+                                </div>
+                                
+                                <div class="problems-solved">
+                                    <p><strong>❌ Problems Solved:</strong> Addresses the challenge of handling decisions that require human judgment, expertise, or authorization. It solves the problem of creating a seamless workflow where automated processes can pause for human input and then resume, maintaining context throughout. In banking, this ensures compliance with regulations while maximizing automation of routine decisions.</p>
+                                </div>
+                                
+                                <div class="impact-absent">
+                                    <p><strong>⚠️ Impact if Absent:</strong> Without human-in-the-loop capabilities, systems would need to be either fully automated (potentially making inappropriate decisions) or fully manual (losing efficiency gains). In banking, this could result in either risky automated loan approvals or inefficient manual processing of all applications, increasing costs and slowing response times.</p>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap mb-3">
+                                    <span class="tag tag-custom">Custom</span>
+                                    <span class="tag tag-control">Control</span>
+                                </div>
+                                
+                                <div class="tech-insight">
+                                    <p><strong>🧠 In-depth Technical Insight:</strong> Human-in-the-loop in LangChain involves creating mechanisms for pausing execution, gathering human input, and incorporating that input into the workflow. This can be implemented through special tools that request human input, callbacks that pause execution, or custom runnables that manage the human interaction process.</p>
+                                    
+                                    <pre><code class="language-python">
+from langchain_core.tools import tool
+from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda
+from langchain_core.runnables.config import RunnableConfig
+from typing import Dict, List, Optional, Union, Any
+import json
+import time
+from enum import Enum
+
+class HumanInputRequired(Exception):
+    """Exception raised when human input is required."""
+    
+    def __init__(self, prompt: str, input_key: str, options: Optional[List[str]] = None):
+        self.prompt = prompt
+        self.input_key = input_key
+        self.options = options
+        super().__init__(f"Human input required for '{input_key}'")
+
+class HumanInputResponse:
+    """Response from human input."""
+    
+    def __init__(self, input_key: str, value: Any):
+        self.input_key = input_key
+        self.value = value
+
+# Tool that may require human input
+@tool
+def approve_loan_application(application_data: Dict) -> Dict:
+    """
+    Approve or reject a loan application based on predefined criteria.
+    
+    Args:
+        application_data: Dictionary containing loan application data
+        
+    Returns:
+        Dictionary with approval decision and reasoning
+    """
+    # Extract key information
+    credit_score = application_data.get("credit_score", 0)
+    annual_income = application_data.get("annual_income", 0)
+    loan_amount = application_data.get("loan_amount", 0)
+    debt_to_income = application_data.get("debt_to_income", 1.0)
+    
+    # Basic approval criteria
+    if credit_score >= 700 and debt_to_income < 0.36:
+        decision = "approved"
+        reason = "Meets standard approval criteria"
+    elif credit_score < 600 or debt_to_income > 0.43:
+        decision = "rejected"
+        reason = "Does not meet minimum approval criteria"
+    else:
+        # Borderline case - requires human review
+        raise HumanInputRequired(
+            prompt=f"Review loan application for {application_data.get('applicant_name', 'Unknown')}:\n"
+                  f"Credit Score: {credit_score}\n"
+                  f"Annual Income: ${annual_income:,.2f}\n"
+                  f"Loan Amount: ${loan_amount:,.2f}\n"
+                  f"Debt-to-Income Ratio: {debt_to_income:.2%}\n\n"
+                  f"Should this application be approved?",
+            input_key="loan_decision",
+            options=["approved", "rejected"]
+        )
+    
+    return {
+        "application_id": application_data.get("application_id"),
+        "decision": decision,
+        "reason": reason,
+        "reviewed_by": "automated_system"
+    }
+
+# Tool to record human decision
+@tool
+def record_human_decision(application_id: str, decision: str, reviewer_id: str, notes: str = "") -> Dict:
+    """
+    Record a human decision for a loan application.
+    
+    Args:
+        application_id: Unique identifier for the application
+        decision: Approval decision (approved/rejected)
+        reviewer_id: ID of the reviewer
+        notes: Optional notes about the decision
+        
+    Returns:
+        Dictionary confirming the decision was recorded
+    """
+    # In a real implementation, this would update the database
+    return {
+        "application_id": application_id,
+        "decision": decision,
+        "reviewer_id": reviewer_id,
+        "notes": notes,
+        "timestamp": time.time()
+    }
+
+# Human-in-the-loop processor
+class HumanInTheLoopProcessor:
+    """Processes runnables with human-in-the-loop capabilities."""
+    
+    def __init__(self):
+        self.pending_inputs = {}
+    
+    def process_with_human_input(self, runnable, input_data, config: Optional[RunnableConfig] = None):
+        """
+        Process a runnable with human-in-the-loop capabilities.
+        
+        Args:
+            runnable: The runnable to process
+            input_data: Input data for the runnable
+            config: Optional configuration
+            
+        Returns:
+            Result of processing
+        """
+        try:
+            # Try to execute the runnable
+            result = runnable.invoke(input_data, config=config)
+            return result
+        except HumanInputRequired as e:
+            # Handle required human input
+            print(f"\n{'='*50}")
+            print(f"HUMAN INPUT REQUIRED")
+            print(f"{'='*50}")
+            print(e.prompt)
+            
+            if e.options:
+                print("\nOptions:")
+                for i, option in enumerate(e.options, 1):
+                    print(f"{i}. {option}")
+                
+                # Get human input
+                while True:
+                    try:
+                        choice = int(input("\nEnter your choice (number): "))
+                        if 1 <= choice <= len(e.options):
+                            value = e.options[choice - 1]
+                            break
+                        else:
+                            print("Invalid choice. Please try again.")
+                    except ValueError:
+                        print("Please enter a valid number.")
+            else:
+                # Free-form input
+                value = input("\nYour response: ")
+            
+            # Store the human input
+            human_response = HumanInputResponse(input_key=e.input_key, value=value)
+            self.pending_inputs[e.input_key] = human_response
+            
+            # Create a modified input with the human decision
+            modified_input = {**input_data, e.input_key: value}
+            
+            # Retry the runnable with the human input
+            print(f"\nResuming processing with human input for '{e.input_key}'...")
+            return self.process_with_human_input(runnable, modified_input, config)
+
+# Example usage
+def process_loan_application_with_human_review(application_data: Dict):
+    """
+    Process a loan application with human review for borderline cases.
+    """
+    processor = HumanInTheLoopProcessor()
+    
+    # Initial processing
+    try:
+        result = processor.process_with_human_input(
+            approve_loan_application,
+            {"application_data": application_data}
+        )
+        
+        # If we get here without human input, it was an automated decision
+        print(f"\nLoan application {application_data.get('application_id')} was {result['decision']}.")
+        print(f"Reason: {result['reason']}")
+        
+        return result
+        
+    except Exception as e:
+        print(f"Error processing loan application: {str(e)}")
+        return None
+
+# Test with a clear approval case
+print("Testing with clear approval case:")
+clear_approval_app = {
+    "application_id": "APP-12345",
+    "applicant_name": "John Smith",
+    "credit_score": 750,
+    "annual_income": 85000,
+    "loan_amount": 250000,
+    "debt_to_income": 0.25
+}
+result = process_loan_application_with_human_review(clear_approval_app)
+
+# Test with a borderline case requiring human review
+print("\n" + "="*60)
+print("Testing with borderline case requiring human review:")
+borderline_app = {
+    "application_id": "APP-67890",
+    "applicant_name": "Jane Doe",
+    "credit_score": 650,
+    "annual_income": 55000,
+    "loan_amount": 200000,
+    "debt_to_income": 0.38
+}
+result = process_loan_application_with_human_review(borderline_app)
+
+# If a human decision was made, record it
+if result and result.get("reviewed_by") != "automated_system":
+    record_result = record_human_decision.invoke({
+        "application_id": borderline_app["application_id"],
+        "decision": result["decision"],
+        "reviewer_id": "OFFICER-789",
+        "notes": "Reviewed borderline application - approved due to stable employment history"
+    })
+    print(f"\nHuman decision recorded: {record_result}")
+                                    </code></pre>
+                                    
+                                    <p>This example demonstrates a human-in-the-loop implementation where the loan approval process can automatically handle clear cases but pauses for human input on borderline decisions. The <code>HumanInTheLoopProcessor</code> class manages the workflow, catching <code>HumanInputRequired</code> exceptions, gathering input from the user, and then resuming processing with the human decision incorporated. This approach allows for efficient automation while ensuring human oversight for critical decisions.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6.3 Advanced Tool Features -->
+                <div id="63-advanced-tool-features" class="component-card">
+                    <h2 class="component-title"><i class="fas fa-cogs"></i> 6.3 Advanced Tool Features</h2>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0">Parallel vs Sequential Tool Calling, Forced Tool Calls, Tool Artifacts, Tool State Management, Converting Runnables to Tools</h4>
+                        </div>
+                        <div class="card-body">
+                            <p>Advanced Tool Features encompass sophisticated capabilities that enhance the power and flexibility of tool integration in language model systems. These features enable more complex workflows, better performance optimization, and improved state management across tool interactions.</p>
+                            
+                            <!-- Parallel vs Sequential Tool Calling -->
+                            <div class="subcomponent">
+                                <h5><i class="fas fa-random"></i> Parallel vs Sequential Tool Calling</h5>
+                                
+                                <div class="business-use-case">
+                                    <p><strong>✅ Business Use Case:</strong> In logistics, a shipment optimization system needs to check multiple carrier APIs simultaneously to compare shipping rates and delivery times. Parallel tool calling allows the system to query all carriers at once, dramatically reducing response time compared to sequential calls, enabling real-time shipping decisions that minimize costs while meeting delivery deadlines.</p>
+                                </div>
+                                
+                                <div class="problems-solved">
+                                    <p><strong>❌ Problems Solved:</strong> Addresses the performance bottleneck of sequential tool execution when multiple independent operations are needed. It solves the problem of long wait times when gathering information from multiple sources, allowing systems to be more responsive. In logistics, this enables faster decision-making and better customer service through reduced quote times.</p>
+                                </div>
+                                
+                                <div class="impact-absent">
+                                    <p><strong>⚠️ Impact if Absent:</strong> Without parallel tool calling, systems would be forced to execute tools one after another, significantly increasing response times when multiple operations are needed. In logistics, this could result in missed shipping deadlines, higher costs due to inability to compare all options in time, and poor customer experience from long wait times for shipping quotes.</p>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap mb-3">
+                                    <span class="tag tag-predefined">Predefined</span>
+                                    <span class="tag tag-execution">Execution</span>
+                                </div>
+                                
+                                <div class="tech-insight">
+                                    <p><strong>🧠 In-depth Technical Insight:</strong> Parallel tool calling in LangChain allows multiple tools to be executed simultaneously rather than sequentially, significantly improving performance when operations are independent. This is particularly valuable when gathering information from multiple sources or performing calculations that don't depend on each other.</p>
+                                    
+                                    <pre><code class="language-python">
+from langchain_core.tools import tool
+from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
+from langchain_openai import ChatOpenAI
+from langchain_core.runnables import RunnableParallel, RunnableSequence
+from langchain_core.runnables.config import RunnableConfig
+from typing import Dict, List, Optional
+import asyncio
+import time
+import random
+
+# Define tools for different carriers
+@tool
+def check_ups_rates(origin: str, destination: str, weight: float, dimensions: Dict) -> Dict:
+    """
+    Check shipping rates with UPS.
+    
+    Args:
+        origin: Origin postal code
+        destination: Destination postal code
+        weight: Package weight in pounds
+        dimensions: Package dimensions (length, width, height in inches)
+        
+    Returns:
+        Dictionary with UPS shipping options and rates
+    """
+    # Simulate API call delay
+    time.sleep(random.uniform(0.5, 1.5))
+    
+    # In a real implementation, this would call the UPS API
+    return {
+        "carrier": "UPS",
+        "options": [
+            {"service": "Ground", "rate": 12.45, "delivery_days": 3},
+            {"service": "2nd Day Air", "rate": 28.75, "delivery_days": 2},
+            {"service": "Next Day Air", "rate": 45.99, "delivery_days": 1}
+        ]
+    }
+
+@tool
+def check_fedex_rates(origin: str, destination: str, weight: float, dimensions: Dict) -> Dict:
+    """
+    Check shipping rates with FedEx.
+    
+    Args:
+        origin: Origin postal code
+        destination: Destination postal code
+        weight: Package weight in pounds
+        dimensions: Package dimensions (length, width, height in inches)
+        
+    Returns:
+        Dictionary with FedEx shipping options and rates
+    """
+    # Simulate API call delay
+    time.sleep(random.uniform(0.5, 1.5))
+    
+    # In a real implementation, this would call the FedEx API
+    return {
+        "carrier": "FedEx",
+        "options": [
+            {"service": "Ground", "rate": 11.99, "delivery_days": 4},
+            {"service": "Express 2Day", "rate": 26.50, "delivery_days": 2},
+            {"service": "Standard Overnight", "rate": 42.25, "delivery_days": 1}
+        ]
+    }
+
+@tool
+def check_usps_rates(origin: str, destination: str, weight: float, dimensions: Dict) -> Dict:
+    """
+    Check shipping rates with USPS.
+    
+    Args:
+        origin: Origin postal code
+        destination: Destination postal code
+        weight: Package weight in pounds
+        dimensions: Package dimensions (length, width, height in inches)
+        
+    Returns:
+        Dictionary with USPS shipping options and rates
+    """
+    # Simulate API call delay
+    time.sleep(random.uniform(0.5, 1.5))
+    
+    # In a real implementation, this would call the USPS API
+    return {
+        "carrier": "USPS",
+        "options": [
+            {"service": "Priority Mail", "rate": 8.75, "delivery_days": 2},
+            {"service": "Priority Mail Express", "rate": 26.35, "delivery_days": 1},
+            {"service": "Retail Ground", "rate": 7.90, "delivery_days": 5}
+        ]
+    }
+
+# Sequential tool calling
+def get_shipping_rates_sequential(origin: str, destination: str, weight: float, dimensions: Dict) -> Dict:
+    """
+    Get shipping rates from all carriers sequentially.
+    
+    Args:
+        origin: Origin postal code
+        destination: Destination postal code
+        weight: Package weight in pounds
+        dimensions: Package dimensions (length, width, height in inches)
+        
+    Returns:
+        Dictionary with shipping options from all carriers
+    """
+    start_time = time.time()
+    
+    # Call each tool sequentially
+    ups_rates = check_ups_rates.invoke({
+        "origin": origin,
+        "destination": destination,
+        "weight": weight,
+        "dimensions": dimensions
+    })
+    
+    fedex_rates = check_fedex_rates.invoke({
+        "origin": origin,
+        "destination": destination,
+        "weight": weight,
+        "dimensions": dimensions
+    })
+    
+    usps_rates = check_usps_rates.invoke({
+        "origin": origin,
+        "destination": destination,
+        "weight": weight,
+        "dimensions": dimensions
+    })
+    
+    end_time = time.time()
+    
+    return {
+        "rates": [ups_rates, fedex_rates, usps_rates],
+        "execution_time": end_time - start_time,
+        "method": "sequential"
+    }
+
+# Parallel tool calling
+async def get_shipping_rates_parallel(origin: str, destination: str, weight: float, dimensions: Dict) -> Dict:
+    """
+    Get shipping rates from all carriers in parallel.
+    
+    Args:
+        origin: Origin postal code
+        destination: Destination postal code
+        weight: Package weight in pounds
+        dimensions: Package dimensions (length, width, height in inches)
+        
+    Returns:
+        Dictionary with shipping options from all carriers
+    """
+    start_time = time.time()
+    
+    # Create tasks for all tools
+    tasks = [
+        check_ups_rates.ainvoke({
+            "origin": origin,
+            "destination": destination,
+            "weight": weight,
+            "dimensions": dimensions
+        }),
+        check_fedex_rates.ainvoke({
+            "origin": origin,
+            "destination": destination,
+            "weight": weight,
+            "dimensions": dimensions
+        }),
+        check_usps_rates.ainvoke({
+            "origin": origin,
+            "destination": destination,
+            "weight": weight,
+            "dimensions": dimensions
+        })
+    ]
+    
+    # Execute all tasks in parallel
+    results = await asyncio.gather(*tasks)
+    
+    end_time = time.time()
+    
+    return {
+        "rates": results,
+        "execution_time": end_time - start_time,
+        "method": "parallel"
+    }
+
+# Compare sequential vs parallel execution
+def compare_execution_methods():
+    """
+    Compare sequential and parallel execution methods.
+    """
+    # Sample shipment data
+    shipment_data = {
+        "origin": "90210",
+        "destination": "10001",
+        "weight": 5.2,
+        "dimensions": {"length": 12, "width": 9, "height": 3}
+    }
+    
+    print("Comparing sequential vs parallel tool execution:\n")
+    
+    # Sequential execution
+    print("Sequential execution:")
+    sequential_result = get_shipping_rates_sequential(**shipment_data)
+    print(f"Execution time: {sequential_result['execution_time']:.2f} seconds")
+    
+    # Find the best rate from sequential results
+    best_rate = None
+    for carrier in sequential_result["rates"]:
+        for option in carrier["options"]:
+            if best_rate is None or option["rate"] < best_rate["rate"]:
+                best_rate = {
+                    "carrier": carrier["carrier"],
+                    "service": option["service"],
+                    "rate": option["rate"],
+                    "delivery_days": option["delivery_days"]
+                }
+    
+    print(f"Best rate: {best_rate['carrier']} {best_rate['service']} - ${best_rate['rate']:.2f} ({best_rate['delivery_days']} days)\n")
+    
+    # Parallel execution
+    print("Parallel execution:")
+    parallel_result = asyncio.run(get_shipping_rates_parallel(**shipment_data))
+    print(f"Execution time: {parallel_result['execution_time']:.2f} seconds")
+    
+    # Find the best rate from parallel results
+    best_rate = None
+    for carrier in parallel_result["rates"]:
+        for option in carrier["options"]:
+            if best_rate is None or option["rate"] < best_rate["rate"]:
+                best_rate = {
+                    "carrier": carrier["carrier"],
+                    "service": option["service"],
+                    "rate": option["rate"],
+                    "delivery_days": option["delivery_days"]
+                }
+    
+    print(f"Best rate: {best_rate['carrier']} {best_rate['service']} - ${best_rate['rate']:.2f} ({best_rate['delivery_days']} days)\n")
+    
+    # Performance improvement
+    improvement = (sequential_result["execution_time"] - parallel_result["execution_time"]) / sequential_result["execution_time"] * 100
+    print(f"Performance improvement: {improvement:.1f}% faster with parallel execution")
+
+# Run the comparison
+compare_execution_methods()
+                                    </code></pre>
+                                    
+                                    <p>This example demonstrates the significant performance benefits of parallel tool calling compared to sequential execution. The <code>get_shipping_rates_parallel</code> function uses asyncio to execute multiple carrier API calls simultaneously, while the sequential version calls them one after another. In real-world scenarios with network latency, the performance difference can be even more dramatic, making parallel execution essential for responsive systems.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Forced Tool Calls -->
+                            <div class="subcomponent">
+                                <h5><i class="fas fa-hand-paper"></i> Forced Tool Calls</h5>
+                                
+                                <div class="business-use-case">
+                                    <p><strong>✅ Business Use Case:</strong> In healthcare, a patient monitoring system must periodically check vital signs regardless of the conversation flow. Forced tool calls ensure that critical monitoring tools are executed at regular intervals, even if the language model is engaged in other tasks, enabling continuous patient monitoring and timely alerts for concerning changes in condition.</p>
+                                </div>
+                                
+                                <div class="problems-solved">
+                                    <p><strong>❌ Problems Solved:</strong> Addresses the challenge of ensuring critical tools are executed when needed, regardless of the language model's decision-making process. It solves the problem of mandatory operations that must be performed at specific times or under certain conditions. In healthcare, this ensures that vital sign monitoring happens consistently, even if the conversation is focused on other topics.</p>
+                                </div>
+                                
+                                <div class="impact-absent">
+                                    <p><strong>⚠️ Impact if Absent:</strong> Without forced tool calls, systems would rely entirely on the language model's judgment about when to use tools, potentially missing critical operations. In healthcare, this could result in missed vital sign checks, delayed detection of patient deterioration, and failure to provide timely interventions, potentially endangering patient safety.</p>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap mb-3">
+                                    <span class="tag tag-custom">Custom</span>
+                                    <span class="tag tag-control">Control</span>
+                                </div>
+                                
+                                <div class="tech-insight">
+                                    <p><strong>🧠 In-depth Technical Insight:</strong> Forced tool calls in LangChain provide mechanisms to ensure specific tools are executed regardless of the language model's normal decision process. This is critical for operations that must happen at certain times or under specific conditions, such as periodic monitoring or mandatory compliance checks.</p>
+                                    
+                                    <pre><code class="language-python">
+from langchain_core.tools import tool
+from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
+from langchain_openai import ChatOpenAI
+from langchain_core.runnables import RunnableLambda, RunnablePassthrough
+from langchain_core.runnables.config import RunnableConfig
+from typing import Dict, List, Optional, Any
+import time
+import datetime
+import json
+from enum import Enum
+
+class ToolCallPriority(Enum):
+    """Priority levels for forced tool calls."""
+    HIGH = 1
+    MEDIUM = 2
+    LOW = 3
+
+class ForcedToolCall:
+    """Represents a forced tool call that must be executed."""
+    
+    def __init__(
+        self, 
+        tool_name: str, 
+        args: Dict[str, Any],
+        priority: ToolCallPriority = ToolCallPriority.MEDIUM,
+        condition: Optional[callable] = None,
+        recurring: bool = False,
+        interval_seconds: Optional[int] = None
+    ):
+        self.tool_name = tool_name
+        self.args = args
+        self.priority = priority
+        self.condition = condition  # Function that returns True if the tool should be called
+        self.recurring = recurring
+        self.interval_seconds = interval_seconds
+        self.last_execution = None
+
+class ForcedToolCallManager:
+    """Manages forced tool calls within a workflow."""
+    
+    def __init__(self):
+        self.forced_calls = []
+        self.tools = {}
+    
+    def register_tool(self, name: str, tool_func):
+        """Register a tool that can be forced."""
+        self.tools[name] = tool_func
+    
+    def add_forced_call(self, forced_call: ForcedToolCall):
+        """Add a forced tool call to the manager."""
+        self.forced_calls.append(forced_call)
+        # Sort by priority
+        self.forced_calls.sort(key=lambda x: x.priority.value)
+    
+    def check_and_execute_forced_calls(self, context: Dict[str, Any]) -> List[ToolMessage]:
+        """
+        Check and execute any forced tool calls that are due.
+        
+        Args:
+            context: Context information for evaluating conditions
+            
+        Returns:
+            List of ToolMessage objects from executed forced calls
+        """
+        results = []
+        current_time = time.time()
+        
+        for forced_call in self.forced_calls:
+            # Check if the call is due
+            call_due = False
+            
+            # Check condition if provided
+            if forced_call.condition and not forced_call.condition(context):
+                continue
+                
+            # Check if it's a recurring call and enough time has passed
+            if forced_call.recurring and forced_call.interval_seconds:
+                if (forced_call.last_execution is None or 
+                    current_time - forced_call.last_execution >= forced_call.interval_seconds):
+                    call_due = True
+                    forced_call.last_execution = current_time
+            elif not forced_call.recurring and forced_call.last_execution is None:
+                # One-time call that hasn't been executed yet
+                call_due = True
+                forced_call.last_execution = current_time
+            
+            # Execute the call if due
+            if call_due:
+                tool_func = self.tools.get(forced_call.tool_name)
+                if tool_func:
+                    try:
+                        result = tool_func.invoke(forced_call.args)
+                        tool_message = ToolMessage(
+                            content=str(result),
+                            name=forced_call.tool_name
+                        )
+                        results.append(tool_message)
+                    except Exception as e:
+                        tool_message = ToolMessage(
+                            content=f"Error executing forced tool call: {str(e)}",
+                            name=forced_call.tool_name
+                        )
+                        results.append(tool_message)
+        
+        return results
+
+# Define healthcare monitoring tools
+@tool
+def check_vital_signs(patient_id: str) -> Dict:
+    """
+    Check current vital signs for a patient.
+    
+    Args:
+        patient_id: Unique patient identifier
+        
+    Returns:
+        Dictionary with current vital signs
+    """
+    # In a real implementation, this would connect to monitoring equipment
+    # Simulated data for demonstration
+    return {
+        "patient_id": patient_id,
+        "timestamp": datetime.datetime.now().isoformat(),
+        "heart_rate": 78,
+        "blood_pressure": "120/80",
+        "oxygen_saturation": 98,
+        "temperature": 98.6,
+        "respiratory_rate": 16
+    }
+
+@tool
+def check_medication_administration(patient_id: str) -> Dict:
+    """
+    Check if scheduled medications have been administered.
+    
+    Args:
+        patient_id: Unique patient identifier
+        
+    Returns:
+        Dictionary with medication administration status
+    """
+    # In a real implementation, this would check medication records
+    # Simulated data for demonstration
+    return {
+        "patient_id": patient_id,
+        "timestamp": datetime.datetime.now().isoformat(),
+        "medications": [
+            {"name": "Lisinopril", "scheduled": "08:00", "administered": "08:05", "status": "administered"},
+            {"name": "Atorvastatin", "scheduled": "20:00", "administered": None, "status": "pending"}
+        ]
+    }
+
+@tool
+def generate_alert(patient_id: str, alert_type: str, message: str, severity: str) -> Dict:
+    """
+    Generate an alert for medical staff.
+    
+    Args:
+        patient_id: Unique patient identifier
+        alert_type: Type of alert (vital_signs, medication, etc.)
+        message: Alert message
+        severity: Alert severity (low, medium, high, critical)
+        
+    Returns:
+        Dictionary confirming alert generation
+    """
+    # In a real implementation, this would send alerts to medical staff
+    print(f"ALERT [{severity.upper()}]: {message}")
+    return {
+        "patient_id": patient_id,
+        "alert_type": alert_type,
+        "message": message,
+        "severity": severity,
+        "timestamp": datetime.datetime.now().isoformat(),
+        "status": "sent"
+    }
+
+# Example usage
+def demonstrate_forced_tool_calls():
+    """Demonstrate forced tool calls in a healthcare monitoring scenario."""
+    
+    # Create the manager
+    manager = ForcedToolCallManager()
+    
+    # Register tools
+    manager.register_tool("check_vital_signs", check_vital_signs)
+    manager.register_tool("check_medication_administration", check_medication_administration)
+    manager.register_tool("generate_alert", generate_alert)
+    
+    # Add forced tool calls
+    # 1. Check vital signs every 5 minutes (high priority)
+    manager.add_forced_call(ForcedToolCall(
+        tool_name="check_vital_signs",
+        args={"patient_id": "PATIENT-12345"},
+        priority=ToolCallPriority.HIGH,
+        recurring=True,
+        interval_seconds=5  # 5 seconds for demo (would be longer in real system)
+    ))
+    
+    # 2. Check medication administration every hour (medium priority)
+    manager.add_forced_call(ForcedToolCall(
+        tool_name="check_medication_administration",
+        args={"patient_id": "PATIENT-12345"},
+        priority=ToolCallPriority.MEDIUM,
+        recurring=True,
+        interval_seconds=10  # 10 seconds for demo
+    ))
+    
+    # 3. Generate alert if heart rate is abnormal (conditional, high priority)
+    def heart_rate_condition(context):
+        vitals = context.get("last_vitals", {})
+        heart_rate = vitals.get("heart_rate", 0)
+        return heart_rate < 60 or heart_rate > 100
+    
+    manager.add_forced_call(ForcedToolCall(
+        tool_name="generate_alert",
+        args={
+            "patient_id": "PATIENT-12345",
+            "alert_type": "vital_signs",
+            "message": "Abnormal heart rate detected",
+            "severity": "medium"
+        },
+        priority=ToolCallPriority.HIGH,
+        condition=heart_rate_condition
+    ))
+    
+    # Simulate a monitoring session
+    print("Starting patient monitoring session...\n")
+    
+    # Context for evaluating conditions
+    context = {"patient_id": "PATIENT-12345", "last_vitals": {}}
+    
+    # Simulate multiple monitoring cycles
+    for cycle in range(1, 6):
+        print(f"--- Monitoring Cycle {cycle} ---")
+        
+        # Check and execute forced tool calls
+        results = manager.check_and_execute_forced_calls(context)
+        
+        # Process results
+        for result in results:
+            print(f"Executed: {result.name}")
+            
+            if result.name == "check_vital_signs":
+                vitals = json.loads(result.content)
+                context["last_vitals"] = vitals
+                print(f"  Heart rate: {vitals['heart_rate']}")
+                print(f"  Blood pressure: {vitals['blood_pressure']}")
+                
+            elif result.name == "check_medication_administration":
+                meds = json.loads(result.content)
+                for med in meds["medications"]:
+                    print(f"  {med['name']}: {med['status']}")
+                    
+            elif result.name == "generate_alert":
+                alert = json.loads(result.content)
+                print(f"  Alert sent: {alert['message']} (Severity: {alert['severity']})")
+        
+        # Simulate abnormal heart rate in cycle 3
+        if cycle == 3:
+            print("  (Simulating abnormal heart rate...)")
+            context["last_vitals"]["heart_rate"] = 55
+        
+        print()
+        
+        # Wait before next cycle
+        time.sleep(3)
+    
+    print("Monitoring session completed.")
+
+# Run the demonstration
+demonstrate_forced_tool_calls()
+                                    </code></pre>
+                                    
+                                    <p>This example demonstrates a forced tool call system for healthcare monitoring, where vital signs must be checked regularly regardless of other activities. The <code>ForcedToolCallManager</code> handles the execution of mandatory tool calls based on priority, conditions, and timing. This ensures critical operations like patient monitoring happen consistently, even when the system is engaged in other tasks.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Tool Artifacts -->
+                            <div class="subcomponent">
+                                <h5><i class="fas fa-archive"></i> Tool Artifacts</h5>
+                                
+                                <div class="business-use-case">
+                                    <p><strong>✅ Business Use Case:</strong> In retail, a product recommendation system generates personalized shopping lists for customers. Tool artifacts allow the system to save these lists as structured documents that can be retrieved later, shared across sessions, or used for analytics. This enables persistent shopping experiences where customers can build lists over multiple visits and receive consistent recommendations.</p>
+                                </div>
+                                
+                                <div class="problems-solved">
+                                    <p><strong>❌ Problems Solved:</strong> Addresses the challenge of preserving and reusing outputs from tool executions across multiple interactions or sessions. It solves the problem of creating persistent, structured results that can be referenced later, shared between tools, or used for analysis. In retail, this enables continuity in customer experiences and data-driven insights from shopping patterns.</p>
+                                </div>
+                                
+                                <div class="impact-absent">
+                                    <p><strong>⚠️ Impact if Absent:</strong> Without tool artifacts, systems would lose the outputs of tool executions after each interaction, preventing continuity and deeper analysis. In retail, this would result in customers having to restart their shopping journey each time, inability to analyze shopping patterns over time, and missed opportunities for personalized recommendations based on accumulated preferences.</p>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap mb-3">
+                                    <span class="tag tag-custom">Custom</span>
+                                    <span class="tag tag-interface">Interface</span>
+                                </div>
+                                
+                                <div class="tech-insight">
+                                    <p><strong>🧠 In-depth Technical Insight:</strong> Tool artifacts in LangChain provide a mechanism for creating, storing, and retrieving structured outputs from tool executions. These artifacts persist beyond individual interactions and can be referenced in future operations, enabling more sophisticated workflows and data analysis.</p>
+                                    
+                                    <pre><code class="language-python">
+from langchain_core.tools import tool
+from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
+from langchain_openai import ChatOpenAI
+from langchain_core.runnables import RunnableLambda, RunnablePassthrough
+from typing import Dict, List, Optional, Any, Union
+import json
+import uuid
+import datetime
+import os
+from dataclasses import dataclass, asdict
+from enum import Enum
+
+class ArtifactType(Enum):
+    """Types of artifacts that can be created."""
+    SHOPPING_LIST = "shopping_list"
+    PRODUCT_RECOMMENDATIONS = "product_recommendations"
+    CUSTOMER_PROFILE = "customer_profile"
+    ANALYSIS_REPORT = "analysis_report"
+
+@dataclass
+class Artifact:
+    """Represents a tool artifact."""
+    id: str
+    type: ArtifactType
+    title: str
+    content: Dict[str, Any]
+    created_at: str
+    created_by: str
+    tags: List[str]
+    metadata: Dict[str, Any]
+
+class ArtifactManager:
+    """Manages creation, storage, and retrieval of tool artifacts."""
+    
+    def __init__(self, storage_path: str = "artifacts"):
+        self.storage_path = storage_path
+        self.artifacts = {}  # In-memory cache
+        
+        # Create storage directory if it doesn't exist
+        os.makedirs(storage_path, exist_ok=True)
+        
+        # Load existing artifacts
+        self._load_artifacts()
+    
+    def _load_artifacts(self):
+        """Load existing artifacts from storage."""
+        if not os.path.exists(self.storage_path):
+            return
+            
+        for filename in os.listdir(self.storage_path):
+            if filename.endswith(".json"):
+                file_path = os.path.join(self.storage_path, filename)
+                try:
+                    with open(file_path, 'r') as f:
+                        artifact_data = json.load(f)
+                        
+                    # Convert type string back to enum
+                    artifact_data["type"] = ArtifactType(artifact_data["type"])
+                    
+                    artifact = Artifact(**artifact_data)
+                    self.artifacts[artifact.id] = artifact
+                except Exception as e:
+                    print(f"Error loading artifact {filename}: {e}")
+    
+    def create_artifact(
+        self, 
+        artifact_type: ArtifactType, 
+        title: str, 
+        content: Dict[str, Any],
+        created_by: str,
+        tags: Optional[List[str]] = None,
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> Artifact:
+        """
+        Create a new artifact.
+        
+        Args:
+            artifact_type: Type of artifact
+            title: Title for the artifact
+            content: Content of the artifact
+            created_by: Identifier of what created the artifact
+            tags: Optional list of tags
+            metadata: Optional metadata dictionary
+            
+        Returns:
+            The created artifact
+        """
+        artifact_id = str(uuid.uuid4())
+        now = datetime.datetime.now().isoformat()
+        
+        artifact = Artifact(
+            id=artifact_id,
+            type=artifact_type,
+            title=title,
+            content=content,
+            created_at=now,
+            created_by=created_by,
+            tags=tags or [],
+            metadata=metadata or {}
+        )
+        
+        # Save to memory and disk
+        self.artifacts[artifact_id] = artifact
+        self._save_artifact(artifact)
+        
+        return artifact
+    
+    def get_artifact(self, artifact_id: str) -> Optional[Artifact]:
+        """
+        Get an artifact by ID.
+        
+        Args:
+            artifact_id: ID of the artifact to retrieve
+            
+        Returns:
+            The artifact if found, None otherwise
+        """
+        return self.artifacts.get(artifact_id)
+    
+    def find_artifacts(
+        self, 
+        artifact_type: Optional[ArtifactType] = None,
+        tags: Optional[List[str]] = None,
+        created_by: Optional[str] = None,
+        limit: int = 10
+    ) -> List[Artifact]:
+        """
+        Find artifacts matching the specified criteria.
+        
+        Args:
+            artifact_type: Optional type to filter by
+            tags: Optional list of tags to filter by
+            created_by: Optional creator to filter by
+            limit: Maximum number of artifacts to return
+            
+        Returns:
+            List of matching artifacts
+        """
+        results = []
+        
+        for artifact in self.artifacts.values():
+            # Check type filter
+            if artifact_type and artifact.type != artifact_type:
+                continue
+                
+            # Check tags filter
+            if tags:
+                if not all(tag in artifact.tags for tag in tags):
+                    continue
+                    
+            # Check created_by filter
+            if created_by and artifact.created_by != created_by:
+                continue
+                
+            results.append(artifact)
+            
+            # Check limit
+            if len(results) >= limit:
+                break
+        
+        # Sort by creation time (newest first)
+        results.sort(key=lambda a: a.created_at, reverse=True)
+        
+        return results
+    
+    def _save_artifact(self, artifact: Artifact):
+        """Save an artifact to disk."""
+        file_path = os.path.join(self.storage_path, f"{artifact.id}.json")
+        
+        # Convert to dictionary for JSON serialization
+        artifact_dict = asdict(artifact)
+        # Convert enum to string for JSON
+        artifact_dict["type"] = artifact.type.value
+        
+        with open(file_path, 'w') as f:
+            json.dump(artifact_dict, f, indent=2)
+
+# Define retail tools that create artifacts
+@tool
+def generate_shopping_list(
+    customer_id: str, 
+    preferences: Dict[str, Any], 
+    previous_purchases: List[str]
+) -> Dict:
+    """
+    Generate a personalized shopping list for a customer.
+    
+    Args:
+        customer_id: Unique customer identifier
+        preferences: Customer preferences (dietary, brands, etc.)
+        previous_purchases: List of previously purchased items
+        
+    Returns:
+        Dictionary with shopping list and artifact ID
+    """
+    # In a real implementation, this would use a recommendation engine
+    # Simulated data for demonstration
+    
+    # Generate shopping list based on preferences and history
+    shopping_list = {
+        "customer_id": customer_id,
+        "generated_at": datetime.datetime.now().isoformat(),
+        "items": [
+            {"name": "Organic Milk", "category": "Dairy", "quantity": 1, "reason": "Regular purchase"},
+            {"name": "Whole Wheat Bread", "category": "Bakery", "quantity": 2, "reason": "Dietary preference"},
+            {"name": "Free-range Eggs", "category": "Dairy", "quantity": 1, "reason": "New recommendation based on preferences"}
+        ],
+        "total_items": 3,
+        "estimated_cost": 12.47
+    }
+    
+    return shopping_list
+
+@tool
+def analyze_shopping_patterns(artifact_ids: List[str]) -> Dict:
+    """
+    Analyze shopping patterns across multiple shopping list artifacts.
+    
+    Args:
+        artifact_ids: List of artifact IDs to analyze
+        
+    Returns:
+        Dictionary with analysis results and artifact ID
+    """
+    # Get artifacts
+    artifacts = []
+    for artifact_id in artifact_ids:
+        artifact = artifact_manager.get_artifact(artifact_id)
+        if artifact and artifact.type == ArtifactType.SHOPPING_LIST:
+            artifacts.append(artifact)
+    
+    if not artifacts:
+        return {"error": "No valid shopping list artifacts found"}
+    
+    # Analyze patterns
+    all_items = []
+    for artifact in artifacts:
+        for item in artifact.content.get("items", []):
+            all_items.append(item["name"])
+    
+    # Count item frequency
+    item_counts = {}
+    for item in all_items:
+        item_counts[item] = item_counts.get(item, 0) + 1
+    
+    # Find most common items
+    sorted_items = sorted(item_counts.items(), key=lambda x: x[1], reverse=True)
+    most_common = sorted_items[:5]
+    
+    # Analyze categories
+    categories = {}
+    for artifact in artifacts:
+        for item in artifact.content.get("items", []):
+            category = item.get("category", "Unknown")
+            categories[category] = categories.get(category, 0) + 1
+    
+    analysis = {
+        "analyzed_artifacts": len(artifacts),
+        "total_items": len(all_items),
+        "unique_items": len(item_counts),
+        "most_common_items": [{"name": name, "frequency": count} for name, count in most_common],
+        "category_distribution": categories,
+        "analysis_date": datetime.datetime.now().isoformat()
+    }
+    
+    return analysis
+
+# Create artifact manager
+artifact_manager = ArtifactManager()
+
+# Create tool wrappers that create artifacts
+def create_shopping_list_artifact(customer_id: str, preferences: Dict[str, Any], previous_purchases: List[str]) -> Dict:
+    """Generate a shopping list and create an artifact."""
+    
+    # Generate the shopping list
+    shopping_list = generate_shopping_list.invoke({
+        "customer_id": customer_id,
+        "preferences": preferences,
+        "previous_purchases": previous_purchases
+    })
+    
+    # Create an artifact
+    artifact = artifact_manager.create_artifact(
+        artifact_type=ArtifactType.SHOPPING_LIST,
+        title=f"Shopping List for {customer_id}",
+        content=shopping_list,
+        created_by="shopping_list_generator",
+        tags=[customer_id, "shopping", "recommendations"],
+        metadata={"customer_id": customer_id}
+    )
+    
+    # Return the shopping list with artifact ID
+    result = shopping_list.copy()
+    result["artifact_id"] = artifact.id
+    
+    return result
+
+def create_analysis_artifact(artifact_ids: List[str]) -> Dict:
+    """Analyze shopping patterns and create an artifact."""
+    
+    # Perform the analysis
+    analysis = analyze_shopping_patterns.invoke({"artifact_ids": artifact_ids})
+    
+    if "error" in analysis:
+        return analysis
+    
+    # Create an artifact
+    artifact = artifact_manager.create_artifact(
+        artifact_type=ArtifactType.ANALYSIS_REPORT,
+        title="Shopping Pattern Analysis",
+        content=analysis,
+        created_by="pattern_analyzer",
+        tags=["analysis", "shopping_patterns"],
+        metadata={"analyzed_artifacts": artifact_ids}
+    )
+    
+    # Return the analysis with artifact ID
+    result = analysis.copy()
+    result["artifact_id"] = artifact.id
+    
+    return result
+
+# Example usage
+def demonstrate_artifacts():
+    """Demonstrate tool artifacts in a retail scenario."""
+    
+    print("Demonstrating tool artifacts in retail...\n")
+    
+    # Create shopping lists for a customer over multiple sessions
+    customer_id = "CUST-789456"
+    preferences = {"dietary": "health-conscious", "brands": ["organic", "natural"]}
+    previous_purchases = ["Organic Milk", "Whole Wheat Bread", "Free-range Eggs"]
+    
+    # Session 1
+    print("Session 1: Creating initial shopping list")
+    list1 = create_shopping_list_artifact(customer_id, preferences, previous_purchases)
+    print(f"Created shopping list with {list1['total_items']} items")
+    print(f"Artifact ID: {list1['artifact_id']}\n")
+    
+    # Session 2 (with updated preferences)
+    print("Session 2: Creating updated shopping list")
+    preferences["dietary"] = "gluten-free"
+    list2 = create_shopping_list_artifact(customer_id, preferences, previous_purchases)
+    print(f"Created shopping list with {list2['total_items']} items")
+    print(f"Artifact ID: {list2['artifact_id']}\n")
+    
+    # Session 3 (another list)
+    print("Session 3: Creating another shopping list")
+    preferences["dietary"] = "health-conscious"
+    list3 = create_shopping_list_artifact(customer_id, preferences, previous_purchases)
+    print(f"Created shopping list with {list3['total_items']} items")
+    print(f"Artifact ID: {list3['artifact_id']}\n")
+    
+    # Analyze shopping patterns
+    print("Analyzing shopping patterns across sessions")
+    artifact_ids = [list1["artifact_id"], list2["artifact_id"], list3["artifact_id"]]
+    analysis = create_analysis_artifact(artifact_ids)
+    
+    if "error" not in analysis:
+        print(f"Analyzed {analysis['analyzed_artifacts']} shopping lists")
+        print(f"Found {analysis['unique_items']} unique items across {analysis['total_items']} total items")
+        print("Most common items:")
+        for item in analysis["most_common_items"]:
+            print(f"  {item['name']}: {item['frequency']} occurrences")
+        print(f"Analysis artifact ID: {analysis['artifact_id']}\n")
+    
+    # Retrieve an artifact
+    print("Retrieving a specific artifact")
+    retrieved_artifact = artifact_manager.get_artifact(list1["artifact_id"])
+    if retrieved_artifact:
+        print(f"Retrieved: {retrieved_artifact.title}")
+        print(f"Created: {retrieved_artifact.created_at}")
+        print(f"Items: {retrieved_artifact.content['total_items']}\n")
+    
+    # Find artifacts by customer
+    print(f"Finding all artifacts for customer {customer_id}")
+    customer_artifacts = artifact_manager.find_artifacts(tags=[customer_id])
+    print(f"Found {len(customer_artifacts)} artifacts:")
+    for artifact in customer_artifacts:
+        print(f"  {artifact.title} ({artifact.type.value}) - {artifact.created_at}")
+
+# Run the demonstration
+demonstrate_artifacts()
+                                    </code></pre>
+                                    
+                                    <p>This example demonstrates a tool artifact system for retail applications, where shopping lists and analysis reports are created as persistent artifacts. The <code>ArtifactManager</code> class handles the creation, storage, and retrieval of these artifacts, enabling data to persist across sessions and be used for analysis. This approach allows for more sophisticated workflows where outputs from one interaction can be referenced and built upon in future interactions.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Tool State Management -->
+                            <div class="subcomponent">
+                                <h5><i class="fas fa-database"></i> Tool State Management</h5>
+                                
+                                <div class="business-use-case">
+                                    <p><strong>✅ Business Use Case:</strong> In banking, a loan application process spans multiple interactions with customers, requiring the system to maintain state across conversations. Tool state management ensures that information gathered in one session (like initial application details) is preserved and available in subsequent sessions (like document submission and final approval), creating a seamless experience for both customers and loan officers.</p>
+                                </div>
+                                
+                                <div class="problems-solved">
+                                    <p><strong>❌ Problems Solved:</strong> Addresses the challenge of maintaining context and data across multiple tool executions and conversations. It solves the problem of stateless interactions where information is lost between sessions, forcing users to repeat themselves. In banking, this enables efficient multi-step processes without requiring customers to resubmit information at each step.</p>
+                                </div>
+                                
+                                <div class="impact-absent">
+                                    <p><strong>⚠️ Impact if Absent:</strong> Without proper tool state management, systems would lose context between interactions, leading to fragmented user experiences and data loss. In banking, this would frustrate customers who need to repeatedly provide the same information, increase processing time for loan applications, and potentially lead to errors from inconsistent or incomplete data.</p>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap mb-3">
+                                    <span class="tag tag-custom">Custom</span>
+                                    <span class="tag tag-control">Control</span>
+                                </div>
+                                
+                                <div class="tech-insight">
+                                    <p><strong>🧠 In-depth Technical Insight:</strong> Tool state management in LangChain involves maintaining and sharing state across tool executions and conversations. This can be implemented through various mechanisms including InjectedState, InjectedStore, and InjectedToolArg, which provide different approaches to state management depending on the use case.</p>
+                                    
+                                    <pre><code class="language-python">
+from langchain_core.tools import tool
+from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
+from langchain_openai import ChatOpenAI
+from langchain_core.runnables import RunnableLambda, RunnablePassthrough
+from langchain_core.runnables.config import RunnableConfig, get_configurable, patch_config
+from typing import Dict, List, Optional, Any, Union, TypeVar, Generic
+import json
+import uuid
+import datetime
+import os
+from dataclasses import dataclass, field
+from enum import Enum
+
+# Define state management types
+T = TypeVar('T')
+
+class StateScope(Enum):
+    """Scope of state persistence."""
+    SESSION = "session"      # Persists for a single conversation session
+    USER = "user"           # Persists for a specific user across sessions
+    GLOBAL = "global"       # Persists for all users and sessions
+
+@dataclass
+class StateEntry(Generic[T]):
+    """Represents an entry in the state store."""
+    key: str
+    value: T
+    scope: StateScope
+    owner_id: Optional[str] = None  # User or session ID
+    created_at: str = field(default_factory=lambda: datetime.datetime.now().isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.datetime.now().isoformat())
+    expires_at: Optional[str] = None
+
+class StateStore:
+    """Manages state storage and retrieval."""
+    
+    def __init__(self, storage_path: str = "state_store"):
+        self.storage_path = storage_path
+        self.memory_store = {}  # In-memory cache
+        
+        # Create storage directory if it doesn't exist
+        os.makedirs(storage_path, exist_ok=True)
+        
+        # Load existing state
+        self._load_state()
+    
+    def _load_state(self):
+        """Load existing state from storage."""
+        if not os.path.exists(self.storage_path):
+            return
+            
+        for filename in os.listdir(self.storage_path):
+            if filename.endswith(".json"):
+                file_path = os.path.join(self.storage_path, filename)
+                try:
+                    with open(file_path, 'r') as f:
+                        state_data = json.load(f)
+                        
+                    # Convert scope string back to enum
+                    state_data["scope"] = StateScope(state_data["scope"])
+                    
+                    state_entry = StateEntry(**state_data)
+                    self.memory_store[state_entry.key] = state_entry
+                except Exception as e:
+                    print(f"Error loading state {filename}: {e}")
+    
+    def set_state(
+        self, 
+        key: str, 
+        value: Any, 
+        scope: StateScope = StateScope.SESSION,
+        owner_id: Optional[str] = None,
+        expires_in_seconds: Optional[int] = None
+    ):
+        """
+        Set a state value.
+        
+        Args:
+            key: State key
+            value: State value
+            scope: Scope of the state
+            owner_id: Owner ID for user or session scope
+            expires_in_seconds: Optional expiration time in seconds
+        """
+        now = datetime.datetime.now()
+        expires_at = None
+        
+        if expires_in_seconds:
+            expires_at = (now + datetime.timedelta(seconds=expires_in_seconds)).isoformat()
+        
+        state_entry = StateEntry(
+            key=key,
+            value=value,
+            scope=scope,
+            owner_id=owner_id,
+            updated_at=now.isoformat(),
+            expires_at=expires_at
+        )
+        
+        # Save to memory and disk
+        self.memory_store[key] = state_entry
+        self._save_state_entry(state_entry)
+    
+    def get_state(self, key: str, default: Any = None) -> Any:
+        """
+        Get a state value.
+        
+        Args:
+            key: State key
+            default: Default value if key not found
+            
+        Returns:
+            State value or default
+        """
+        state_entry = self.memory_store.get(key)
+        
+        if state_entry is None:
+            return default
+            
+        # Check if expired
+        if state_entry.expires_at:
+            now = datetime.datetime.now()
+            expires_at = datetime.datetime.fromisoformat(state_entry.expires_at)
+            if now > expires_at:
+                # Remove expired state
+                self.delete_state(key)
+                return default
+                
+        return state_entry.value
+    
+    def delete_state(self, key: str):
+        """
+        Delete a state value.
+        
+        Args:
+            key: State key to delete
+        """
+        if key in self.memory_store:
+            del self.memory_store[key]
+            
+            # Remove from disk
+            file_path = os.path.join(self.storage_path, f"{key}.json")
+            if os.path.exists(file_path):
+                os.remove(file_path)
+    
+    def _save_state_entry(self, state_entry: StateEntry):
+        """Save a state entry to disk."""
+        file_path = os.path.join(self.storage_path, f"{state_entry.key}.json")
+        
+        # Convert to dictionary for JSON serialization
+        state_dict = {
+            "key": state_entry.key,
+            "value": state_entry.value,
+            "scope": state_entry.scope.value,
+            "owner_id": state_entry.owner_id,
+            "created_at": state_entry.created_at,
+            "updated_at": state_entry.updated_at,
+            "expires_at": state_entry.expires_at
+        }
+        
+        with open(file_path, 'w') as f:
+            json.dump(state_dict, f, indent=2)
+
+# Create a global state store
+state_store = StateStore()
+
+# Decorator for injecting state into tools
+def inject_state(state_key: str, scope: StateScope = StateScope.SESSION, default: Any = None):
+    """
+    Decorator to inject state into a tool.
+    
+    Args:
+        state_key: Key of the state to inject
+        scope: Scope of the state
+        default: Default value if state not found
+    """
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            # Get config from the last argument if it exists
+            config = None
+            if args and isinstance(args[-1], RunnableConfig):
+                config = args[-1]
+            
+            # Get owner ID from config
+            owner_id = None
+            if config:
+                configurable = get_configurable(config)
+                if configurable:
+                    if scope == StateScope.USER:
+                        owner_id = configurable.get("user_id")
+                    elif scope == StateScope.SESSION:
+                        owner_id = configurable.get("session_id")
+            
+            # Get state value
+            state_value = state_store.get_state(f"{owner_id}:{state_key}" if owner_id else state_key, default)
+            
+            # Add state value to kwargs
+            kwargs["injected_state"] = state_value
+            
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+# Decorator for injecting store into tools
+def inject_store(func):
+    """
+    Decorator to inject the state store into a tool.
+    """
+    def wrapper(*args, **kwargs):
+        # Add state store to kwargs
+        kwargs["injected_store"] = state_store
+        return func(*args, **kwargs)
+    return wrapper
+
+# Define banking tools with state management
+@tool
+@inject_state("loan_application", StateScope.USER)
+def start_loan_application(
+    customer_id: str, 
+    loan_type: str, 
+    loan_amount: float,
+    injected_state: Optional[Dict] = None,
+    config: Optional[RunnableConfig] = None
+) -> Dict:
+    """
+    Start a new loan application or continue an existing one.
+    
+    Args:
+        customer_id: Unique customer identifier
+        loan_type: Type of loan (mortgage, personal, auto, etc.)
+        loan_amount: Requested loan amount
+        injected_state: Injected state (from decorator)
+        config: Optional configuration
+        
+    Returns:
+        Dictionary with application status and next steps
+    """
+    # Get user ID from config
+    user_id = customer_id  # In a real system, this would be different
+    if config:
+        configurable = get_configurable(config)
+        if configurable:
+            user_id = configurable.get("user_id", customer_id)
+    
+    # Check if we have an existing application
+    if injected_state:
+        application = injected_state
+        application["updated_at"] = datetime.datetime.now().isoformat()
+        
+        # Update with new information if provided
+        if loan_type and loan_type != application.get("loan_type"):
+            application["loan_type"] = loan_type
+        if loan_amount and loan_amount != application.get("loan_amount"):
+            application["loan_amount"] = loan_amount
+            
+        status_message = f"Continuing existing loan application {application['application_id']}"
+    else:
+        # Create new application
+        application = {
+            "application_id": f"APP-{uuid.uuid4().hex[:8].upper()}",
+            "customer_id": customer_id,
+            "loan_type": loan_type,
+            "loan_amount": loan_amount,
+            "status": "started",
+            "created_at": datetime.datetime.now().isoformat(),
+            "updated_at": datetime.datetime.now().isoformat(),
+            "steps_completed": []
+        }
+        
+        status_message = f"Started new loan application {application['application_id']}"
+    
+    # Save state
+    state_store.set_state(
+        f"{user_id}:loan_application",
+        application,
+        scope=StateScope.USER,
+        owner_id=user_id
+    )
+    
+    # Determine next steps
+    next_steps = []
+    if "personal_info" not in application.get("steps_completed", []):
+        next_steps.append("Provide personal information")
+    if "financial_info" not in application.get("steps_completed", []):
+        next_steps.append("Provide financial information")
+    if "documents" not in application.get("steps_completed", []):
+        next_steps.append("Upload required documents")
+    
+    return {
+        "application_id": application["application_id"],
+        "status": application["status"],
+        "message": status_message,
+        "next_steps": next_steps
+    }
+
+@tool
+@inject_state("loan_application", StateScope.USER)
+@inject_store
+def submit_application_documents(
+    customer_id: str,
+    documents: List[Dict],
+    injected_state: Optional[Dict] = None,
+    injected_store: Optional[StateStore] = None,
+    config: Optional[RunnableConfig] = None
+) -> Dict:
+    """
+    Submit documents for a loan application.
+    
+    Args:
+        customer_id: Unique customer identifier
+        documents: List of documents to submit
+        injected_state: Injected state (from decorator)
+        injected_store: Injected store (from decorator)
+        config: Optional configuration
+        
+    Returns:
+        Dictionary with submission status and application state
+    """
+    if not injected_state:
+        return {"error": "No active loan application found"}
+    
+    # Get user ID from config
+    user_id = customer_id  # In a real system, this would be different
+    if config:
+        configurable = get_configurable(config)
+        if configurable:
+            user_id = configurable.get("user_id", customer_id)
+    
+    # Update application
+    application = injected_state
+    application["updated_at"] = datetime.datetime.now().isoformat()
+    
+    # Add documents
+    if "documents" not in application:
+        application["documents"] = []
+    
+    for doc in documents:
+        doc["submitted_at"] = datetime.datetime.now().isoformat()
+        application["documents"].append(doc)
+    
+    # Mark step as completed
+    if "documents" not in application.get("steps_completed", []):
+        application["steps_completed"].append("documents")
+    
+    # Update status
+    if "personal_info" in application.get("steps_completed", []) and \
+       "financial_info" in application.get("steps_completed", []):
+        application["status"] = "under_review"
+    
+    # Save state
+    injected_store.set_state(
+        f"{user_id}:loan_application",
+        application,
+        scope=StateScope.USER,
+        owner_id=user_id
+    )
+    
+    return {
+        "application_id": application["application_id"],
+        "status": application["status"],
+        "message": f"Submitted {len(documents)} documents for application {application['application_id']}",
+        "documents_received": len(application.get("documents", [])),
+        "steps_completed": application.get("steps_completed", [])
+    }
+
+# Example usage
+def demonstrate_state_management():
+    """Demonstrate tool state management in a banking scenario."""
+    
+    print("Demonstrating tool state management in banking...\n")
+    
+    # Create a config with user and session IDs
+    config = RunnableConfig(
+        configurable={
+            "user_id": "USER-789456",
+            "session_id": "SESSION-123456"
+        }
+    )
+    
+    # Start a loan application
+    print("Starting loan application...")
+    result1 = start_loan_application.invoke(
+        {
+            "customer_id": "CUST-789456",
+            "loan_type": "mortgage",
+            "loan_amount": 350000
+        },
+        config=config
+    )
+    print(f"Result: {result1['message']}")
+    print(f"Application ID: {result1['application_id']}")
+    print(f"Next steps: {', '.join(result1['next_steps'])}\n")
+    
+    # Submit documents
+    print("Submitting application documents...")
+    documents = [
+        {"type": "pay_stub", "description": "Recent pay stub"},
+        {"type": "bank_statement", "description": "Last 3 months of bank statements"},
+        {"type": "id_verification", "description": "Driver's license"}
+    ]
+    
+    result2 = submit_application_documents.invoke(
+        {
+            "customer_id": "CUST-789456",
+            "documents": documents
+        },
+        config=config
+    )
+    print(f"Result: {result2['message']}")
+    print(f"Application status: {result2['status']}")
+    print(f"Documents received: {result2['documents_received']}")
+    print(f"Steps completed: {', '.join(result2['steps_completed'])}\n")
+    
+    # Check that state was preserved
+    print("Checking that state was preserved...")
+    user_id = "USER-789456"
+    application_state = state_store.get_state(f"{user_id}:loan_application")
+    
+    if application_state:
+        print(f"Application ID: {application_state['application_id']}")
+        print(f"Loan type: {application_state['loan_type']}")
+        print(f"Loan amount: ${application_state['loan_amount']:,.2f}")
+        print(f"Status: {application_state['status']}")
+        print(f"Documents: {len(application_state.get('documents', []))}")
+        print(f"Steps completed: {', '.join(application_state.get('steps_completed', []))}")
+    else:
+        print("No application state found!")
+    
+    # Simulate a new session (same user, different session ID)
+    print("\nSimulating a new session with the same user...")
+    new_config = RunnableConfig(
+        configurable={
+            "user_id": "USER-789456",  # Same user
+            "session_id": "SESSION-789012"  # Different session
+        }
+    )
+    
+    # Continue the loan application in the new session
+    print("Continuing loan application in new session...")
+    result3 = start_loan_application.invoke(
+        {
+            "customer_id": "CUST-789456",
+            "loan_type": "mortgage",  # Same as before
+            "loan_amount": 350000    # Same as before
+        },
+        config=new_config
+    )
+    print(f"Result: {result3['message']}")
+    print(f"Application status: {result3['status']}")
+    print(f"Next steps: {', '.join(result3['next_steps'])}")
+
+# Run the demonstration
+demonstrate_state_management()
+                                    </code></pre>
+                                    
+                                    <p>This example demonstrates a comprehensive state management system for banking applications, where loan application data must persist across multiple sessions. The <code>StateStore</code> class handles persistence of state with different scopes (session, user, global), while the <code>@inject_state</code> and <code>@inject_store</code> decorators provide convenient ways to access state within tools. This approach ensures that information gathered in one interaction is available in subsequent interactions, creating a seamless experience for users.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Converting Runnables to Tools -->
+                            <div class="subcomponent">
+                                <h5><i class="fas fa-exchange-alt"></i> Converting Runnables to Tools</h5>
+                                
+                                <div class="business-use-case">
+                                    <p><strong>✅ Business Use Case:</strong> In healthcare, a patient triage system combines multiple runnables for symptom checking, risk assessment, and care recommendations. By converting these runnables to tools, the system can leverage the language model's decision-making to determine which components to use based on patient input, creating a flexible and intelligent triage process that adapts to each patient's specific situation.</p>
+                                </div>
+                                
+                                <div class="problems-solved">
+                                    <p><strong>❌ Problems Solved:</strong> Addresses the challenge of integrating complex workflows and chains as tools that can be selectively invoked by language models. It solves the problem of creating modular, reusable components that can be combined in different ways based on the specific needs of each interaction. In healthcare, this enables more personalized and adaptive patient care processes.</p>
+                                </div>
+                                
+                                <div class="impact-absent">
+                                    <p><strong>⚠️ Impact if Absent:</strong> Without the ability to convert runnables to tools, complex workflows would need to be executed in their entirety regardless of whether all components are needed. In healthcare, this could lead to inefficient processing, unnecessary tests or assessments, and less personalized care plans that don't adapt well to individual patient needs.</p>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap mb-3">
+                                    <span class="tag tag-predefined">Predefined</span>
+                                    <span class="tag tag-interface">Interface</span>
+                                </div>
+                                
+                                <div class="tech-insight">
+                                    <p><strong>🧠 In-depth Technical Insight:</strong> Converting runnables to tools in LangChain allows complex workflows, chains, and other runnable components to be exposed as tools that language models can invoke selectively. This enables more flexible and intelligent systems where the model can determine which components to use based on the specific context of each interaction.</p>
+                                    
+                                    <pre><code class="language-python">
+from langchain_core.tools import tool
+from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
+from langchain_openai import ChatOpenAI
+from langchain_core.runnables import RunnableLambda, RunnablePassthrough, RunnableSequence
+from langchain_core.runnables.config import RunnableConfig
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from typing import Dict, List, Optional, Any, Union
+import json
+import re
+from enum import Enum
+
+# Define a symptom severity enum
+class SymptomSeverity(Enum):
+    MILD = "mild"
+    MODERATE = "moderate"
+    SEVERE = "severe"
+    CRITICAL = "critical"
+
+# Create a runnable for symptom assessment
+def assess_symptoms(symptoms: List[str], duration: str, patient_age: int) -> Dict:
+    """
+    Assess the severity of patient symptoms.
+    
+    Args:
+        symptoms: List of patient symptoms
+        duration: How long symptoms have been present
+        patient_age: Age of the patient
+        
+    Returns:
+        Dictionary with symptom assessment
+    """
+    # In a real implementation, this would use a more sophisticated model
+    # For demonstration, we'll use simple rules
+    
+    # Define severity keywords
+    severe_keywords = ["severe", "intense", "excruciating", "unbearable", "debilitating"]
+    mild_keywords = ["mild", "slight", "minor", "occasional"]
+    
+    # Check for severe symptoms
+    severe_symptoms = []
+    for symptom in symptoms:
+        symptom_lower = symptom.lower()
+        if any(keyword in symptom_lower for keyword in severe_keywords):
+            severe_symptoms.append(symptom)
+    
+    # Check for mild symptoms
+    mild_symptoms = []
+    for symptom in symptoms:
+        symptom_lower = symptom.lower()
+        if any(keyword in symptom_lower for keyword in mild_keywords):
+            mild_symptoms.append(symptom)
+    
+    # Determine overall severity
+    if severe_symptoms:
+        severity = SymptomSeverity.SEVERE
+    elif len(symptoms) > 3:
+        severity = SymptomSeverity.MODERATE
+    elif mild_symptoms and len(mild_symptoms) == len(symptoms):
+        severity = SymptomSeverity.MILD
+    else:
+        severity = SymptomSeverity.MODERATE
+    
+    # Check for critical symptoms (emergency situations)
+    critical_symptoms = ["chest pain", "difficulty breathing", "loss of consciousness", "severe bleeding"]
+    for symptom in symptoms:
+        symptom_lower = symptom.lower()
+        if any(critical in symptom_lower for critical in critical_symptoms):
+            severity = SymptomSeverity.CRITICAL
+            break
+    
+    return {
+        "symptoms": symptoms,
+        "duration": duration,
+        "patient_age": patient_age,
+        "severity": severity.value,
+        "severe_symptoms": severe_symptoms,
+        "mild_symptoms": mild_symptoms,
+        "assessment_time": "2023-06-12T14:30:00Z"
+    }
+
+# Create a runnable for risk assessment
+def assess_risk_factors(symptom_assessment: Dict, patient_history: Dict) -> Dict:
+    """
+    Assess risk factors based on symptoms and patient history.
+    
+    Args:
+        symptom_assessment: Result from symptom assessment
+        patient_history: Patient medical history
+        
+    Returns:
+        Dictionary with risk assessment
+    """
+    # Extract information
+    severity = symptom_assessment.get("severity", SymptomSeverity.MILD.value)
+    symptoms = symptom_assessment.get("symptoms", [])
+    patient_age = symptom_assessment.get("patient_age", 30)
+    
+    # Initialize risk factors
+    risk_factors = []
+    risk_level = "low"
+    
+    # Age-related risks
+    if patient_age > 65:
+        risk_factors.append("advanced age")
+        risk_level = "medium"
+    
+    # Symptom-related risks
+    if severity == SymptomSeverity.CRITICAL.value:
+        risk_factors.append("critical symptoms")
+        risk_level = "critical"
+    elif severity == SymptomSeverity.SEVERE.value:
+        risk_factors.append("severe symptoms")
+        if risk_level == "low":
+            risk_level = "medium"
+    
+    # History-related risks
+    chronic_conditions = patient_history.get("chronic_conditions", [])
+    if chronic_conditions:
+        risk_factors.append(f"chronic conditions: {', '.join(chronic_conditions)}")
+        if risk_level == "low":
+            risk_level = "medium"
+        elif risk_level == "medium":
+            risk_level = "high"
+    
+    # Medication-related risks
+    medications = patient_history.get("medications", [])
+    if medications:
+        risk_factors.append(f"current medications: {len(medications)}")
+    
+    # Allergies
+    allergies = patient_history.get("allergies", [])
+    if allergies:
+        risk_factors.append(f"allergies: {', '.join(allergies)}")
+    
+    return {
+        "risk_level": risk_level,
+        "risk_factors": risk_factors,
+        "based_on": {
+            "symptom_severity": severity,
+            "patient_age": patient_age,
+            "chronic_conditions": len(chronic_conditions),
+            "medications": len(medications),
+            "allergies": len(allergies)
+        },
+        "assessment_time": "2023-06-12T14:35:00Z"
+    }
+
+# Create a runnable for care recommendations
+def generate_care_recommendations(symptom_assessment: Dict, risk_assessment: Dict) -> Dict:
+    """
+    Generate care recommendations based on assessments.
+    
+    Args:
+        symptom_assessment: Result from symptom assessment
+        risk_assessment: Result from risk assessment
+        
+    Returns:
+        Dictionary with care recommendations
+    """
+    # Extract information
+    severity = symptom_assessment.get("severity", SymptomSeverity.MILD.value)
+    risk_level = risk_assessment.get("risk_level", "low")
+    symptoms = symptom_assessment.get("symptoms", [])
+    
+    # Initialize recommendations
+    recommendations = []
+    urgency = "low"
+    care_level = "self_care"
+    
+    # Determine urgency and care level
+    if severity == SymptomSeverity.CRITICAL.value or risk_level == "critical":
+        urgency = "immediate"
+        care_level = "emergency"
+        recommendations.append("Seek immediate emergency medical care")
+    elif severity == SymptomSeverity.SEVERE.value or risk_level == "high":
+        urgency = "urgent"
+        care_level = "physician"
+        recommendations.append("Schedule an urgent appointment with your physician")
+    elif severity == SymptomSeverity.MODERATE.value or risk_level == "medium":
+        urgency = "moderate"
+        care_level = "physician"
+        recommendations.append("Schedule an appointment with your physician within 48 hours")
+    else:
+        urgency = "low"
+        care_level = "self_care"
+        recommendations.append("Monitor symptoms and use self-care measures")
+    
+    # Add specific recommendations based on symptoms
+    symptom_lower = " ".join(symptoms).lower()
+    
+    if "fever" in symptom_lower:
+        recommendations.append("Monitor temperature and stay hydrated")
+    
+    if "pain" in symptom_lower:
+        recommendations.append("Consider over-the-counter pain relief if appropriate")
+    
+    if "cough" in symptom_lower or "congestion" in symptom_lower:
+        recommendations.append("Rest and increase fluid intake")
+    
+    # Add follow-up recommendation
+    if urgency != "immediate":
+        recommendations.append("Follow up if symptoms worsen or don't improve within 3-5 days")
+    
+    return {
+        "urgency": urgency,
+        "care_level": care_level,
+        "recommendations": recommendations,
+        "based_on": {
+            "symptom_severity": severity,
+            "risk_level": risk_level
+        },
+        "generated_at": "2023-06-12T14:40:00Z"
+    }
+
+# Convert the functions to runnables
+symptom_assessment_runnable = RunnableLambda(assess_symptoms)
+risk_assessment_runnable = RunnableLambda(assess_risk_factors)
+care_recommendations_runnable = RunnableLambda(generate_care_recommendations)
+
+# Create a chain that combines the runnables
+triage_chain = (
+    RunnablePassthrough.assign(
+        symptom_assessment=lambda x: symptom_assessment_runnable.invoke({
+            "symptoms": x["symptoms"],
+            "duration": x["duration"],
+            "patient_age": x["patient_age"]
+        })
+    )
+    | RunnablePassthrough.assign(
+        risk_assessment=lambda x: risk_assessment_runnable.invoke({
+            "symptom_assessment": x["symptom_assessment"],
+            "patient_history": x["patient_history"]
+        })
+    )
+    | RunnablePassthrough.assign(
+        care_recommendations=lambda x: care_recommendations_runnable.invoke({
+            "symptom_assessment": x["symptom_assessment"],
+            "risk_assessment": x["risk_assessment"]
+        })
+    )
+)
+
+# Convert the chain to a tool
+from langchain_core.tools import StructuredTool
+
+triage_tool = StructuredTool.from_function(
+    func=triage_chain.invoke,
+    name="patient_triage",
+    description="Perform a complete patient triage assessment including symptom evaluation, risk assessment, and care recommendations",
+    args_schema=None  # Will be inferred from the function
+)
+
+# Create individual tools from the runnables
+symptom_assessment_tool = StructuredTool.from_function(
+    func=symptom_assessment_runnable.invoke,
+    name="symptom_assessment",
+    description="Assess the severity of patient symptoms"
+)
+
+risk_assessment_tool = StructuredTool.from_function(
+    func=risk_assessment_runnable.invoke,
+    name="risk_assessment",
+    description="Assess risk factors based on symptoms and patient history"
+)
+
+care_recommendations_tool = StructuredTool.from_function(
+    func=care_recommendations_runnable.invoke,
+    name="care_recommendations",
+    description="Generate care recommendations based on symptom and risk assessments"
+)
+
+# Example usage
+def demonstrate_runnable_to_tool_conversion():
+    """Demonstrate converting runnables to tools in a healthcare scenario."""
+    
+    print("Demonstrating conversion of runnables to tools in healthcare...\n")
+    
+    # Patient data
+    patient_data = {
+        "symptoms": ["headache", "mild fever", "fatigue"],
+        "duration": "2 days",
+        "patient_age": 42,
+        "patient_history": {
+            "chronic_conditions": ["hypertension"],
+            "medications": ["lisinopril"],
+            "allergies": ["penicillin"]
+        }
+    }
+    
+    # Use the complete triage tool
+    print("Using the complete triage tool:")
+    triage_result = triage_tool.invoke(patient_data)
+    
+    print(f"Symptom severity: {triage_result['symptom_assessment']['severity']}")
+    print(f"Risk level: {triage_result['risk_assessment']['risk_level']}")
+    print(f"Care urgency: {triage_result['care_recommendations']['urgency']}")
+    print("Recommendations:")
+    for rec in triage_result['care_recommendations']['recommendations']:
+        print(f"  - {rec}")
+    print()
+    
+    # Use individual tools for more granular control
+    print("Using individual tools for granular control:")
+    
+    # Step 1: Symptom assessment
+    print("\nStep 1: Symptom assessment")
+    symptom_result = symptom_assessment_tool.invoke({
+        "symptoms": patient_data["symptoms"],
+        "duration": patient_data["duration"],
+        "patient_age": patient_data["patient_age"]
+    })
+    print(f"Severity: {symptom_result['severity']}")
+    
+    # Step 2: Risk assessment
+    print("\nStep 2: Risk assessment")
+    risk_result = risk_assessment_tool.invoke({
+        "symptom_assessment": symptom_result,
+        "patient_history": patient_data["patient_history"]
+    })
+    print(f"Risk level: {risk_result['risk_level']}")
+    print(f"Risk factors: {', '.join(risk_result['risk_factors'])}")
+    
+    # Step 3: Care recommendations
+    print("\nStep 3: Care recommendations")
+    care_result = care_recommendations_tool.invoke({
+        "symptom_assessment": symptom_result,
+        "risk_assessment": risk_result
+    })
+    print(f"Urgency: {care_result['urgency']}")
+    print("Recommendations:")
+    for rec in care_result['recommendations']:
+        print(f"  - {rec}")
+    
+    # Demonstrate how a language model might choose which tools to use
+    print("\nDemonstrating how a language model might choose tools:")
+    
+    # Create a model with tools
+    llm = ChatOpenAI(model="gpt-4")
+    llm_with_tools = llm.bind_tools([
+        symptom_assessment_tool,
+        risk_assessment_tool,
+        care_recommendations_tool,
+        triage_tool
+    ])
+    
+    # Create a prompt for the model
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", "You are a healthcare assistant helping with patient triage. Use the appropriate tools to assess the patient's condition and provide recommendations."),
+        ("human", "I'm a 42-year-old patient with hypertension. I've been experiencing a headache, mild fever, and fatigue for the past 2 days. What should I do?")
+    ])
+    
+    # Create a chain
+    chain = prompt | llm_with_tools
+    
+    # Invoke the chain
+    print("\nLanguage model response:")
+    response = chain.invoke({})
+    print(response.content)
+    
+    if response.tool_calls:
+        print("\nTool calls requested by the model:")
+        for tool_call in response.tool_calls:
+            print(f"  - {tool_call['name']}: {tool_call['args']}")
+
+# Run the demonstration
+demonstrate_runnable_to_tool_conversion()
+                                    </code></pre>
+                                    
+                                    <p>This example demonstrates how to convert complex runnables and chains into tools that can be selectively invoked by language models. The healthcare triage system is implemented as both a complete chain and as individual tools, allowing for flexibility in how the system is used. The <code>StructuredTool.from_function</code> method converts the runnables into tools with proper schemas, enabling the language model to understand and invoke them appropriately based on the specific context of each patient interaction.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>LangChain Documentation</h5>
+                    <p>Level 6: Tool Integration & Actions</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>&copy; 2023 LangChain. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script>
+        // Add smooth scrolling to all links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Highlight active section in navigation
+        window.addEventListener('scroll', () => {
+            let current = '';
+            document.querySelectorAll('div[id^="6"]').forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            document.querySelectorAll('.toc-list a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').slice(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
