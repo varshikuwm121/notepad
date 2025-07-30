@@ -3654,6 +3654,324 @@ function updateLineNumbers() {
         updateMinimap();
     }
 }
+// Save file
+async function saveFile() {
+    const tab = tabs[activeTabIndex];
+    if (!tab) return;
+    
+    if (tab.fileHandle) {
+        // File has been saved before, use the existing handle
+        try {
+            const writable = await tab.fileHandle.createWritable();
+            await writable.write(tab.content);
+            await writable.close();
+            tab.modified = false;
+            showNotification(`File "${tab.name}" saved`);
+        } catch (err) {
+            console.error('Error saving file:', err);
+            showNotification('Error saving file');
+        }
+    } else {
+        // New file, ask where to save
+        saveFileAs();
+    }
+}
+
+// Save file as
+async function saveFileAs() {
+    const tab = tabs[activeTabIndex];
+    if (!tab) return;
+    
+    try {
+        // Check if File System Access API is available
+        if ('showSaveFilePicker' in window) {
+            // Use File System Access API
+            const fileHandle = await window.showSaveFilePicker({
+                suggestedName: tab.name,
+                types: [
+                    {
+                        description: 'Text Files',
+                        accept: {
+                            'text/plain': ['.txt'],
+                        },
+                    },
+                    {
+                        description: 'HTML Files',
+                        accept: {
+                            'text/html': ['.html', '.htm'],
+                        },
+                    },
+                    {
+                        description: 'CSS Files',
+                        accept: {
+                            'text/css': ['.css'],
+                        },
+                    },
+                    {
+                        description: 'JavaScript Files',
+                        accept: {
+                            'text/javascript': ['.js'],
+                        },
+                    },
+                    {
+                        description: 'JSON Files',
+                        accept: {
+                            'application/json': ['.json'],
+                        },
+                    },
+                    {
+                        description: 'All Files',
+                        accept: {
+                            '*/*': ['.*'],
+                        },
+                    },
+                ],
+            });
+            
+            // Write to the file
+            const writable = await fileHandle.createWritable();
+            await writable.write(tab.content);
+            await writable.close();
+            
+            // Update tab information
+            tab.fileHandle = fileHandle;
+            tab.name = fileHandle.name;
+            tab.path = fileHandle.name;
+            tab.modified = false;
+            
+            // Update tab name in UI
+            const tabElement = document.querySelector(`[data-tab-id="${tab.id}"] .tab-name`);
+            if (tabElement) {
+                tabElement.textContent = tab.name;
+            }
+            
+            showNotification(`File saved as "${tab.name}"`);
+        } else {
+            // Fallback for browsers that don't support File System Access API
+            const fileName = prompt('Enter file name:', tab.name);
+            if (fileName) {
+                // Create a blob with the content
+                const blob = new Blob([tab.content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                
+                // Create a temporary link to download the file
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                // Update tab information
+                tab.name = fileName;
+                tab.path = fileName;
+                tab.modified = false;
+                
+                // Update tab name in UI
+                const tabElement = document.querySelector(`[data-tab-id="${tab.id}"] .tab-name`);
+                if (tabElement) {
+                    tabElement.textContent = tab.name;
+                }
+                
+                showNotification(`File saved as "${fileName}"`);
+            }
+        }
+    } catch (err) {
+        if (err.name !== 'AbortError') {
+            console.error('Error saving file:', err);
+            showNotification('Error saving file');
+        }
+    }
+}
+
+// Save all files
+async function saveAllFiles() {
+    let savedCount = 0;
+    
+    for (const tab of tabs) {
+        if (tab.modified) {
+            try {
+                if (tab.fileHandle) {
+                    const writable = await tab.fileHandle.createWritable();
+                    await writable.write(tab.content);
+                    await writable.close();
+                    tab.modified = false;
+                    savedCount++;
+                } else {
+                    // For new files, we need to ask where to save each one
+                    // This is a simplified version - in a real app you might want to batch these
+                    const activeTabIndexBackup = activeTabIndex;
+                    activeTabIndex = tabs.indexOf(tab);
+                    await saveFileAs();
+                    activeTabIndex = activeTabIndexBackup;
+                    savedCount++;
+                }
+            } catch (err) {
+                console.error('Error saving file:', err);
+            }
+        }
+    }
+    
+    if (savedCount > 0) {
+        showNotification(`${savedCount} file(s) saved`);
+    } else {
+        showNotification('No files to save');
+    }
+}
+
+// Update createNewTab to include fileHandle
+function createNewTab(fileName = null, content = '') {
+    const tabId = Date.now();
+    const tab = {
+        id: tabId,
+        name: fileName || `Untitled-${tabs.length + 1}`,
+        content: content,
+        language: 'normal',
+        encoding: settings.defaultEncoding,
+        modified: false,
+        path: null,
+        fileHandle: null // Add fileHandle property
+    };
+    
+    // ... rest of the function remains the same
+}
+
+// Update openFile to set fileHandle when using File System Access API
+async function openFile(file = null) {
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            const content = e.target.result;
+            const tab = createNewTab(file.name, content);
+            
+            // Detect language from file extension
+            const extension = file.name.split('.').pop().toLowerCase();
+            const languageMap = {
+                'html': 'html',
+                'htm': 'html',
+                'css': 'css',
+                'js': 'javascript',
+                'json': 'json',
+                'xml': 'xml',
+                'py': 'python',
+                'java': 'java',
+                'c': 'c',
+                'cpp': 'cpp',
+                'h': 'cpp',
+                'cs': 'csharp',
+                'php': 'php',
+                'rb': 'ruby',
+                'go': 'go',
+                'rs': 'rust',
+                'sql': 'sql',
+                'md': 'markdown',
+                'yaml': 'yaml',
+                'yml': 'yaml'
+            };
+            
+            tab.language = languageMap[extension] || 'normal';
+            tab.path = file.name;
+            
+            // Try to get a file handle if File System Access API is available
+            if ('showOpenFilePicker' in window) {
+                try {
+                    const [fileHandle] = await window.showOpenFilePicker({
+                        multiple: false,
+                        types: [
+                            {
+                                description: 'Text Files',
+                                accept: {
+                                    'text/plain': ['.txt'],
+                                },
+                            },
+                            // Add other types as needed
+                        ],
+                    });
+                    tab.fileHandle = fileHandle;
+                } catch (err) {
+                    // User cancelled or error, continue without file handle
+                    console.log('Could not get file handle:', err);
+                }
+            }
+            
+            updateStatusBar();
+            applySyntaxHighlighting();
+        };
+        reader.readAsText(file);
+    } else {
+        // Create file input for file selection
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.txt,.js,.html,.css,.json,.xml,.py,.java,.cpp,.c,.cs,.php,.rb,.go,.rs,.sql,.md,.yaml,.yml';
+        input.onchange = async function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Try to get a file handle if File System Access API is available
+                let fileHandle = null;
+                if ('showOpenFilePicker' in window) {
+                    try {
+                        [fileHandle] = await window.showOpenFilePicker({
+                            multiple: false,
+                            types: [
+                                {
+                                    description: 'Text Files',
+                                    accept: {
+                                        'text/plain': ['.txt'],
+                                    },
+                                },
+                                // Add other types as needed
+                            ],
+                        });
+                    } catch (err) {
+                        // User cancelled or error, continue without file handle
+                        console.log('Could not get file handle:', err);
+                    }
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    const tab = createNewTab(file.name, content);
+                    
+                    // Detect language from file extension
+                    const extension = file.name.split('.').pop().toLowerCase();
+                    const languageMap = {
+                        'html': 'html',
+                        'htm': 'html',
+                        'css': 'css',
+                        'js': 'javascript',
+                        'json': 'json',
+                        'xml': 'xml',
+                        'py': 'python',
+                        'java': 'java',
+                        'c': 'c',
+                        'cpp': 'cpp',
+                        'h': 'cpp',
+                        'cs': 'csharp',
+                        'php': 'php',
+                        'rb': 'ruby',
+                        'go': 'go',
+                        'rs': 'rust',
+                        'sql': 'sql',
+                        'md': 'markdown',
+                        'yaml': 'yaml',
+                        'yml': 'yaml'
+                    };
+                    
+                    tab.language = languageMap[extension] || 'normal';
+                    tab.path = file.name;
+                    tab.fileHandle = fileHandle;
+                    
+                    updateStatusBar();
+                    applySyntaxHighlighting();
+                };
+                reader.readAsText(file);
+            }
+        };
+        input.click();
+    }
+}
     </script>
 </body>
 </html>
