@@ -923,6 +923,25 @@
             border: 1px solid var(--accent);
             pointer-events: none;
         }
+/* Line Numbers */
+.line-numbers {
+    background-color: var(--bg-secondary);
+    border-right: 1px solid var(--border);
+    padding: 10px 10px 10px 5px;
+    text-align: right;
+    color: var(--line-number);
+    font-size: 14px;
+    line-height: 1.5;
+    user-select: none;
+    overflow: hidden;
+    min-width: 50px;
+    display: flex;
+    flex-direction: column;
+}
+
+.line-numbers div {
+    height: 1.5em; /* Match line-height */
+}
     </style>
 </head>
 <body data-theme="dark">
@@ -3608,6 +3627,33 @@ Enjoy coding!`;
                 loadTabContent(tabs[0]);
             }
         });
+// Update line numbers
+function updateLineNumbers() {
+    const editor = document.getElementById('text-editor');
+    const lineNumbers = document.getElementById('line-numbers');
+    const lines = editor.value.split('\n').length;
+    
+    // Clear existing line numbers
+    lineNumbers.innerHTML = '';
+    
+    // Create a document fragment for better performance
+    const fragment = document.createDocumentFragment();
+    
+    // Add each line number as a separate div
+    for (let i = 1; i <= lines; i++) {
+        const lineNumberDiv = document.createElement('div');
+        lineNumberDiv.textContent = i;
+        fragment.appendChild(lineNumberDiv);
+    }
+    
+    // Append all line numbers at once
+    lineNumbers.appendChild(fragment);
+    
+    // Update minimap
+    if (settings.showMinimap) {
+        updateMinimap();
+    }
+}
     </script>
 </body>
 </html>
