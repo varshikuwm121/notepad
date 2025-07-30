@@ -1,1 +1,2357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 9: Specialized Use Cases - Comprehensive Learning Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --code-bg: #1e1e1e;
+            --code-text: #d4d4d4;
+            --code-keyword: #569cd6;
+            --code-string: #ce9178;
+            --code-comment: #6a9955;
+            --code-function: #dcdcaa;
+            --code-variable: #9cdcfe;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        main {
+            padding: 2rem 0;
+        }
+
+        .section {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: var(--dark);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .section-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .subsection {
+            margin-bottom: 2rem;
+        }
+
+        .subsection-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .subsection-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .component {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .component:last-child {
+            border-bottom: none;
+        }
+
+        .component-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .component-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .component-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .component-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .component-item-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .component-item-content {
+            color: #4b5563;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: var(--code-text);
+            font-size: 0.875rem;
+        }
+
+        .code-title {
+            font-weight: 500;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--code-text);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: background-color 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        pre {
+            margin: 0;
+            color: var(--code-text);
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+
+        .keyword {
+            color: var(--code-keyword);
+        }
+
+        .string {
+            color: var(--code-string);
+        }
+
+        .comment {
+            color: var(--code-comment);
+            font-style: italic;
+        }
+
+        .function {
+            color: var(--code-function);
+        }
+
+        .variable {
+            color: var(--code-variable);
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .operator {
+            color: #d4d4d4;
+        }
+
+        .tag {
+            color: var(--code-keyword);
+        }
+
+        .attribute {
+            color: #9cdcfe;
+        }
+
+        .value {
+            color: var(--code-string);
+        }
+
+        .success-icon {
+            color: var(--success);
+        }
+
+        .danger-icon {
+            color: var(--danger);
+        }
+
+        .warning-icon {
+            color: var(--warning);
+        }
+
+        .info-icon {
+            color: var(--primary);
+        }
+
+        .tag-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        .tag-predefined {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .tag-custom {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .tag-foundation {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .tag-execution {
+            background: #fffbeb;
+            color: #92400e;
+        }
+
+        .tag-control {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .tag-interface {
+            background: #e0f2fe;
+            color: #0c4a6e;
+        }
+
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-link {
+            color: #d1d5db;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .component-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1>Level 9: Specialized Use Cases</h1>
+                    <p class="subtitle">Building on Level 8 - Domain-Specific Applications</p>
+                </div>
+                <div class="nav-links">
+                    <a href="#qa-systems" class="nav-link">QA Systems</a>
+                    <a href="#data-analysis" class="nav-link">Data Analysis</a>
+                    <a href="#text-processing" class="nav-link">Text Processing</a>
+                    <a href="#interactive-apps" class="nav-link">Interactive Apps</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="qa-systems" class="section">
+            <div class="section-header">
+                <h2 class="section-title">9.1 Question Answering Systems</h2>
+                <span class="section-badge">Core Technology</span>
+            </div>
+            
+            <div class="subsection">
+                <div class="subsection-header">
+                    <i class="fas fa-cube info-icon"></i>
+                    <h3 class="subsection-title">RAG (Retrieval Augmented Generation)</h3>
+                </div>
+                
+                <div class="component">
+                    <div class="component-header">
+                        <h4 class="component-title">Basic RAG Implementation</h4>
+                    </div>
+                    
+                    <div class="component-content">
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-check-circle success-icon"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <p class="component-item-content">
+                                In healthcare, a hospital implements RAG to provide doctors with instant access to the latest medical research and patient records. When a doctor queries about treatment options for a rare condition, the system retrieves relevant medical journals, clinical trials, and the patient's history to generate a comprehensive response with citations.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-times-circle danger-icon"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <p class="component-item-content">
+                                Addresses information overload by providing precise, contextually relevant answers from vast knowledge bases. Eliminates the need for medical professionals to manually search through numerous documents, saving time and reducing the risk of missing critical information.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <p class="component-item-content">
+                                Without RAG, healthcare providers would spend significantly more time researching information, potentially leading to delayed treatment decisions. The quality of care would be inconsistent as it would depend on individual research capabilities rather than a systematic approach to information retrieval.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-tools info-icon"></i>
+                                <span>Predefined or Custom</span>
+                                <span class="tag-badge tag-custom">Custom</span>
+                            </div>
+                            <p class="component-item-content">
+                                RAG systems require customization to specific domains and knowledge bases. While the underlying framework can be predefined, the implementation needs to be tailored to the specific data sources, retrieval mechanisms, and formatting requirements of each business domain.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-link info-icon"></i>
+                                <span>Relationship Keyword</span>
+                                <span class="tag-badge tag-foundation">Foundation</span>
+                            </div>
+                            <p class="component-item-content">
+                                Foundation for advanced question answering systems. RAG provides the core infrastructure that enables more sophisticated applications like chat history integration, streaming responses, and source citation capabilities.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-brain info-icon"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <p class="component-item-content">
+                                RAG combines retrieval-based methods with generative models to produce answers grounded in specific knowledge sources. The system first retrieves relevant documents or passages based on the query, then uses these as context for the generative model to formulate a response.
+                            </p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">Basic RAG Implementation</span>
+                                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="keyword">from</span> langchain.llms <span class="keyword">import</span> OpenAI
+<span class="keyword">from</span> langchain.chains <span class="keyword">import</span> RetrievalQA
+<span class="keyword">from</span> langchain.document_loaders <span class="keyword">import</span> PyPDFLoader
+<span class="keyword">from</span> langchain.indexes <span class="keyword">import</span> VectorstoreIndexCreator
+<span class="keyword">from</span> langchain.text_splitter <span class="keyword">import</span> CharacterTextSplitter
+<span class="keyword">from</span> langchain.embeddings <span class="keyword">import</span> OpenAIEmbeddings
+<span class="keyword">from</span> langchain.vectorstores <span class="keyword">import</span> Chroma
+
+<span class="comment"># Load documents (in healthcare: medical journals, patient records)</span>
+<span class="keyword">def</span> <span class="function">load_documents</span>(file_paths):
+    documents = []
+    <span class="keyword">for</span> file_path <span class="keyword">in</span> file_paths:
+        loader = PyPDFLoader(file_path)
+        documents.extend(loader.load())
+    <span class="keyword">return</span> documents
+
+<span class="comment"># Split documents into chunks</span>
+<span class="keyword">def</span> <span class="function">split_documents</span>(documents):
+    text_splitter = CharacterTextSplitter(
+        chunk_size=<span class="number">1000</span>,
+        chunk_overlap=<span class="number">200</span>
+    )
+    <span class="keyword">return</span> text_splitter.split_documents(documents)
+
+<span class="comment"># Create vector store</span>
+<span class="keyword">def</span> <span class="function">create_vector_store</span>(texts):
+    embeddings = OpenAIEmbeddings()
+    vectorstore = Chroma.from_documents(texts, embeddings)
+    <span class="keyword">return</span> vectorstore
+
+<span class="comment"># Initialize RAG system</span>
+<span class="keyword">def</span> <span class="function">initialize_rag</span>(vectorstore):
+    llm = OpenAI(temperature=<span class="number">0</span>)
+    qa_chain = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type=<span class="string">"stuff"</span>,
+        retriever=vectorstore.as_retriever(),
+        return_source_documents=<span class="keyword">True</span>
+    )
+    <span class="keyword">return</span> qa_chain
+
+<span class="comment"># Example usage in healthcare context</span>
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    <span class="comment"># Load medical documents</span>
+    medical_files = [
+        <span class="string">"./data/medical_journal_1.pdf"</span>,
+        <span class="string">"./data/clinical_trials.pdf"</span>,
+        <span class="string">"./data/treatment_guidelines.pdf"</span>
+    ]
+    
+    documents = load_documents(medical_files)
+    texts = split_documents(documents)
+    vectorstore = create_vector_store(texts)
+    qa_chain = initialize_rag(vectorstore)
+    
+    <span class="comment"># Query the system</span>
+    query = <span class="string">"What are the latest treatment options for stage 3 lung cancer?"</span>
+    result = qa_chain({<span class="string">"query"</span>: query})
+    
+    <span class="keyword">print</span>(<span class="string">f"Question: {query}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Answer: {result['result']}"</span>)
+    <span class="keyword">print</span>(<span class="string">"\nSources:"</span>)
+    <span class="keyword">for</span> doc <span class="keyword">in</span> result[<span class="string">'source_documents'</span>]:
+        <span class="keyword">print</span>(<span class="string">f"- {doc.metadata['source']}"</span>)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="component">
+                    <div class="component-header">
+                        <h4 class="component-title">Chat History in RAG</h4>
+                    </div>
+                    
+                    <div class="component-content">
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-check-circle success-icon"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <p class="component-item-content">
+                                In banking, a customer service chatbot uses RAG with chat history to provide personalized financial advice. When a customer asks follow-up questions about investment options, the system remembers previous context about their risk tolerance, financial goals, and past investments to provide consistent, personalized recommendations.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-times-circle danger-icon"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <p class="component-item-content">
+                                Solves the problem of conversational context loss in multi-turn interactions. Enables the system to understand references to previous questions and provide coherent, contextually relevant responses without requiring users to repeat information.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <p class="component-item-content">
+                                Without chat history, banking customers would need to repeat context in every interaction, leading to frustration and inefficiency. Financial advisors would waste time re-establishing context, and the quality of advice would suffer due to incomplete understanding of the customer's situation.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-tools info-icon"></i>
+                                <span>Predefined or Custom</span>
+                                <span class="tag-badge tag-custom">Custom</span>
+                            </div>
+                            <p class="component-item-content">
+                                Chat history integration requires custom implementation to determine what context to preserve, how to format it for the model, and how to manage conversation state. The specific approach varies based on the application domain and user interaction patterns.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-link info-icon"></i>
+                                <span>Relationship Keyword</span>
+                                <span class="tag-badge tag-execution">Execution</span>
+                            </div>
+                            <p class="component-item-content">
+                                Execution component that builds upon the basic RAG foundation. Chat history management enables more natural, conversational interactions by maintaining context across multiple exchanges.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-brain info-icon"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <p class="component-item-content">
+                                Chat history in RAG involves storing previous interactions and incorporating them into the context for subsequent queries. This requires careful management of conversation state, context window limitations, and relevance determination to maintain coherent conversations.
+                            </p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">Chat History in RAG Implementation</span>
+                                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="keyword">from</span> langchain <span class="keyword">import</span> LLMChain, PromptTemplate
+<span class="keyword">from</span> langchain.memory <span class="keyword">import</span> ConversationBufferMemory
+<span class="keyword">from</span> langchain.chains <span class="keyword">import</span> ConversationalRetrievalChain
+<span class="keyword">from</span> langchain.chat_models <span class="keyword">import</span> ChatOpenAI
+<span class="keyword">from</span> langchain.vectorstores <span class="keyword">import</span> Chroma
+<span class="keyword">from</span> langchain.embeddings <span class="keyword">import</span> OpenAIEmbeddings
+
+<span class="comment"># Custom prompt template with chat history</span>
+template = <span class="string">"""Given the following conversation and a follow up question, 
+rephrase the follow up question to be a standalone question.
+
+Chat History:
+{chat_history}
+
+Follow Up Input: {question}
+Standalone question:"""</span>
+
+CONDENSE_QUESTION_PROMPT = PromptTemplate.from_template(template)
+
+<span class="comment"># Template for answering with context</span>
+qa_template = <span class="string">"""Use the following pieces of context to answer the question 
+at the end. If you don't know the answer, just say that you don't know. 
+Do not try to make up an answer.
+
+{context}
+
+Question: {question}
+Helpful Answer:"""</span>
+
+QA_PROMPT = PromptTemplate.from_template(qa_template)
+
+<span class="keyword">def</span> <span class="function">create_conversational_rag</span>(vectorstore):
+    <span class="comment"># Initialize LLM</span>
+    llm = ChatOpenAI(temperature=<span class="number">0</span>, model_name=<span class="string">"gpt-3.5-turbo"</span>)
+    
+    <span class="comment"># Create memory for conversation history</span>
+    memory = ConversationBufferMemory(
+        memory_key=<span class="string">"chat_history"</span>,
+        return_messages=<span class="keyword">True</span>,
+        output_key=<span class="string">"answer"</span>
+    )
+    
+    <span class="comment"># Create conversational retrieval chain</span>
+    qa_chain = ConversationalRetrievalChain.from_llm(
+        llm=llm,
+        retriever=vectorstore.as_retriever(),
+        memory=memory,
+        condense_question_prompt=CONDENSE_QUESTION_PROMPT,
+        combine_docs_chain_kwargs={<span class="string">"prompt"</span>: QA_PROMPT},
+        return_source_documents=<span class="keyword">True</span>
+    )
+    
+    <span class="keyword">return</span> qa_chain
+
+<span class="comment"># Example usage in banking context</span>
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    <span class="comment"># Load vector store with financial documents</span>
+    embeddings = OpenAIEmbeddings()
+    vectorstore = Chroma(
+        persist_directory=<span class="string">"./data/financial_db"</span>, 
+        embedding_function=embeddings
+    )
+    
+    <span class="comment"># Create conversational RAG</span>
+    conversational_rag = create_conversational_rag(vectorstore)
+    
+    <span class="comment"># Simulate a conversation</span>
+    query1 = <span class="string">"What are the best investment options for someone with moderate risk tolerance?"</span>
+    result1 = conversational_rag({<span class="string">"question"</span>: query1})
+    
+    <span class="keyword">print</span>(<span class="string">f"Customer: {query1}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Assistant: {result1['answer']}"</span>)
+    
+    <span class="comment"># Follow-up question that references previous context</span>
+    query2 = <span class="string">"Which of those have the lowest fees?"</span>
+    result2 = conversational_rag({<span class="string">"question"</span>: query2})
+    
+    <span class="keyword">print</span>(<span class="string">f"\nCustomer: {query2}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Assistant: {result2['answer']}"</span>)
+    
+    <span class="comment"># Another follow-up question</span>
+    query3 = <span class="string">"How do they compare to index funds?"</span>
+    result3 = conversational_rag({<span class="string">"question"</span>: query3})
+    
+    <span class="keyword">print</span>(<span class="string">f"\nCustomer: {query3}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Assistant: {result3['answer']}"</span>)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="component">
+                    <div class="component-header">
+                        <h4 class="component-title">RAG Streaming</h4>
+                    </div>
+                    
+                    <div class="component-content">
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-check-circle success-icon"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <p class="component-item-content">
+                                In logistics, a supply chain management system uses RAG streaming to provide real-time updates on shipment status. When a logistics manager queries about a delayed shipment, the system streams information as it retrieves data from various sources (carriers, customs, weather services), providing immediate partial responses followed by complete information.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-times-circle danger-icon"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <p class="component-item-content">
+                                Addresses latency issues in complex information retrieval scenarios. Enables immediate user feedback while processing continues in the background, improving perceived responsiveness and user experience, especially when dealing with multiple data sources.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <p class="component-item-content">
+                                Without streaming, logistics managers would experience significant delays when querying supply chain information, potentially leading to missed decision windows. In time-sensitive situations like shipment rerouting or delay management, this could result in substantial financial losses and customer dissatisfaction.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-tools info-icon"></i>
+                                <span>Predefined or Custom</span>
+                                <span class="tag-badge tag-custom">Custom</span>
+                            </div>
+                            <p class="component-item-content">
+                                RAG streaming requires custom implementation to handle the asynchronous nature of streaming responses, manage partial content delivery, and ensure coherence in the final response. The specific approach depends on the application requirements and user experience goals.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-link info-icon"></i>
+                                <span>Relationship Keyword</span>
+                                <span class="tag-badge tag-interface">Interface</span>
+                            </div>
+                            <p class="component-item-content">
+                                Interface component that enhances the user experience by providing immediate feedback. Streaming transforms how users interact with the system, making it more responsive and engaging.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-brain info-icon"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <p class="component-item-content">
+                                RAG streaming involves processing and delivering responses in chunks as they become available, rather than waiting for the complete response. This requires careful coordination between retrieval, generation, and streaming components to ensure coherent and useful partial responses.
+                            </p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">RAG Streaming Implementation</span>
+                                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="keyword">from</span> langchain.callbacks.manager <span class="keyword">import</span> CallbackManager
+<span class="keyword">from</span> langchain.callbacks.streaming_stdout <span class="keyword">import</span> StreamingStdOutCallbackHandler
+<span class="keyword">from</span> langchain.chains <span class="keyword">import</span> RetrievalQAWithSourcesChain
+<span class="keyword">from</span> langchain.chat_models <span class="keyword">import</span> ChatOpenAI
+<span class="keyword">from</span> langchain.vectorstores <span class="keyword">import</span> Chroma
+<span class="keyword">from</span> langchain.embeddings <span class="keyword">import</span> OpenAIEmbeddings
+<span class="keyword">from</span> langchain.schema <span class="keyword">import</span> AIMessageChunk, HumanMessage
+<span class="keyword">import</span> asyncio
+
+<span class="keyword">class</span> <span class="function">LogisticsStreamingCallbackHandler</span>(StreamingStdOutCallbackHandler):
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):
+        <span class="keyword">super</span>().__init__()
+        <span class="variable">self</span>.tokens = []
+        <span class="variable">self</span>.sources = []
+    
+    <span class="keyword">def</span> <span class="function">on_llm_new_token</span>(<span class="variable">self</span>, token, **kwargs):
+        <span class="variable">self</span>.tokens.append(token)
+        <span class="keyword">print</span>(token, end=<span class="string">""</span>, flush=<span class="keyword">True</span>)
+    
+    <span class="keyword">def</span> <span class="function">on_retriever_end</span>(<span class="variable">self</span>, documents, **kwargs):
+        <span class="variable">self</span>.sources = [doc.metadata[<span class="string">"source"</span>] <span class="keyword">for</span> doc <span class="keyword">in</span> documents]
+        <span class="keyword">print</span>(<span class="string">"\n\n[Sources: "</span> + <span class="string">", "</span>.join(<span class="variable">self</span>.sources) + <span class="string">"]"</span>)
+
+<span class="keyword">def</span> <span class="function">create_streaming_rag</span>(vectorstore):
+    <span class="comment"># Initialize streaming callback handler</span>
+    callback_handler = LogisticsStreamingCallbackHandler()
+    callback_manager = CallbackManager([callback_handler])
+    
+    <span class="comment"># Initialize LLM with streaming</span>
+    llm = ChatOpenAI(
+        streaming=<span class="keyword">True</span>,
+        callback_manager=callback_manager,
+        verbose=<span class="keyword">True</span>,
+        temperature=<span class="number">0</span>
+    )
+    
+    <span class="comment"># Create retrieval QA chain with sources</span>
+    qa_chain = RetrievalQAWithSourcesChain.from_chain_type(
+        llm=llm,
+        chain_type=<span class="string">"stuff"</span>,
+        retriever=vectorstore.as_retriever()
+    )
+    
+    <span class="keyword">return</span> qa_chain, callback_handler
+
+<span class="comment"># Example usage in logistics context</span>
+<span class="keyword">async def</span> <span class="function">process_logistics_query</span>(query):
+    <span class="comment"># Load vector store with logistics data</span>
+    embeddings = OpenAIEmbeddings()
+    vectorstore = Chroma(
+        persist_directory=<span class="string">"./data/logistics_db"</span>, 
+        embedding_function=embeddings
+    )
+    
+    <span class="comment"># Create streaming RAG</span>
+    qa_chain, callback_handler = create_streaming_rag(vectorstore)
+    
+    <span class="comment"># Process query with streaming</span>
+    <span class="keyword">print</span>(<span class="string">f"Query: {query}"</span>)
+    <span class="keyword">print</span>(<span class="string">"Response: "</span>)
+    
+    <span class="comment"># Run the chain in a thread to avoid blocking</span>
+    result = <span class="keyword">await</span> asyncio.get_event_loop().run_in_executor(
+        <span class="keyword">None</span>, 
+        <span class="keyword">lambda</span>: qa_chain({<span class="string">"question"</span>: query})
+    )
+    
+    <span class="keyword">return</span> {
+        <span class="string">"answer"</span>: <span class="string">""</span>.join(callback_handler.tokens),
+        <span class="string">"sources"</span>: callback_handler.sources
+    }
+
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    <span class="comment"># Simulate a logistics query</span>
+    query = <span class="string">"What is the current status of shipment SH-789456 and what caused the delay?"</span>
+    
+    <span class="comment"># Process the query with streaming</span>
+    result = asyncio.run(process_logistics_query(query))
+    
+    <span class="keyword">print</span>(<span class="string">"\n\nFull response received."</span>)
+    <span class="keyword">print</span>(<span class="string">f"Answer: {result['answer']}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Sources: {result['sources']}"</span>)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="component">
+                    <div class="component-header">
+                        <h4 class="component-title">Source Citation</h4>
+                    </div>
+                    
+                    <div class="component-content">
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-check-circle success-icon"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <p class="component-item-content">
+                                In retail, a product recommendation system uses RAG with source citation to provide customers with personalized shopping suggestions. When a customer asks for recommendations on outdoor gear, the system generates suggestions with citations to product reviews, expert opinions, and compatibility information, building trust and enabling informed purchasing decisions.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-times-circle danger-icon"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <p class="component-item-content">
+                                Addresses trust and transparency issues in AI-generated content. Enables users to verify information by providing direct references to source material, which is crucial in domains where accuracy and credibility are paramount, such as retail product recommendations.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <p class="component-item-content">
+                                Without source citations, retail customers would be less likely to trust AI-generated recommendations, leading to lower conversion rates and increased return rates. The lack of verifiable references would make it difficult for customers to make informed decisions, potentially damaging the retailer's reputation.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-tools info-icon"></i>
+                                <span>Predefined or Custom</span>
+                                <span class="tag-badge tag-custom">Custom</span>
+                            </div>
+                            <p class="component-item-content">
+                                Source citation requires custom implementation to track which documents contributed to specific parts of the generated response, format citations appropriately, and ensure they are meaningful and helpful to users.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-link info-icon"></i>
+                                <span>Relationship Keyword</span>
+                                <span class="tag-badge tag-control">Control</span>
+                            </div>
+                            <p class="component-item-content">
+                                Control component that ensures transparency and verifiability of AI-generated content. Source citation provides mechanisms for users to validate information and understand the basis for recommendations.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-brain info-icon"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <p class="component-item-content">
+                                Source citation in RAG involves tracking the provenance of information used in generating responses. This requires mapping parts of the generated text back to specific source documents and presenting this information in a user-friendly format.
+                            </p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">Source Citation Implementation</span>
+                                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="keyword">from</span> langchain.chains <span class="keyword">import</span> RetrievalQAWithSourcesChain
+<span class="keyword">from</span> langchain.chat_models <span class="keyword">import</span> ChatOpenAI
+<span class="keyword">from</span> langchain.vectorstores <span class="keyword">import</span> Chroma
+<span class="keyword">from</span> langchain.embeddings <span class="keyword">import</span> OpenAIEmbeddings
+<span class="keyword">from</span> langchain.prompts <span class="keyword">import</span> PromptTemplate
+<span class="keyword">from</span> langchain.text_splitter <span class="keyword">import</span> CharacterTextSplitter
+<span class="keyword">import</span> re
+
+<span class="comment"># Custom prompt template for retail recommendations with citations</span>
+template = <span class="string">"""You are a helpful retail assistant. Use the following pieces of context to 
+answer the question at the end. If you don't know the answer, just say that you don't know. 
+Always include citations to the sources you used in your answer in the format [source: document_name].
+
+{context}
+
+Question: {question}
+Helpful Answer with citations:"""</span>
+
+PROMPT = PromptTemplate.from_template(template)
+
+<span class="keyword">class</span> <span class="function">RetailCitationFormatter</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):
+        <span class="variable">self</span>.source_pattern = re.compile(<span class="string">r'\[source: ([^\]]+)\]'</span>)
+    
+    <span class="keyword">def</span> <span class="function">format_response_with_citations</span>(<span class="variable">self</span>, answer, sources):
+        <span class="comment"># Extract unique sources mentioned in the answer</span>
+        mentioned_sources = <span class="variable">self</span>.source_pattern.findall(answer)
+        unique_sources = list(set(mentioned_sources))
+        
+        <span class="comment"># Format the answer with highlighted citations</span>
+        formatted_answer = <span class="variable">self</span>.source_pattern.sub(
+            <span class="keyword">lambda</span> m: <span class="string">f'<span class="citation">[source: {m.group(1)}]</span>'</span>, 
+            answer
+        )
+        
+        <span class="comment"># Create a list of all available sources with metadata</span>
+        source_list = []
+        <span class="keyword">for</span> source <span class="keyword">in</span> sources:
+            source_name = source.split(<span class="string">'/'</span>)[-1] <span class="keyword">if</span> <span class="string">'/'</span> <span class="keyword">in</span> source <span class="keyword">else</span> source
+            is_mentioned = source_name <span class="keyword">in</span> unique_sources
+            source_list.append({
+                <span class="string">"name"</span>: source_name,
+                <span class="string">"path"</span>: source,
+                <span class="string">"mentioned"</span>: is_mentioned
+            })
+        
+        <span class="keyword">return</span> {
+            <span class="string">"answer"</span>: formatted_answer,
+            <span class="string">"sources"</span>: source_list,
+            <span class="string">"mentioned_sources"</span>: unique_sources
+        }
+
+<span class="keyword">def</span> <span class="function">create_citation_rag</span>(vectorstore):
+    <span class="comment"># Initialize LLM</span>
+    llm = ChatOpenAI(temperature=<span class="number">0.2</span>)
+    
+    <span class="comment"># Create retrieval QA chain with sources</span>
+    qa_chain = RetrievalQAWithSourcesChain.from_chain_type(
+        llm=llm,
+        chain_type=<span class="string">"stuff"</span>,
+        retriever=vectorstore.as_retriever(),
+        chain_type_kwargs={<span class="string">"prompt"</span>: PROMPT},
+        return_source_documents=<span class="keyword">True</span>
+    )
+    
+    <span class="keyword">return</span> qa_chain
+
+<span class="comment"># Example usage in retail context</span>
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    <span class="comment"># Load vector store with retail product data</span>
+    embeddings = OpenAIEmbeddings()
+    vectorstore = Chroma(
+        persist_directory=<span class="string">"./data/retail_db"</span>, 
+        embedding_function=embeddings
+    )
+    
+    <span class="comment"># Create RAG with citation capability</span>
+    qa_chain = create_citation_rag(vectorstore)
+    formatter = RetailCitationFormatter()
+    
+    <span class="comment"># Query about product recommendations</span>
+    query = <span class="string">"What are the best hiking boots for someone with flat feet and a budget under $150?"</span>
+    result = qa_chain({<span class="string">"question"</span>: query})
+    
+    <span class="comment"># Format response with citations</span>
+    formatted_response = formatter.format_response_with_citations(
+        result[<span class="string">'answer'</span>], 
+        [doc.metadata[<span class="string">'source'</span>] <span class="keyword">for</span> doc <span class="keyword">in</span> result[<span class="string">'source_documents'</span>]]
+    )
+    
+    <span class="keyword">print</span>(<span class="string">f"Query: {query}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Answer: {formatted_response['answer']}"</span>)
+    
+    <span class="keyword">print</span>(<span class="string">"\nSources:"</span>)
+    <span class="keyword">for</span> source <span class="keyword">in</span> formatted_response[<span class="string">'sources'</span>]:
+        mention_status = <span class="string">"(mentioned)"</span> <span class="keyword">if</span> source[<span class="string">"mentioned"</span>] <span class="keyword">else</span> <span class="string">"(not mentioned)"</span>
+        <span class="keyword">print</span>(<span class="string">f"- {source['name']} {mention_status}"</span>)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="component">
+                    <div class="component-header">
+                        <h4 class="component-title">RAG Optimization</h4>
+                    </div>
+                    
+                    <div class="component-content">
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-check-circle success-icon"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <p class="component-item-content">
+                                In healthcare, a clinical decision support system uses optimized RAG to provide doctors with rapid, accurate treatment recommendations. By optimizing retrieval algorithms and response generation, the system reduces latency from seconds to milliseconds, enabling real-time decision support during critical patient care situations.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-times-circle danger-icon"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <p class="component-item-content">
+                                Addresses performance bottlenecks in RAG systems, including slow retrieval times, high computational costs, and inconsistent response quality. Optimizations ensure that the system can handle large knowledge bases while maintaining fast response times and high accuracy.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <p class="component-item-content">
+                                Without optimization, healthcare RAG systems would be too slow for real-time clinical decision support, potentially leading to delayed treatment decisions. In emergency situations, even seconds of delay can impact patient outcomes. Additionally, unoptimized systems would require more computational resources, increasing operational costs.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-tools info-icon"></i>
+                                <span>Predefined or Custom</span>
+                                <span class="tag-badge tag-custom">Custom</span>
+                            </div>
+                            <p class="component-item-content">
+                                RAG optimization requires custom implementation tailored to specific use cases, data characteristics, and performance requirements. The optimization strategies vary based on factors like knowledge base size, query complexity, and latency tolerance.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-link info-icon"></i>
+                                <span>Relationship Keyword</span>
+                                <span class="tag-badge tag-control">Control</span>
+                            </div>
+                            <p class="component-item-content">
+                                Control component that manages system performance and resource utilization. Optimization techniques ensure that RAG systems operate efficiently and effectively under various conditions.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-brain info-icon"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <p class="component-item-content">
+                                RAG optimization involves multiple techniques including indexing strategies, retrieval algorithms, caching mechanisms, and model quantization. These optimizations work together to improve performance while maintaining or enhancing response quality.
+                            </p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">RAG Optimization Implementation</span>
+                                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="keyword">from</span> langchain <span class="keyword">import</span> LLMChain, PromptTemplate
+<span class="keyword">from</span> langchain.llms <span class="keyword">import</span> OpenAI
+<span class="keyword">from</span> langchain.embeddings <span class="keyword">import</span> OpenAIEmbeddings
+<span class="keyword">from</span> langchain.vectorstores <span class="keyword">import</span> FAISS, Chroma
+<span class="keyword">from</span> langchain.text_splitter <span class="keyword">import</span> RecursiveCharacterTextSplitter
+<span class="keyword">from</span> langchain.chains <span class="keyword">import</span> RetrievalQA
+<span class="keyword">from</span> langchain.cache <span class="keyword">import</span> InMemoryCache
+<span class="keyword">from</span> langchain.globals <span class="keyword">import</span> set_llm_cache
+<span class="keyword">import</span> time
+<span class="keyword">import</span> pickle
+<span class="keyword">import</span> os
+
+<span class="comment"># Set up caching for LLM responses</span>
+set_llm_cache(InMemoryCache())
+
+<span class="keyword">class</span> <span class="function">OptimizedRAGSystem</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>, data_path, use_faiss=<span class="keyword">True</span>):
+        <span class="variable">self</span>.data_path = data_path
+        <span class="variable">self</span>.use_faiss = use_faiss
+        <span class="variable">self</span>.vectorstore = <span class="keyword">None</span>
+        <span class="variable">self</span>.qa_chain = <span class="keyword">None</span>
+        <span class="variable">self</span>.embeddings = OpenAIEmbeddings()
+        <span class="variable">self</span>.cache_dir = <span class="string">"./cache"</span>
+        
+        <span class="comment"># Create cache directory if it doesn't exist</span>
+        os.makedirs(<span class="variable">self</span>.cache_dir, exist_ok=<span class="keyword">True</span>)
+    
+    <span class="keyword">def</span> <span class="function">load_or_create_vectorstore</span>(<span class="variable">self</span>):
+        <span class="comment"># Check if cached vectorstore exists</span>
+        cache_path = os.path.join(<span class="variable">self</span>.cache_dir, <span class="string">"vectorstore.pkl"</span>)
+        
+        <span class="keyword">if</span> os.path.exists(cache_path):
+            <span class="keyword">print</span>(<span class="string">"Loading cached vectorstore..."</span>)
+            <span class="keyword">with</span> <span class="keyword">open</span>(cache_path, <span class="string">"rb"</span>) <span class="keyword">as</span> f:
+                <span class="variable">self</span>.vectorstore = pickle.load(f)
+            <span class="keyword">return</span>
+        
+        <span class="comment"># Load and process documents</span>
+        <span class="keyword">print</span>(<span class="string">"Creating new vectorstore..."</span>)
+        documents = <span class="variable">self</span>._load_documents()
+        texts = <span class="variable">self</span>._split_documents(documents)
+        
+        <span class="comment"># Create vectorstore based on configuration</span>
+        <span class="keyword">if</span> <span class="variable">self</span>.use_faiss:
+            <span class="variable">self</span>.vectorstore = FAISS.from_documents(texts, <span class="variable">self</span>.embeddings)
+        <span class="keyword">else</span>:
+            <span class="variable">self</span>.vectorstore = Chroma.from_documents(texts, <span class="variable">self</span>.embeddings)
+        
+        <span class="comment"># Cache the vectorstore</span>
+        <span class="keyword">with</span> <span class="keyword">open</span>(cache_path, <span class="string">"wb"</span>) <span class="keyword">as</span> f:
+            pickle.dump(<span class="variable">self</span>.vectorstore, f)
+    
+    <span class="keyword">def</span> <span class="function">_load_documents</span>(<span class="variable">self</span>):
+        <span class="comment"># Implementation for loading documents from various sources</span>
+        <span class="comment"># This would be customized based on the specific data sources</span>
+        <span class="keyword">from</span> langchain.document_loaders <span class="keyword">import</span> DirectoryLoader
+        
+        loader = DirectoryLoader(
+            <span class="variable">self</span>.data_path,
+            glob=<span class="string">"**/*.txt"</span>,
+            show_progress=<span class="keyword">True</span>
+        )
+        <span class="keyword">return</span> loader.load()
+    
+    <span class="keyword">def</span> <span class="function">_split_documents</span>(<span class="variable">self</span>, documents):
+        <span class="comment"># Use optimized text splitter</span>
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=<span class="number">1000</span>,
+            chunk_overlap=<span class="number">200</span>,
+            length_function=<span class="keyword">len</span>,
+            separators=[<span class="string">"\n\n"</span>, <span class="string">"\n"</span>, <span class="string">" "</span>, <span class="string">""</span>]
+        )
+        <span class="keyword">return</span> text_splitter.split_documents(documents)
+    
+    <span class="keyword">def</span> <span class="function">create_qa_chain</span>(<span class="variable">self</span>):
+        <span class="comment"># Configure optimized retriever</span>
+        retriever = <span class="variable">self</span>.vectorstore.as_retriever(
+            search_type=<span class="string">"similarity"</span>,
+            search_kwargs={<span class="string">"k"</span>: <span class="number">5</span>}  <span class="comment"># Retrieve top 5 documents</span>
+        )
+        
+        <span class="comment"># Use optimized prompt template</span>
+        template = <span class="string">"""Use the following pieces of context to answer the question at the end. 
+If you don't know the answer, just say that you don't know. Do not try to make up an answer.
+Keep the answer concise and relevant.
+
+{context}
+
+Question: {question}
+Helpful Answer:"""</span>
+        
+        prompt = PromptTemplate.from_template(template)
+        
+        <span class="comment"># Create optimized QA chain</span>
+        <span class="variable">self</span>.qa_chain = RetrievalQA.from_chain_type(
+            llm=OpenAI(temperature=<span class="number">0</span>),
+            chain_type=<span class="string">"stuff"</span>,
+            retriever=retriever,
+            chain_type_kwargs={<span class="string">"prompt"</span>: prompt},
+            return_source_documents=<span class="keyword">True</span>
+        )
+    
+    <span class="keyword">def</span> <span class="function">query</span>(<span class="variable">self</span>, question):
+        <span class="keyword">if</span> <span class="keyword">not</span> <span class="variable">self</span>.qa_chain:
+            <span class="variable">self</span>.create_qa_chain()
+        
+        start_time = time.time()
+        result = <span class="variable">self</span>.qa_chain({<span class="string">"query"</span>: question})
+        end_time = time.time()
+        
+        <span class="keyword">return</span> {
+            <span class="string">"answer"</span>: result[<span class="string">"result"</span>],
+            <span class="string">"sources"</span>: [doc.metadata[<span class="string">"source"</span>] <span class="keyword">for</span> doc <span class="keyword">in</span> result[<span class="string">"source_documents"</span>]],
+            <span class="string">"response_time"</span>: end_time - start_time
+        }
+
+<span class="comment"># Example usage in healthcare context</span>
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    <span class="comment"># Initialize optimized RAG system</span>
+    rag_system = OptimizedRAGSystem(
+        data_path=<span class="string">"./data/medical_documents"</span>,
+        use_faiss=<span class="keyword">True</span>  <span class="comment"># FAISS is faster for large datasets</span>
+    )
+    
+    <span class="comment"># Load or create vectorstore</span>
+    rag_system.load_or_create_vectorstore()
+    
+    <span class="comment"># Create QA chain</span>
+    rag_system.create_qa_chain()
+    
+    <span class="comment"># Test query performance</span>
+    query = <span class="string">"What are the recommended treatments for type 2 diabetes in elderly patients?"</span>
+    
+    <span class="comment"># Run query and measure performance</span>
+    result = rag_system.query(query)
+    
+    <span class="keyword">print</span>(<span class="string">f"Query: {query}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Answer: {result['answer']}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Response time: {result['response_time']:.2f} seconds"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Sources: {result['sources']}"</span>)
+    
+    <span class="comment"># Run a second query to test caching</span>
+    query2 = <span class="string">"What are the side effects of metformin?"</span>
+    result2 = rag_system.query(query2)
+    
+    <span class="keyword">print</span>(<span class="string">f"\nQuery: {query2}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Answer: {result2['answer']}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Response time: {result2['response_time']:.2f} seconds"</span>)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="data-analysis" class="section">
+            <div class="section-header">
+                <h2 class="section-title">9.2 Data Analysis Applications</h2>
+                <span class="section-badge">Analytical Tools</span>
+            </div>
+            
+            <div class="subsection">
+                <div class="subsection-header">
+                    <i class="fas fa-database info-icon"></i>
+                    <h3 class="subsection-title">SQL + CSV Q&A</h3>
+                </div>
+                
+                <div class="component">
+                    <div class="component-header">
+                        <h4 class="component-title">Query Validation</h4>
+                    </div>
+                    
+                    <div class="component-content">
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-check-circle success-icon"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <p class="component-item-content">
+                                In banking, a financial analysis system uses SQL query validation to ensure that business analysts generate safe and accurate queries when examining transaction data. When an analyst requests information about customer spending patterns, the system validates the query to prevent unauthorized access to sensitive data and ensure it won't overload the database.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-times-circle danger-icon"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <p class="component-item-content">
+                                Addresses security and performance risks in dynamically generated SQL queries. Prevents SQL injection attacks, unauthorized data access, and resource-intensive queries that could impact system performance. Ensures that generated queries align with business rules and data governance policies.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <p class="component-item-content">
+                                Without query validation, banking systems would be vulnerable to security breaches through SQL injection attacks. Analysts could accidentally run resource-intensive queries that slow down critical systems, and unauthorized access to sensitive financial data could lead to regulatory violations and loss of customer trust.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-tools info-icon"></i>
+                                <span>Predefined or Custom</span>
+                                <span class="tag-badge tag-custom">Custom</span>
+                            </div>
+                            <p class="component-item-content">
+                                Query validation requires custom implementation based on specific database schemas, security policies, and performance requirements. The validation rules need to be tailored to the organization's data governance framework and business context.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-link info-icon"></i>
+                                <span>Relationship Keyword</span>
+                                <span class="tag-badge tag-control">Control</span>
+                            </div>
+                            <p class="component-item-content">
+                                Control component that ensures security and compliance in data access. Query validation provides mechanisms to enforce governance policies and prevent potentially harmful operations.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-brain info-icon"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <p class="component-item-content">
+                                Query validation involves parsing and analyzing SQL queries to ensure they comply with security policies, performance guidelines, and business rules. This includes checking for SQL injection patterns, validating table and column access permissions, and estimating query execution costs.
+                            </p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">SQL Query Validation Implementation</span>
+                                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="keyword">import</span> re
+<span class="keyword">from</span> typing <span class="keyword">import</span> List, Dict, Tuple, Optional
+<span class="keyword">import</span> sqlparse
+<span class="keyword">from</span> sqlparse.sql <span class="keyword">import</span> IdentifierList, Identifier, Function
+<span class="keyword">from</span> sqlparse.tokens <span class="keyword">import</span> Keyword, DML, Name
+
+<span class="keyword">class</span> <span class="function">SQLQueryValidator</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>, schema_info: Dict, allowed_tables: List[str], restricted_columns: Dict[str, List[str]]):
+        <span class="variable">self</span>.schema_info = schema_info  <span class="comment"># Database schema information</span>
+        <span class="variable">self</span>.allowed_tables = allowed_tables  <span class="comment"># Tables users can access</span>
+        <span class="variable">self</span>.restricted_columns = restricted_columns  <span class="comment"># Columns that require special permissions</span>
+        
+        <span class="comment"># Common SQL injection patterns</span>
+        <span class="variable">self</span>.injection_patterns = [
+            re.compile(<span class="string">r'(\s|^)(OR|AND)\s+\d+\s*=\s*\d+'</span>, re.IGNORECASE),
+            re.compile(<span class="string">r'(\s|^)(OR|AND)\s+\w+\s*=\s*\w+'</span>, re.IGNORECASE),
+            re.compile(<span class="string">r';\s*(DROP|DELETE|UPDATE|INSERT|CREATE|ALTER)'</span>, re.IGNORECASE),
+            re.compile(<span class="string">r'--\s*$'</span>),
+            re.compile(<span class="string">r'/\*.*\*/'</span>)
+        ]
+        
+        <span class="comment"># Potentially dangerous operations</span>
+        <span class="variable">self</span>.restricted_operations = [
+            <span class="string">'DROP'</span>, <span class="string">'DELETE'</span>, <span class="string">'UPDATE'</span>, <span class="string">'INSERT'</span>, 
+            <span class="string">'CREATE'</span>, <span class="string">'ALTER'</span>, <span class="string">'TRUNCATE'</span>, <span class="string">'GRANT'</span>, <span class="string">'REVOKE'</span>
+        ]
+    
+    <span class="keyword">def</span> <span class="function">validate_query</span>(<span class="variable">self</span>, query: str, user_permissions: Dict[str, List[str]]) -> Tuple[bool, Optional[str]]:
+        <span class="string">"""
+        Validate a SQL query against security and performance rules.
+        
+        Args:
+            query: The SQL query to validate
+            user_permissions: Dictionary of user permissions by table
+            
+        Returns:
+            Tuple of (is_valid, error_message)
+        """</span>
+        <span class="comment"># Basic sanitization</span>
+        query = query.strip()
+        
+        <span class="comment"># Check for SQL injection patterns</span>
+        <span class="keyword">for</span> pattern <span class="keyword">in</span> <span class="variable">self</span>.injection_patterns:
+            <span class="keyword">if</span> pattern.search(query):
+                <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Potential SQL injection detected"</span>
+        
+        <span class="comment"># Parse the SQL query</span>
+        parsed = sqlparse.parse(query)
+        <span class="keyword">if</span> <span class="keyword">not</span> parsed:
+            <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Invalid SQL syntax"</span>
+        
+        stmt = parsed[<span class="number">0</span>]
+        
+        <span class="comment"># Check for restricted operations</span>
+        <span class="keyword">for</span> token <span class="keyword">in</span> stmt.flatten():
+            <span class="keyword">if</span> token.ttype <span class="keyword">in</span> Keyword <span class="keyword">and</span> token.value.upper() <span class="keyword">in</span> <span class="variable">self</span>.restricted_operations:
+                <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">f"Restricted operation '{token.value}' not allowed"</span>
+        
+        <span class="comment"># Extract tables and columns from the query</span>
+        tables = <span class="variable">self</span>._extract_tables(stmt)
+        columns = <span class="variable">self</span>._extract_columns(stmt)
+        
+        <span class="comment"># Validate table access</span>
+        <span class="keyword">for</span> table <span class="keyword">in</span> tables:
+            <span class="keyword">if</span> table <span class="keyword">not</span> <span class="keyword">in</span> <span class="variable">self</span>.allowed_tables:
+                <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">f"Access to table '{table}' is not allowed"</span>
+            
+            <span class="comment"># Check if user has permission to access this table</span>
+            <span class="keyword">if</span> table <span class="keyword">not</span> <span class="keyword">in</span> user_permissions:
+                <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">f"No permission to access table '{table}'"</span>
+        
+        <span class="comment"># Validate column access</span>
+        <span class="keyword">for</span> table, column <span class="keyword">in</span> columns:
+            <span class="comment"># Check if column exists in the table</span>
+            <span class="keyword">if</span> table <span class="keyword">in</span> <span class="variable">self</span>.schema_info <span class="keyword">and</span> column <span class="keyword">not</span> <span class="keyword">in</span> <span class="variable">self</span>.schema_info[table]:
+                <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">f"Column '{column}' does not exist in table '{table}'"</span>
+            
+            <span class="comment"># Check if column is restricted and user has permission</span>
+            <span class="keyword">if</span> table <span class="keyword">in</span> <span class="variable">self</span>.restricted_columns <span class="keyword">and</span> column <span class="keyword">in</span> <span class="variable">self</span>.restricted_columns[table]:
+                <span class="keyword">if</span> column <span class="keyword">not</span> <span class="keyword">in</span> user_permissions.get(table, []):
+                    <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">f"No permission to access restricted column '{column}' in table '{table}'"</span>
+        
+        <span class="comment"># Check for potentially expensive operations</span>
+        <span class="keyword">if</span> <span class="variable">self</span>._has_expensive_operation(stmt):
+            <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Query contains potentially expensive operations"</span>
+        
+        <span class="keyword">return</span> <span class="keyword">True</span>, <span class="keyword">None</span>
+    
+    <span class="keyword">def</span> <span class="function">_extract_tables</span>(<span class="variable">self</span>, stmt) -> List[str]:
+        <span class="string">"""Extract table names from a parsed SQL statement."""</span>
+        tables = []
+        
+        <span class="comment"># This is a simplified implementation</span>
+        <span class="comment"># A more robust implementation would handle JOINs, subqueries, etc.</span>
+        <span class="keyword">for</span> token <span class="keyword">in</span> stmt.tokens:
+            <span class="keyword">if</span> isinstance(token, Identifier):
+                tables.append(token.get_real_name())
+            <span class="keyword">elif</span> isinstance(token, IdentifierList):
+                <span class="keyword">for</span> identifier <span class="keyword">in</span> token.get_identifiers():
+                    <span class="keyword">if</span> isinstance(identifier, Identifier):
+                        tables.append(identifier.get_real_name())
+        
+        <span class="keyword">return</span> list(set(tables))  <span class="comment"># Remove duplicates</span>
+    
+    <span class="keyword">def</span> <span class="function">_extract_columns</span>(<span class="variable">self</span>, stmt) -> List[Tuple[str, str]]:
+        <span class="string">"""Extract (table, column) tuples from a parsed SQL statement."""</span>
+        columns = []
+        
+        <span class="comment"># This is a simplified implementation</span>
+        <span class="comment"># A more robust implementation would handle table aliases, qualified names, etc.</span>
+        from_table = <span class="keyword">None</span>
+        
+        <span class="keyword">for</span> token <span class="keyword">in</span> stmt.tokens:
+            <span class="keyword">if</span> token.ttype <span class="keyword">is</span> DML <span class="keyword">and</span> token.value.upper() == <span class="string">'FROM'</span>:
+                <span class="comment"># Get the table name after FROM</span>
+                idx = stmt.token_index(token)
+                <span class="keyword">if</span> idx + <span class="number">1</span> < len(stmt.tokens):
+                    next_token = stmt.tokens[idx + <span class="number">1</span>]
+                    <span class="keyword">if</span> isinstance(next_token, Identifier):
+                        from_table = next_token.get_real_name()
+            
+            <span class="keyword">if</span> isinstance(token, Identifier) <span class="keyword">and</span> from_table:
+                columns.append((from_table, token.get_real_name()))
+        
+        <span class="keyword">return</span> columns
+    
+    <span class="keyword">def</span> <span class="function">_has_expensive_operation</span>(<span class="variable">self</span>, stmt) -> bool:
+        <span class="string">"""Check if the query contains potentially expensive operations."""</span>
+        <span class="comment"># This is a simplified implementation</span>
+        <span class="comment"># A more robust implementation would analyze the query plan</span>
+        
+        query_text = str(stmt).upper()
+        
+        <span class="comment"># Check for CROSS JOIN (often unintentional and expensive)</span>
+        <span class="keyword">if</span> <span class="string">'CROSS JOIN'</span> <span class="keyword">in</span> query_text:
+            <span class="keyword">return</span> <span class="keyword">True</span>
+        
+        <span class="comment"># Check for multiple JOINs without proper indexes</span>
+        <span class="comment"># This would require knowledge of the database schema and indexes</span>
+        
+        <span class="comment"># Check for SELECT * on large tables</span>
+        <span class="keyword">if</span> <span class="string">'SELECT *'</span> <span class="keyword">in</span> query_text:
+            <span class="comment"># In a real implementation, we would check if the table is large</span>
+            <span class="keyword">pass</span>
+        
+        <span class="keyword">return</span> <span class="keyword">False</span>
+
+<span class="comment"># Example usage in banking context</span>
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    <span class="comment"># Define database schema</span>
+    schema_info = {
+        <span class="string">'customers'</span>: [<span class="string">'customer_id'</span>, <span class="string">'name'</span>, <span class="string">'email'</span>, <span class="string">'phone'</span>, <span class="string">'address'</span>, <span class="string">'credit_score'</span>],
+        <span class="string">'accounts'</span>: [<span class="string">'account_id'</span>, <span class="string">'customer_id'</span>, <span class="string">'account_type'</span>, <span class="string">'balance'</span>, <span class="string">'open_date'</span>],
+        <span class="string">'transactions'</span>: [<span class="string">'transaction_id'</span>, <span class="string">'account_id'</span>, <span class="string">'amount'</span>, <span class="string">'transaction_date'</span>, <span class="string">'description'</span>]
+    }
+    
+    <span class="comment"># Define allowed tables</span>
+    allowed_tables = [<span class="string">'customers'</span>, <span class="string">'accounts'</span>, <span class="string">'transactions'</span>]
+    
+    <span class="comment"># Define restricted columns that require special permissions</span>
+    restricted_columns = {
+        <span class="string">'customers'</span>: [<span class="string">'credit_score'</span>],
+        <span class="string">'accounts'</span>: [<span class="string">'balance'</span>]
+    }
+    
+    <span class="comment"># Create validator</span>
+    validator = SQLQueryValidator(schema_info, allowed_tables, restricted_columns)
+    
+    <span class="comment"># Define user permissions</span>
+    user_permissions = {
+        <span class="string">'customers'</span>: [<span class="string">'customer_id'</span>, <span class="string">'name'</span>, <span class="string">'email'</span>],
+        <span class="string">'accounts'</span>: [<span class="string">'account_id'</span>, <span class="string">'customer_id'</span>, <span class="string">'account_type'</span>],
+        <span class="string">'transactions'</span>: [<span class="string">'transaction_id'</span>, <span class="string">'account_id'</span>, <span class="string">'amount'</span>, <span class="string">'transaction_date'</span>]
+    }
+    
+    <span class="comment"># Test queries</span>
+    test_queries = [
+        <span class="string">"SELECT customer_id, name FROM customers WHERE credit_score > 700"</span>,
+        <span class="string">"SELECT account_id, balance FROM accounts WHERE customer_id = 12345"</span>,
+        <span class="string">"SELECT t.transaction_id, t.amount, t.transaction_date FROM transactions t JOIN accounts a ON t.account_id = a.account_id WHERE a.customer_id = 12345"</span>,
+        <span class="string">"SELECT * FROM customers"</span>,
+        <span class="string">"DROP TABLE customers"</span>
+    ]
+    
+    <span class="keyword">for</span> query <span class="keyword">in</span> test_queries:
+        is_valid, error_msg = validator.validate_query(query, user_permissions)
+        <span class="keyword">print</span>(<span class="string">f"Query: {query}"</span>)
+        <span class="keyword">if</span> is_valid:
+            <span class="keyword">print</span>(<span class="string">"Status: VALID"</span>)
+        <span class="keyword">else</span>:
+            <span class="keyword">print</span>(<span class="string">f"Status: INVALID - {error_msg}"</span>)
+        <span class="keyword">print</span>(<span class="string">"---"</span>)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="component">
+                    <div class="component-header">
+                        <h4 class="component-title">Large Database Handling</h4>
+                    </div>
+                    
+                    <div class="component-content">
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-check-circle success-icon"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <p class="component-item-content">
+                                In retail, a large e-commerce platform uses advanced database handling techniques to analyze millions of customer transactions and product interactions. When business analysts query for seasonal purchasing trends or product affinity patterns, the system efficiently processes terabytes of data to provide insights without overwhelming the database infrastructure.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-times-circle danger-icon"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <p class="component-item-content">
+                                Addresses performance and scalability challenges when querying large datasets. Enables efficient data processing through techniques like query optimization, data partitioning, indexing strategies, and distributed processing, ensuring that analytical queries complete in reasonable timeframes.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <p class="component-item-content">
+                                Without large database handling capabilities, retail analysts would experience extremely slow query times, making real-time decision-making impossible. Business opportunities would be missed as insights arrive too late to be actionable, and the database infrastructure could become overloaded during peak analysis periods.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-tools info-icon"></i>
+                                <span>Predefined or Custom</span>
+                                <span class="tag-badge tag-custom">Custom</span>
+                            </div>
+                            <p class="component-item-content">
+                                Large database handling requires custom implementation based on specific data characteristics, database technologies, and analytical requirements. The optimization strategies need to be tailored to the organization's data infrastructure and business needs.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-link info-icon"></i>
+                                <span>Relationship Keyword</span>
+                                <span class="tag-badge tag-execution">Execution</span>
+                            </div>
+                            <p class="component-item-content">
+                                Execution component that enables efficient processing of large-scale data operations. Large database handling techniques ensure that analytical queries can be performed effectively regardless of dataset size.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-brain info-icon"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <p class="component-item-content">
+                                Large database handling involves multiple techniques including query optimization, data partitioning, indexing strategies, caching mechanisms, and distributed processing. These approaches work together to ensure efficient data access and processing even with massive datasets.
+                            </p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">Large Database Handling Implementation</span>
+                                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> create_engine, text
+<span class="keyword">from</span> sqlalchemy.pool <span class="keyword">import</span> QueuePool
+<span class="keyword">from</span> sqlalchemy.exc <span class="keyword">import</span> SQLAlchemyError
+<span class="keyword">import</span> dask.dataframe <span class="keyword">as</span> dd
+<span class="keyword">import</span> time
+<span class="keyword">import</span> logging
+<span class="keyword">from</span> typing <span class="keyword">import</span> Dict, List, Tuple, Optional, Union
+<span class="keyword">import</span> os
+
+<span class="comment"># Configure logging</span>
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+<span class="keyword">class</span> <span class="function">LargeDatabaseHandler</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>, connection_string: str, chunk_size: int = <span class="number">10000</span>, 
+                 max_workers: int = <span class="number">4</span>, cache_dir: str = <span class="string">"./cache"</span>):
+        <span class="string">"""
+        Initialize the large database handler.
+        
+        Args:
+            connection_string: Database connection string
+            chunk_size: Number of rows to fetch at a time
+            max_workers: Maximum number of parallel workers
+            cache_dir: Directory for caching intermediate results
+        """</span>
+        <span class="variable">self</span>.connection_string = connection_string
+        <span class="variable">self</span>.chunk_size = chunk_size
+        <span class="variable">self</span>.max_workers = max_workers
+        <span class="variable">self</span>.cache_dir = cache_dir
+        
+        <span class="comment"># Create cache directory if it doesn't exist</span>
+        os.makedirs(cache_dir, exist_ok=<span class="keyword">True</span>)
+        
+        <span class="comment"># Create database engine with connection pooling</span>
+        <span class="variable">self</span>.engine = create_engine(
+            connection_string,
+            poolclass=QueuePool,
+            pool_size=<span class="number">10</span>,
+            max_overflow=<span class="number">20</span>,
+            pool_timeout=<span class="number">30</span>,
+            pool_recycle=<span class="number">3600</span>
+        )
+        
+        <span class="comment"># Initialize query cache</span>
+        <span class="variable">self</span>.query_cache = {}
+    
+    <span class="keyword">def</span> <span class="function">execute_large_query</span>(<span class="variable">self</span>, query: str, use_dask: bool = <span class="keyword">False</span>, 
+                         output_format: str = <span class="string">"pandas"</span>) -> Union[pd.DataFrame, dd.DataFrame]:
+        <span class="string">"""
+        Execute a query on a large database efficiently.
+        
+        Args:
+            query: SQL query to execute
+            use_dask: Whether to use Dask for out-of-core processing
+            output_format: Format of the output (pandas or dask)
+            
+        Returns:
+            DataFrame with query results
+        """</span>
+        start_time = time.time()
+        
+        <span class="comment"># Check if query is in cache</span>
+        cache_key = <span class="variable">self</span>._generate_cache_key(query)
+        <span class="keyword">if</span> cache_key <span class="keyword">in</span> <span class="variable">self</span>.query_cache:
+            logger.info(<span class="string">f"Using cached result for query: {cache_key}"</span>)
+            <span class="keyword">return</span> <span class="variable">self</span>.query_cache[cache_key]
+        
+        <span class="keyword">try</span>:
+            <span class="keyword">if</span> use_dask:
+                <span class="comment"># Use Dask for out-of-core processing</span>
+                result = <span class="variable">self</span>._execute_with_dask(query, output_format)
+            <span class="keyword">else</span>:
+                <span class="comment"># Use chunked processing with pandas</span>
+                result = <span class="variable">self</span>._execute_chunked(query)
+            
+            <span class="comment"># Cache the result</span>
+            <span class="variable">self</span>.query_cache[cache_key] = result
+            
+            execution_time = time.time() - start_time
+            logger.info(<span class="string">f"Query executed in {execution_time:.2f} seconds"</span>)
+            
+            <span class="keyword">return</span> result
+        <span class="keyword">except</span> SQLAlchemyError <span class="keyword">as</span> e:
+            logger.error(<span class="string">f"Database error: {str(e)}"</span>)
+            <span class="keyword">raise</span>
+        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+            logger.error(<span class="string">f"Unexpected error: {str(e)}"</span>)
+            <span class="keyword">raise</span>
+    
+    <span class="keyword">def</span> <span class="function">_execute_chunked</span>(<span class="variable">self</span>, query: str) -> pd.DataFrame:
+        <span class="string">"""
+        Execute a query using chunked processing.
+        
+        Args:
+            query: SQL query to execute
+            
+        Returns:
+            pandas DataFrame with query results
+        """</span>
+        logger.info(<span class="string">f"Executing query with chunked processing: {query[:100]}..."</span>)
+        
+        <span class="comment"># Create a placeholder for the results</span>
+        chunks = []
+        
+        <span class="comment"># Execute the query in chunks</span>
+        <span class="keyword">with</span> <span class="variable">self</span>.engine.connect() <span class="keyword">as</span> conn:
+            <span class="comment"># Use server-side cursor for large result sets</span>
+            result = conn.execution_options(stream_results=<span class="keyword">True</span>).execute(text(query))
+            
+            <span class="keyword">while</span> <span class="keyword">True</span>:
+                chunk = result.fetchmany(<span class="variable">self</span>.chunk_size)
+                <span class="keyword">if</span> <span class="keyword">not</span> chunk:
+                    <span class="keyword">break</span>
+                
+                <span class="comment"># Convert chunk to DataFrame</span>
+                chunk_df = pd.DataFrame(chunk, columns=result.keys())
+                chunks.append(chunk_df)
+                
+                <span class="comment"># Process the chunk if needed</span>
+                <span class="variable">self</span>._process_chunk(chunk_df)
+        
+        <span class="comment"># Combine all chunks</span>
+        <span class="keyword">if</span> chunks:
+            result_df = pd.concat(chunks, ignore_index=<span class="keyword">True</span>)
+            <span class="keyword">return</span> result_df
+        <span class="keyword">else</span>:
+            <span class="keyword">return</span> pd.DataFrame()
+    
+    <span class="keyword">def</span> <span class="function">_execute_with_dask</span>(<span class="variable">self</span>, query: str, output_format: str) -> Union[pd.DataFrame, dd.DataFrame]:
+        <span class="string">"""
+        Execute a query using Dask for out-of-core processing.
+        
+        Args:
+            query: SQL query to execute
+            output_format: Format of the output (pandas or dask)
+            
+        Returns:
+            DataFrame with query results
+        """</span>
+        logger.info(<span class="string">f"Executing query with Dask: {query[:100]}..."</span>)
+        
+        <span class="comment"># Create Dask DataFrame from SQL query</span>
+        ddf = dd.read_sql_query(
+            query,
+            <span class="variable">self</span>.connection_string,
+            npartitions=<span class="variable">self</span>.max_workers,
+            index_col=<span class="keyword">None</span>,
+            chunksize=<span class="variable">self</span>.chunk_size
+        )
+        
+        <span class="comment"># Perform any necessary transformations</span>
+        ddf = <span class="variable">self</span>._transform_dask_dataframe(ddf)
+        
+        <span class="keyword">if</span> output_format.lower() == <span class="string">"pandas"</span>:
+            <span class="comment"># Convert to pandas DataFrame</span>
+            <span class="keyword">return</span> ddf.compute()
+        <span class="keyword">else</span>:
+            <span class="comment"># Return as Dask DataFrame</span>
+            <span class="keyword">return</span> ddf
+    
+    <span class="keyword">def</span> <span class="function">_process_chunk</span>(<span class="variable">self</span>, chunk_df: pd.DataFrame):
+        <span class="string">"""
+        Process a chunk of data.
+        
+        Args:
+            chunk_df: DataFrame chunk to process
+        """</span>
+        <span class="comment"># This method can be overridden to implement custom chunk processing</span>
+        <span class="keyword">pass</span>
+    
+    <span class="keyword">def</span> <span class="function">_transform_dask_dataframe</span>(<span class="variable">self</span>, ddf: dd.DataFrame) -> dd.DataFrame:
+        <span class="string">"""
+        Transform a Dask DataFrame.
+        
+        Args:
+            ddf: Dask DataFrame to transform
+            
+        Returns:
+            Transformed Dask DataFrame
+        """</span>
+        <span class="comment"># This method can be overridden to implement custom transformations</span>
+        <span class="keyword">return</span> ddf
+    
+    <span class="keyword">def</span> <span class="function">_generate_cache_key</span>(<span class="variable">self</span>, query: str) -> str:
+        <span class="string">"""
+        Generate a cache key for a query.
+        
+        Args:
+            query: SQL query
+            
+        Returns:
+            Cache key string
+        """</span>
+        <span class="comment"># Simple hash-based cache key</span>
+        <span class="keyword">import</span> hashlib
+        <span class="keyword">return</span> hashlib.md5(query.encode()).hexdigest()
+    
+    <span class="keyword">def</span> <span class="function">create_optimized_index</span>(<span class="variable">self</span>, table_name: str, columns: List[str], 
+                           index_name: Optional[str] = <span class="keyword">None</span>) -> bool:
+        <span class="string">"""
+        Create an optimized index on a table.
+        
+        Args:
+            table_name: Name of the table
+            columns: List of columns to index
+            index_name: Optional name for the index
+            
+        Returns:
+            True if successful, False otherwise
+        """</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> index_name:
+            index_name = f<span class="string">"idx_{table_name}_{'_'.join(columns)}"</span>
+        
+        <span class="keyword">try</span>:
+            <span class="keyword">with</span> <span class="variable">self</span>.engine.connect() <span class="keyword">as</span> conn:
+                <span class="comment"># Check if index already exists</span>
+                check_query = <span class="string">f"""
+                SELECT 1 FROM pg_indexes 
+                WHERE tablename = '{table_name}' 
+                AND indexname = '{index_name}'
+                """</span>
+                
+                result = conn.execute(text(check_query)).fetchone()
+                
+                <span class="keyword">if</span> result:
+                    logger.info(<span class="string">f"Index {index_name} already exists"</span>)
+                    <span class="keyword">return</span> <span class="keyword">True</span>
+                
+                <span class="comment"># Create the index</span>
+                create_query = <span class="string">f"""
+                CREATE INDEX CONCURRENTLY {index_name} 
+                ON {table_name} ({', '.join(columns)})
+                """</span>
+                
+                conn.execute(text(create_query))
+                conn.commit()
+                
+                logger.info(<span class="string">f"Created index {index_name} on table {table_name}"</span>)
+                <span class="keyword">return</span> <span class="keyword">True</span>
+        <span class="keyword">except</span> SQLAlchemyError <span class="keyword">as</span> e:
+            logger.error(<span class="string">f"Error creating index: {str(e)}"</span>)
+            <span class="keyword">return</span> <span class="keyword">False</span>
+    
+    <span class="keyword">def</span> <span class="function">partition_table</span>(<span class="variable">self</span>, table_name: str, partition_column: str, 
+                   partition_type: str = <span class="string">"range"</span>, partitions: List[str] = <span class="keyword">None</span>) -> bool:
+        <span class="string">"""
+        Partition a large table for better performance.
+        
+        Args:
+            table_name: Name of the table to partition
+            partition_column: Column to partition on
+            partition_type: Type of partitioning (range, list, hash)
+            partitions: List of partition definitions
+            
+        Returns:
+            True if successful, False otherwise
+        """</span>
+        <span class="keyword">try</span>:
+            <span class="keyword">with</span> <span class="variable">self</span>.engine.connect() <span class="keyword">as</span> conn:
+                <span class="comment"># This is a simplified implementation</span>
+                <span class="comment"># In a real implementation, you would need to handle more complex scenarios</span>
+                
+                <span class="keyword">if</span> partition_type.lower() == <span class="string">"range"</span> <span class="keyword">and</span> partitions:
+                    <span class="comment"># Create range partitions</span>
+                    partition_defs = <span class="string">', '</span>.join([
+                        <span class="string">f"PARTITION p{i} VALUES LESS THAN ({partition})"</span>
+                        <span class="keyword">for</span> i, partition <span class="keyword">in</span> <span class="built_in">enumerate</span>(partitions)
+                    ])
+                    
+                    partition_query = <span class="string">f"""
+                    ALTER TABLE {table_name} 
+                    PARTITION BY RANGE ({partition_column}) (
+                        {partition_defs}
+                    )
+                    """</span>
+                    
+                    conn.execute(text(partition_query))
+                    conn.commit()
+                    
+                    logger.info(<span class="string">f"Created range partitions on table {table_name}"</span>)
+                    <span class="keyword">return</span> <span class="keyword">True</span>
+                
+                <span class="comment"># Add support for other partition types as needed</span>
+                logger.warning(<span class="string">f"Unsupported partition type: {partition_type}"</span>)
+                <span class="keyword">return</span> <span class="keyword">False</span>
+        <span class="keyword">except</span> SQLAlchemyError <span class="keyword">as</span> e:
+            logger.error(<span class="string">f"Error partitioning table: {str(e)}"</span>)
+            <span class="keyword">return</span> <span class="keyword">False</span>
+
+<span class="comment"># Example usage in retail context</span>
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    <span class="comment"># Initialize the database handler</span>
+    db_handler = LargeDatabaseHandler(
+        connection_string=<span class="string">"postgresql://user:password@localhost/retail_db"</span>,
+        chunk_size=<span class="number">50000</span>,
+        max_workers=<span class="number">8</span>
+    )
+    
+    <span class="comment"># Example 1: Execute a large query with chunked processing</span>
+    query1 = <span class="string">"""
+    SELECT customer_id, product_id, purchase_date, amount 
+    FROM transactions 
+    WHERE purchase_date BETWEEN '2023-01-01' AND '2023-12-31'
+    ORDER BY purchase_date
+    """</span>
+    
+    <span class="keyword">print</span>(<span class="string">"Executing large query with chunked processing..."</span>)
+    result1 = db_handler.execute_large_query(query1)
+    <span class="keyword">print</span>(<span class="string">f"Retrieved {len(result1)} rows"</span>)
+    
+    <span class="comment"># Example 2: Execute a query with Dask for out-of-core processing</span>
+    query2 = <span class="string">"""
+    SELECT p.category, SUM(t.amount) as total_sales, COUNT(t.transaction_id) as transaction_count
+    FROM transactions t
+    JOIN products p ON t.product_id = p.product_id
+    GROUP BY p.category
+    ORDER BY total_sales DESC
+    """</span>
+    
+    <span class="keyword">print</span>(<span class="string">"\nExecuting analytical query with Dask..."</span>)
+    result2 = db_handler.execute_large_query(query2, use_dask=<span class="keyword">True</span>)
+    <span class="keyword">print</span>(<span class="string">f"Sales by category:\n{result2}"</span>)
+    
+    <span class="comment"># Example 3: Create an optimized index</span>
+    <span class="keyword">print</span>(<span class="string">"\nCreating optimized index..."</span>)
+    success = db_handler.create_optimized_index(
+        table_name=<span class="string">"transactions"</span>,
+        columns=[<span class="string">"customer_id"</span>, <span class="string">"purchase_date"</span>],
+        index_name=<span class="string">"idx_transactions_customer_date"</span>
+    )
+    <span class="keyword">print</span>(<span class="string">f"Index creation {'successful' if success else 'failed'}"</span>)
+    
+    <span class="comment"># Example 4: Partition a large table</span>
+    <span class="keyword">print</span>(<span class="string">"\nPartitioning large table..."</span>)
+    success = db_handler.partition_table(
+        table_name=<span class="string">"transactions"</span>,
+        partition_column=<span class="string">"purchase_date"</span>,
+        partition_type=<span class="string">"range"</span>,
+        partitions=[<span class="string">"'2023-01-01'"</span>, <span class="string">"'2023-04-01'"</span>, <span class="string">"'2023-07-01'"</span>, <span class="string">"'2023-10-01'"</span>, <span class="string">"'2024-01-01'"</span>]
+    )
+    <span class="keyword">print</span>(<span class="string">f"Table partitioning {'successful' if success else 'failed'}"</span>)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="component">
+                    <div class="component-header">
+                        <h4 class="component-title">Prompting Optimization</h4>
+                    </div>
+                    
+                    <div class="component-content">
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-check-circle success-icon"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <p class="component-item-content">
+                                In healthcare, a clinical research system uses optimized prompting to extract meaningful insights from complex patient data. When researchers query about treatment outcomes across diverse patient populations, the system generates precise SQL queries through carefully crafted prompts that account for medical terminology, data relationships, and analytical requirements.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-times-circle danger-icon"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <p class="component-item-content">
+                                Addresses challenges in natural language to SQL translation, particularly for complex domain-specific queries. Optimized prompting ensures that generated queries accurately reflect user intent, handle domain-specific terminology correctly, and produce efficient SQL that returns the desired results.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <p class="component-item-content">
+                                Without prompting optimization, healthcare researchers would receive inaccurate or inefficient SQL queries, leading to incorrect analytical results. This could result in flawed clinical insights, potentially affecting treatment decisions and patient outcomes. Researchers would waste significant time manually correcting queries.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-tools info-icon"></i>
+                                <span>Predefined or Custom</span>
+                                <span class="tag-badge tag-custom">Custom</span>
+                            </div>
+                            <p class="component-item-content">
+                                Prompting optimization requires custom implementation based on specific domain knowledge, data schemas, and query patterns. The optimization strategies need to be tailored to the organization's data structure and analytical requirements.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-link info-icon"></i>
+                                <span>Relationship Keyword</span>
+                                <span class="tag-badge tag-control">Control</span>
+                            </div>
+                            <p class="component-item-content">
+                                Control component that ensures accurate translation of natural language to executable queries. Prompting optimization provides mechanisms to guide the language model toward generating correct and efficient SQL.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-brain info-icon"></i>
+                                <span>In-depth Technical Insight</span>
+                            </div>
+                            <p class="component-item-content">
+                                Prompting optimization involves techniques like few-shot learning, instruction tuning, and prompt engineering to improve the quality of generated SQL queries. This includes providing schema context, example queries, and domain-specific knowledge to guide the language model.
+                            </p>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-title">Prompting Optimization Implementation</span>
+                                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                <pre><code><span class="keyword">from</span> langchain <span class="keyword">import</span> LLMChain, PromptTemplate
+<span class="keyword">from</span> langchain.chat_models <span class="keyword">import</span> ChatOpenAI
+<span class="keyword">from</span> langchain.schema <span class="keyword">import</span> HumanMessage, AIMessage, SystemMessage
+<span class="keyword">from</span> typing <span class="keyword">import</span> List, Dict, Optional, Union
+<span class="keyword">import</span> json
+<span class="keyword">import</span> re
+
+<span class="keyword">class</span> <span class="function">SQLOptimizedPromptGenerator</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>, model_name: str = <span class="string">"gpt-4"</span>, temperature: float = <span class="number">0.1</span>):
+        <span class="string">"""
+        Initialize the SQL prompt generator.
+        
+        Args:
+            model_name: Name of the language model to use
+            temperature: Temperature parameter for the model
+        """</span>
+        <span class="variable">self</span>.llm = ChatOpenAI(model_name=model_name, temperature=temperature)
+        <span class="variable">self</span>.schema_cache = {}
+    
+    <span class="keyword">def</span> <span class="function">generate_sql_prompt</span>(<span class="variable">self</span>, question: str, schema_info: Dict, 
+                       examples: Optional[List[Dict]] = <span class="keyword">None</span>,
+                       domain_knowledge: Optional[str] = <span class="keyword">None</span>) -> str:
+        <span class="string">"""
+        Generate an optimized prompt for SQL generation.
+        
+        Args:
+            question: Natural language question
+            schema_info: Database schema information
+            examples: Few-shot examples (optional)
+            domain_knowledge: Domain-specific knowledge (optional)
+            
+        Returns:
+            Optimized prompt for SQL generation
+        """</span>
+        <span class="comment"># Create schema context</span>
+        schema_context = <span class="variable">self</span>._format_schema_context(schema_info)
+        
+        <span class="comment"># Create examples section</span>
+        examples_section = <span class="string">""</span>
+        <span class="keyword">if</span> examples:
+            examples_section = <span class="string">"\n\nHere are some examples of questions and their corresponding SQL queries:\n\n"</span>
+            <span class="keyword">for</span> example <span class="keyword">in</span> examples:
+                examples_section += <span class="string">f"Question: {example['question']}\n"</span>
+                examples_section += <span class="string">f"SQL: {example['sql']}\n\n"</span>
+        
+        <span class="comment"># Create domain knowledge section</span>
+        domain_section = <span class="string">""</span>
+        <span class="keyword">if</span> domain_knowledge:
+            domain_section = <span class="string">f"\n\nDomain Knowledge:\n{domain_knowledge}\n"</span>
+        
+        <span class="comment"># Create the full prompt</span>
+        prompt = <span class="string">f"""You are an expert SQL developer with deep knowledge of database design and optimization.
+Your task is to convert natural language questions into accurate and efficient SQL queries.
+
+Database Schema:
+{schema_context}{examples_section}{domain_section}
+
+Instructions:
+1. Generate only the SQL query without any additional text or explanations.
+2. Use proper SQL syntax that is compatible with PostgreSQL.
+3. Ensure the query is efficient and uses appropriate indexes where possible.
+4. Handle NULL values appropriately.
+5. Use table aliases to make the query more readable.
+6. Include comments in the SQL to explain complex logic.
+
+Question: {question}
+
+SQL:
+"""</span>
+        
+        <span class="keyword">return</span> prompt
+    
+    <span class="keyword">def</span> <span class="function">generate_sql</span>(<span class="variable">self</span>, question: str, schema_info: Dict, 
+                 examples: Optional[List[Dict]] = <span class="keyword">None</span>,
+                 domain_knowledge: Optional[str] = <span class="keyword">None</span>) -> str:
+        <span class="string">"""
+        Generate SQL from a natural language question.
+        
+        Args:
+            question: Natural language question
+            schema_info: Database schema information
+            examples: Few-shot examples (optional)
+            domain_knowledge: Domain-specific knowledge (optional)
+            
+        Returns:
+            Generated SQL query
+        """</span>
+        <span class="comment"># Generate the optimized prompt</span>
+        prompt = <span class="variable">self</span>.generate_sql_prompt(question, schema_info, examples, domain_knowledge)
+        
+        <span class="comment"># Generate SQL using the language model</span>
+        messages = [HumanMessage(content=prompt)]
+        response = <span class="variable">self</span>.llm(messages)
+        
+        <span class="comment"># Extract SQL from the response</span>
+        sql = <span class="variable">self</span>._extract_sql(response.content)
+        
+        <span class="keyword">return</span> sql
+    
+    <span class="keyword">def</span> <span class="function">_format_schema_context</span>(<span class="variable">self</span>, schema_info: Dict) -> str:
+        <span class="string">"""
+        Format schema information for the prompt.
+        
+        Args:
+            schema_info: Database schema information
+            
+        Returns:
+            Formatted schema context
+        """</span>
+        schema_context = <span class="string">""</span>
+        
+        <span class="keyword">for</span> table_name, columns <span class="keyword">in</span> schema_info.items():
+            schema_context += <span class="string">f"Table: {table_name}\n"</span>
+            schema_context += <span class="string">"Columns:\n"</span>
+            
+            <span class="keyword">for</span> column <span class="keyword">in</span> columns:
+                <span class="keyword">if</span> isinstance(column, dict):
+                    column_name = column.get(<span class="string">'name'</span>, <span class="string">''</span>)
+                    column_type = column.get(<span class="string">'type'</span>, <span class="string">''</span>)
+                    description = column.get(<span class="string">'description'</span>, <span class="string">''</span>)
+                    schema_context += <span class="string">f"  - {column_name} ({column_type}): {description}\n"</span>
+                <span class="keyword">else</span>:
+                    schema_context += <span class="string">f"  - {column}\n"</span>
+            
+            <span class="comment"># Add foreign key relationships if available</span>
+            <span class="keyword">if</span> <span class="string">'foreign_keys'</span> <span class="keyword">in</span> schema_info <span class="keyword">and</span> table_name <span class="keyword">in</span> schema_info[<span class="string">'foreign_keys'</span>]:
+                schema_context += <span class="string">"Foreign Keys:\n"</span>
+                <span class="keyword">for</span> fk <span class="keyword">in</span> schema_info[<span class="string">'foreign_keys'</span>][table_name]:
+                    schema_context += <span class="string">f"  - {fk['from_column']} references {fk['to_table']}({fk['to_column']})\n"</span>
+            
+            schema_context += <span class="string">"\n"</span>
+        
+        <span class="keyword">return</span> schema_context
+    
+    <span class="keyword">def</span> <span class="function">_extract_sql</span>(<span class="variable">self</span>, text: str) -> str:
+        <span class="string">"""
+        Extract SQL from the model response.
+        
+        Args:
+            text: Model response text
+            
+        Returns:
+            Extracted SQL query
+        """</span>
+        <span class="comment"># Look for SQL code blocks</span>
+        sql_block_match = re.search(<span class="string">r'```sql\s*(.*?)\s*```'</span>, text, re.DOTALL)
+        <span class="keyword">if</span> sql_block_match:
+            <span class="keyword">return</span> sql_block_match.group(<span class="number">1</span>).strip()
+        
+        <span class="comment"># Look for SQL after "SQL:" or similar patterns</span>
+        sql_match = re.search(<span class="string">r'(?:SQL:|SELECT|WITH)\s*(.*?)(?=\n\n[a-zA-Z]|$)'</span>, text, re.DOTALL | re.IGNORECASE)
+        <span class="keyword">if</span> sql_match:
+            <span class="keyword">return</span> sql_match.group(<span class="number">1</span>).strip()
+        
+        <span class="comment"># If no clear SQL pattern is found, return the entire text</span>
+        <span class="keyword">return</span> text.strip()
+    
+    <span class="keyword">def</span> <span class="function">create_few_shot_examples</span>(<span class="variable">self</span>, examples_file: str) -> List[Dict]:
+        <span class="string">"""
+        Load few-shot examples from a file.
+        
+        Args:
+            examples_file: Path to the examples file
+            
+        Returns:
+            List of example dictionaries
+        """</span>
+        <span class="keyword">try</span>:
+            <span class="keyword">with</span> <span class="keyword">open</span>(examples_file, <span class="string">'r'</span>) <span class="keyword">as</span> f:
+                examples_data = json.load(f)
+            
+            <span class="keyword">return</span> examples_data.get(<span class="string">'examples'</span>, [])
+        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:
+            <span class="keyword">print</span>(<span class="string">f"Error loading examples: {str(e)}"</span>)
+            <span class="keyword">return</span> []
+
+<span class="comment"># Example usage in healthcare context</span>
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    <span class="comment"># Initialize the prompt generator</span>
+    prompt_generator = SQLOptimizedPromptGenerator()
+    
+    <span class="comment"># Define database schema for healthcare</span>
+    schema_info = {
+        <span class="string">'patients'</span>: [
+            {<span class="string">'name'</span>: <span class="string">'patient_id'</span>, <span class="string">'type'</span>: <span class="string">'INTEGER'</span>, <span class="string">'description'</span>: <span class="string">'Unique identifier for the patient'</span>},
+            {<span class="string">'name'</span>: <span class="string">'name'</span>, <span class="string">'type'</span>: <span class="string">'VARCHAR(100)'</span>, <span class="string">'description'</span>: <span class="string">'Patient name'</span>},
+            {<span class="string">'name'</span>: <span class="string">'date_of_birth'</span>, <span class="string">'type'</span>: <span class="string">'DATE'</span>, <span class="string">'description'</span>: <span class="string">'Patient date of birth'</span>},
+            {<span class="string">'name'</span>: <span class="string">'gender'</span>, <span class="string">'type'</span>: <span class="string">'VARCHAR(10)'</span>, <span class="string">'description'</span>: <span class="string">'Patient gender'</span>}
+        ],
+        <span class="string">'diagnoses'</span>: [
+            {<span class="string">'name'</span>: <span class="string">'diagnosis_id'</span>, <span class="string">'type'</span>: <span class="string">'INTEGER'</span>, <span class="string">'description'</span>: <span class="string">'Unique identifier for the diagnosis'</span>},
+            {<span class="string">'name'</span>: <span class="string">'patient_id'</span>, <span class="string">'type'</span>: <span class="string">'INTEGER'</span>, <span class="string">'description'</span>: <span class="string">'Reference to patients table'</span>},
+            {<span class="string">'name'</span>: <span class="string">'diagnosis_code'</span>, <span class="string">'type'</span>: <span class="string">'VARCHAR(20)'</span>, <span class="string">'description'</span>: <span class="string">'ICD-10 diagnosis code'</span>},
+            {<span class="string">'name'</span>: <span class="string">'diagnosis_date'</span>, <span class="string">'type'</span>: <span class="string">'DATE'</span>, <span class="string">'description'</span>: <span class="string">'Date of diagnosis'</span>}
+        ],
+        <span class="string">'treatments'</span>: [
+            {<span class="string">'name'</span>: <span class="string">'treatment_id'</span>, <span class="string">'type'</span>: <span class="string">'INTEGER'</span>, <span class="string">'description'</span>: <span class="string">'Unique identifier for the treatment'</span>},
+            {<span class="string">'name'</span>: <span class="string">'patient_id'</span>, <span class="string">'type'</span>: <span class="string">'INTEGER'</span>, <span class="string">'description'</span>: <span class="string">'Reference to patients table'</span>},
+            {<span class="string">'name'</span>: <span class="string">'treatment_type'</span>, <span class="string">'type'</span>: <span class="string">'VARCHAR(50)'</span>, <span class="string">'description'</span>: <span class="string">'Type of treatment (medication, surgery, therapy, etc.)'</span>},
+            {<span class="string">'name'</span>: <span class="string">'treatment_date'</span>, <span class="string">'type'</span>: <span class="string">'DATE'</span>, <span class="string">'description'</span>: <span class="string">'Date of treatment'</span>},
+            {<span class="string">'name'</span>: <span class="string">'outcome'</span>, <span class="string">'type'</span>: <span class="string">'VARCHAR(100)'</span>, <span class="string">'description'</span>: <span class="string">'Treatment outcome (successful, partial, failed)'</span>}
+        ],
+        <span class="string">'foreign_keys'</span>: {
+            <span class="string">'diagnoses'</span>: [
+                {<span class="string">'from_column'</span>: <span class="string">'patient_id'</span>, <span class="string">'to_table'</span>: <span class="string">'patients'</span>, <span class="string">'to_column'</span>: <span class="string">'patient_id'</span>}
+            ],
+            <span class="string">'treatments'</span>: [
+                {<span class="string">'from_column'</span>: <span class="string">'patient_id'</span>, <span class="string">'to_table'</span>: <span class="string">'patients'</span>, <span class="string">'to_column'</span>: <span class="string">'patient_id'</span>}
+            ]
+        }
+    }
+    
+    <span class="comment"># Define domain-specific knowledge</span>
+    domain_knowledge = <span class="string">"""
+    Healthcare Domain Knowledge:
+    - ICD-10 codes are used to classify diseases and health problems.
+    - Treatment outcomes are categorized as 'successful', 'partial', or 'failed'.
+    - Patient age is calculated from date_of_birth.
+    - Common treatment types include 'medication', 'surgery', 'therapy', and 'observation'.
+    """</span>
+    
+    <span class="comment"># Define few-shot examples</span>
+    examples = [
+        {
+            <span class="string">'question'</span>: <span class="string">"How many patients were diagnosed with diabetes (ICD-10 code E11) in 2023?"</span>,
+            <span class="string">'sql'</span>: <span class="string">"""
+            SELECT COUNT(DISTINCT d.patient_id) as patient_count
+            FROM diagnoses d
+            WHERE d.diagnosis_code = 'E11'
+            AND EXTRACT(YEAR FROM d.diagnosis_date) = 2023;
+            """</span>
+        },
+        {
+            <span class="string">'question'</span>: <span class="string">"What is the average age of patients who received surgery treatment?"</span>,
+            <span class="string">'sql'</span>: <span class="string">"""
+            SELECT AVG(EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.date_of_birth))) as average_age
+            FROM patients p
+            JOIN treatments t ON p.patient_id = t.patient_id
+            WHERE t.treatment_type = 'surgery';
+            """</span>
+        },
+        {
+            <span class="string">'question'</span>: <span class="string">"Show the success rate of different treatment types for patients over 65 years old."</span>,
+            <span class="string">'sql'</span>: <span class="string">"""
+            SELECT 
+                t.treatment_type,
+                COUNT(*) as total_treatments,
+                SUM(CASE WHEN t.outcome = 'successful' THEN 1 ELSE 0 END) as successful_treatments,
+                ROUND(SUM(CASE WHEN t.outcome = 'successful' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) as success_rate
+            FROM treatments t
+            JOIN patients p ON t.patient_id = p.patient_id
+            WHERE EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.date_of_birth)) > 65
+            GROUP BY t.treatment_type
+            ORDER BY success_rate DESC;
+            """</span>
+        }
+    ]
+    
+    <span class="comment"># Generate SQL for a complex healthcare question</span>
+    question = <span class="string">"For patients diagnosed with hypertension (ICD-10 code I10) in the last year, what percentage had successful treatment outcomes, and how does this compare to the overall success rate for all treatments?"</span>
+    
+    <span class="comment"># Generate SQL using optimized prompting</span>
+    generated_sql = prompt_generator.generate_sql(
+        question=question,
+        schema_info=schema_info,
+        examples=examples,
+        domain_knowledge=domain_knowledge
+    )
+    
+    <span class="keyword">print</span>(<span class="string">f"Question: {question}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"\nGenerated SQL:\n{generated_sql}"</span>)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <div class="subsection-header">
+                    <i class="fas fa-project-diagram info-icon"></i>
+                    <h3 class="subsection-title">Graph Database Q&A</h3>
+                </div>
+                
+                <div class="component">
+                    <div class="component-header">
+                        <h4 class="component-title">Semantic Layers</h4>
+                    </div>
+                    
+                    <div class="component-content">
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-check-circle success-icon"></i>
+                                <span>Business Use Case</span>
+                            </div>
+                            <p class="component-item-content">
+                                In logistics, a supply chain management system uses semantic layers to provide a unified view of complex relationships between suppliers, warehouses, transportation routes, and products. When logistics managers query about optimal shipping routes or supplier dependencies, the system interprets these business concepts and translates them into the underlying graph database queries.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-times-circle danger-icon"></i>
+                                <span>Problems Solved</span>
+                            </div>
+                            <p class="component-item-content">
+                                Addresses the complexity of querying graph databases by providing a business-friendly abstraction layer. Enables users to ask questions in natural language or business terms without needing to understand the underlying graph structure, query languages, or data model.
+                            </p>
+                        </div>
+                        
+                        <div class="component-item">
+                            <div class="component-item-title">
+                                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                                <span>Impact if Absent</span>
+                            </div>
+                            <p class="component-item-content">
