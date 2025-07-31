@@ -6,12 +6,6 @@
     <title>Notepad++ Advanced - Web Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         :root {
             --bg-primary: #2d2d30;
             --bg-secondary: #1e1e1e;
@@ -29,8 +23,11 @@
             --tab-active: #1e1e1e;
             --tab-inactive: #2d2d30;
             --tab-hover: #353535;
+            --success: #4ec9b0;
+            --warning: #ce9178;
+            --error: #f48771;
         }
-
+        
         [data-theme="light"] {
             --bg-primary: #ffffff;
             --bg-secondary: #f3f3f3;
@@ -49,15 +46,23 @@
             --tab-inactive: #f3f3f3;
             --tab-hover: #e8e8e8;
         }
-
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             background-color: var(--bg-primary);
             color: var(--text-primary);
             overflow: hidden;
-            user-select: none;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-
+        
         /* Menu Bar */
         .menu-bar {
             background-color: var(--bg-secondary);
@@ -67,8 +72,9 @@
             align-items: center;
             height: 30px;
             font-size: 13px;
+            user-select: none;
         }
-
+        
         .menu-item {
             padding: 0 15px;
             cursor: pointer;
@@ -77,11 +83,11 @@
             height: 100%;
             transition: background-color 0.2s;
         }
-
+        
         .menu-item:hover {
             background-color: var(--bg-tertiary);
         }
-
+        
         .menu-dropdown {
             position: absolute;
             background-color: var(--bg-secondary);
@@ -90,12 +96,13 @@
             display: none;
             z-index: 1000;
             min-width: 200px;
+            border-radius: 4px;
         }
-
+        
         .menu-dropdown.active {
             display: block;
         }
-
+        
         .menu-dropdown-item {
             padding: 8px 20px;
             cursor: pointer;
@@ -104,23 +111,23 @@
             justify-content: space-between;
             transition: background-color 0.2s;
         }
-
+        
         .menu-dropdown-item:hover {
             background-color: var(--accent);
             color: white;
         }
-
+        
         .menu-dropdown-item i {
             margin-right: 8px;
             width: 16px;
         }
-
+        
         .menu-separator {
             height: 1px;
             background-color: var(--border);
             margin: 4px 0;
         }
-
+        
         /* Toolbar */
         .toolbar {
             background-color: var(--bg-tertiary);
@@ -131,7 +138,7 @@
             gap: 10px;
             height: 35px;
         }
-
+        
         .toolbar-btn {
             background: none;
             border: none;
@@ -141,22 +148,25 @@
             border-radius: 3px;
             transition: all 0.2s;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
+        
         .toolbar-btn:hover {
             background-color: var(--bg-secondary);
         }
-
+        
         .toolbar-btn:active {
             transform: scale(0.95);
         }
-
+        
         .toolbar-separator {
             width: 1px;
             height: 20px;
             background-color: var(--border);
         }
-
+        
         /* Tab Bar */
         .tab-bar {
             background-color: var(--bg-secondary);
@@ -166,8 +176,9 @@
             height: 35px;
             overflow-x: auto;
             overflow-y: hidden;
+            user-select: none;
         }
-
+        
         .tab {
             background-color: var(--tab-inactive);
             border: 1px solid var(--border);
@@ -182,42 +193,45 @@
             transition: all 0.2s;
             position: relative;
         }
-
+        
         .tab.active {
             background-color: var(--tab-active);
             border-bottom: 2px solid var(--accent);
         }
-
+        
         .tab:hover:not(.active) {
             background-color: var(--tab-hover);
         }
-
+        
         .tab-name {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             font-size: 13px;
         }
-
+        
         .tab-close {
             cursor: pointer;
             padding: 2px 4px;
             border-radius: 2px;
             transition: background-color 0.2s;
+            font-size: 16px;
+            line-height: 1;
         }
-
+        
         .tab-close:hover {
             background-color: var(--accent);
             color: white;
         }
-
+        
         /* Editor Container */
         .editor-container {
             display: flex;
-            height: calc(100vh - 135px);
+            flex: 1;
             position: relative;
+            overflow: hidden;
         }
-
+        
         /* Line Numbers */
         .line-numbers {
             background-color: var(--bg-secondary);
@@ -230,8 +244,15 @@
             user-select: none;
             overflow: hidden;
             min-width: 50px;
+            height: 100%;
+            overflow-y: hidden;
         }
-
+        
+        .line-number {
+            height: 1.5em;
+            display: block;
+        }
+        
         /* Text Editor */
         .text-editor {
             flex: 1;
@@ -247,12 +268,13 @@
             white-space: pre;
             word-wrap: normal;
             font-family: inherit;
+            height: 100%;
         }
-
+        
         .text-editor::selection {
             background-color: var(--selection);
         }
-
+        
         /* Status Bar */
         .status-bar {
             background-color: var(--bg-secondary);
@@ -264,20 +286,21 @@
             font-size: 12px;
             color: var(--text-secondary);
             justify-content: space-between;
+            user-select: none;
         }
-
+        
         .status-item {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-
+        
         .status-separator {
             width: 1px;
             height: 12px;
             background-color: var(--border);
         }
-
+        
         /* Find/Replace Panel */
         .find-replace-panel {
             position: absolute;
@@ -290,19 +313,21 @@
             display: none;
             z-index: 100;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            border-radius: 0 0 4px 4px;
+            width: 300px;
         }
-
+        
         .find-replace-panel.active {
             display: block;
         }
-
+        
         .find-replace-input {
             display: flex;
             align-items: center;
             gap: 5px;
             margin-bottom: 8px;
         }
-
+        
         .find-replace-input input {
             background-color: var(--bg-primary);
             border: 1px solid var(--border);
@@ -310,25 +335,27 @@
             padding: 4px 8px;
             font-size: 13px;
             width: 200px;
+            border-radius: 3px;
         }
-
+        
         .find-replace-input input:focus {
             outline: none;
             border-color: var(--accent);
         }
-
+        
         .find-replace-input label {
             font-size: 12px;
             color: var(--text-secondary);
             min-width: 60px;
         }
-
+        
         .find-replace-buttons {
             display: flex;
             gap: 5px;
             margin-top: 10px;
+            flex-wrap: wrap;
         }
-
+        
         .find-replace-btn {
             background-color: var(--bg-tertiary);
             border: 1px solid var(--border);
@@ -339,12 +366,17 @@
             border-radius: 3px;
             transition: all 0.2s;
         }
-
+        
         .find-replace-btn:hover {
             background-color: var(--accent);
             color: white;
         }
-
+        
+        .find-replace-btn.active {
+            background-color: var(--accent);
+            color: white;
+        }
+        
         /* Go To Line Dialog */
         .dialog {
             position: fixed;
@@ -358,23 +390,24 @@
             display: none;
             z-index: 1000;
             border-radius: 5px;
+            min-width: 300px;
         }
-
+        
         .dialog.active {
             display: block;
         }
-
+        
         .dialog-header {
             font-size: 16px;
             font-weight: bold;
             margin-bottom: 15px;
             color: var(--text-primary);
         }
-
+        
         .dialog-content {
             margin-bottom: 15px;
         }
-
+        
         .dialog-input {
             width: 100%;
             background-color: var(--bg-primary);
@@ -382,14 +415,15 @@
             color: var(--text-primary);
             padding: 8px;
             font-size: 14px;
+            border-radius: 3px;
         }
-
+        
         .dialog-buttons {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
         }
-
+        
         .dialog-btn {
             padding: 6px 16px;
             border: none;
@@ -398,26 +432,26 @@
             border-radius: 3px;
             transition: all 0.2s;
         }
-
+        
         .dialog-btn-primary {
             background-color: var(--accent);
             color: white;
         }
-
+        
         .dialog-btn-primary:hover {
             background-color: var(--accent-hover);
         }
-
+        
         .dialog-btn-secondary {
             background-color: var(--bg-tertiary);
             color: var(--text-primary);
             border: 1px solid var(--border);
         }
-
+        
         .dialog-btn-secondary:hover {
             background-color: var(--bg-primary);
         }
-
+        
         /* Settings Panel */
         .settings-panel {
             position: fixed;
@@ -431,11 +465,11 @@
             z-index: 1000;
             overflow-y: auto;
         }
-
+        
         .settings-panel.active {
             right: 0;
         }
-
+        
         .settings-header {
             padding: 20px;
             border-bottom: 1px solid var(--border);
@@ -443,46 +477,46 @@
             justify-content: space-between;
             align-items: center;
         }
-
+        
         .settings-title {
             font-size: 18px;
             font-weight: bold;
         }
-
+        
         .settings-close {
             cursor: pointer;
             font-size: 20px;
             color: var(--text-secondary);
             transition: color 0.2s;
         }
-
+        
         .settings-close:hover {
             color: var(--text-primary);
         }
-
+        
         .settings-section {
             padding: 20px;
             border-bottom: 1px solid var(--border);
         }
-
+        
         .settings-section-title {
             font-size: 14px;
             font-weight: bold;
             margin-bottom: 15px;
             color: var(--text-primary);
         }
-
+        
         .settings-option {
             margin-bottom: 15px;
         }
-
+        
         .settings-label {
             display: block;
             font-size: 13px;
             margin-bottom: 5px;
             color: var(--text-secondary);
         }
-
+        
         .settings-select,
         .settings-input {
             width: 100%;
@@ -491,20 +525,21 @@
             color: var(--text-primary);
             padding: 6px 10px;
             font-size: 13px;
+            border-radius: 3px;
         }
-
+        
         .settings-checkbox {
             display: flex;
             align-items: center;
             gap: 8px;
         }
-
+        
         .settings-checkbox input[type="checkbox"] {
             width: 16px;
             height: 16px;
             cursor: pointer;
         }
-
+        
         /* Syntax Highlighting */
         .syntax-html { color: #0000ff; }
         .syntax-tag { color: #800000; }
@@ -525,26 +560,26 @@
         .syntax-js-string { color: #a31515; }
         .syntax-js-comment { color: #008000; font-style: italic; }
         .syntax-js-number { color: #098658; }
-
+        
         /* Scrollbar Styling */
         ::-webkit-scrollbar {
             width: 14px;
             height: 14px;
         }
-
+        
         ::-webkit-scrollbar-track {
             background: var(--bg-secondary);
         }
-
+        
         ::-webkit-scrollbar-thumb {
             background: var(--scrollbar);
             border-radius: 7px;
         }
-
+        
         ::-webkit-scrollbar-thumb:hover {
             background: var(--scrollbar-hover);
         }
-
+        
         /* Context Menu */
         .context-menu {
             position: fixed;
@@ -554,12 +589,13 @@
             display: none;
             z-index: 1001;
             min-width: 180px;
+            border-radius: 4px;
         }
-
+        
         .context-menu.active {
             display: block;
         }
-
+        
         .context-menu-item {
             padding: 8px 20px;
             cursor: pointer;
@@ -569,46 +605,46 @@
             font-size: 13px;
             transition: background-color 0.2s;
         }
-
+        
         .context-menu-item:hover {
             background-color: var(--accent);
             color: white;
         }
-
+        
         .context-menu-separator {
             height: 1px;
             background-color: var(--border);
             margin: 4px 0;
         }
-
+        
         /* Split View */
         .split-view {
             display: flex;
             width: 100%;
             height: 100%;
         }
-
+        
         .split-pane {
             flex: 1;
             position: relative;
             border-right: 1px solid var(--border);
         }
-
+        
         .split-pane:last-child {
             border-right: none;
         }
-
+        
         .split-resizer {
             width: 4px;
             background-color: var(--border);
             cursor: col-resize;
             position: relative;
         }
-
+        
         .split-resizer:hover {
             background-color: var(--accent);
         }
-
+        
         /* Macro Recording Indicator */
         .macro-indicator {
             position: fixed;
@@ -621,18 +657,19 @@
             font-size: 12px;
             display: none;
             animation: pulse 1s infinite;
+            z-index: 1002;
         }
-
+        
         .macro-indicator.active {
             display: block;
         }
-
+        
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.7; }
             100% { opacity: 1; }
         }
-
+        
         /* File Drop Zone */
         .drop-zone {
             position: fixed;
@@ -647,17 +684,17 @@
             justify-content: center;
             z-index: 2000;
         }
-
+        
         .drop-zone.active {
             display: flex;
         }
-
+        
         .drop-zone-text {
             font-size: 24px;
             color: var(--accent);
             text-align: center;
         }
-
+        
         /* Loading Indicator */
         .loading {
             position: fixed;
@@ -665,12 +702,13 @@
             left: 50%;
             transform: translate(-50%, -50%);
             display: none;
+            z-index: 2001;
         }
-
+        
         .loading.active {
             display: block;
         }
-
+        
         .loading-spinner {
             width: 40px;
             height: 40px;
@@ -679,11 +717,11 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
+        
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
+        
         /* Tooltip */
         .tooltip {
             position: absolute;
@@ -697,11 +735,11 @@
             display: none;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-
+        
         .tooltip.active {
             display: block;
         }
-
+        
         /* Notification */
         .notification {
             position: fixed;
@@ -716,12 +754,12 @@
             z-index: 1003;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
-
+        
         .notification.active {
             display: block;
             animation: slideUp 0.3s ease;
         }
-
+        
         @keyframes slideUp {
             from {
                 transform: translateX(-50%) translateY(20px);
@@ -732,7 +770,7 @@
                 opacity: 1;
             }
         }
-
+        
         /* Plugin Manager */
         .plugin-manager {
             position: fixed;
@@ -749,11 +787,11 @@
             border-radius: 5px;
             overflow: hidden;
         }
-
+        
         .plugin-manager.active {
             display: block;
         }
-
+        
         .plugin-manager-header {
             padding: 15px 20px;
             border-bottom: 1px solid var(--border);
@@ -761,24 +799,24 @@
             justify-content: space-between;
             align-items: center;
         }
-
+        
         .plugin-manager-title {
             font-size: 16px;
             font-weight: bold;
         }
-
+        
         .plugin-manager-close {
             cursor: pointer;
             font-size: 20px;
             color: var(--text-secondary);
         }
-
+        
         .plugin-manager-content {
             height: calc(100% - 120px);
             overflow-y: auto;
             padding: 20px;
         }
-
+        
         .plugin-item {
             background-color: var(--bg-primary);
             border: 1px solid var(--border);
@@ -786,19 +824,19 @@
             margin-bottom: 10px;
             border-radius: 3px;
         }
-
+        
         .plugin-item-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
         }
-
+        
         .plugin-name {
             font-weight: bold;
             font-size: 14px;
         }
-
+        
         .plugin-status {
             font-size: 12px;
             padding: 2px 8px;
@@ -806,18 +844,18 @@
             background-color: var(--accent);
             color: white;
         }
-
+        
         .plugin-description {
             font-size: 12px;
             color: var(--text-secondary);
             margin-bottom: 8px;
         }
-
+        
         .plugin-actions {
             display: flex;
             gap: 10px;
         }
-
+        
         .plugin-btn {
             padding: 4px 12px;
             border: none;
@@ -826,26 +864,26 @@
             border-radius: 3px;
             transition: all 0.2s;
         }
-
+        
         .plugin-btn-primary {
             background-color: var(--accent);
             color: white;
         }
-
+        
         .plugin-btn-primary:hover {
             background-color: var(--accent-hover);
         }
-
+        
         .plugin-btn-secondary {
             background-color: var(--bg-tertiary);
             color: var(--text-primary);
             border: 1px solid var(--border);
         }
-
+        
         .plugin-btn-secondary:hover {
             background-color: var(--bg-primary);
         }
-
+        
         /* Encoding Selector */
         .encoding-selector {
             position: fixed;
@@ -859,34 +897,35 @@
             z-index: 1005;
             box-shadow: 0 4px 16px rgba(0,0,0,0.5);
             border-radius: 5px;
+            min-width: 300px;
         }
-
+        
         .encoding-selector.active {
             display: block;
         }
-
+        
         .encoding-list {
             max-height: 300px;
             overflow-y: auto;
             margin-top: 15px;
         }
-
+        
         .encoding-item {
             padding: 8px 15px;
             cursor: pointer;
             transition: background-color 0.2s;
             border-radius: 3px;
         }
-
+        
         .encoding-item:hover {
             background-color: var(--bg-tertiary);
         }
-
+        
         .encoding-item.selected {
             background-color: var(--accent);
             color: white;
         }
-
+        
         /* Minimap */
         .minimap {
             position: fixed;
@@ -901,11 +940,11 @@
             overflow: hidden;
             border-radius: 3px;
         }
-
+        
         .minimap.active {
             display: block;
         }
-
+        
         .minimap-content {
             font-size: 2px;
             line-height: 1.2;
@@ -916,32 +955,208 @@
             width: 1500px;
             height: 3000px;
         }
-
+        
         .minimap-viewport {
             position: absolute;
             background-color: rgba(0, 122, 204, 0.3);
             border: 1px solid var(--accent);
             pointer-events: none;
         }
-/* Line Numbers */
-.line-numbers {
-    background-color: var(--bg-secondary);
-    border-right: 1px solid var(--border);
-    padding: 10px 10px 10px 5px;
-    text-align: right;
-    color: var(--line-number);
-    font-size: 14px;
-    line-height: 1.5;
-    user-select: none;
-    overflow: hidden;
-    min-width: 50px;
-    display: flex;
-    flex-direction: column;
-}
-
-.line-numbers div {
-    height: 1.5em; /* Match line-height */
-}
+        
+        /* Shortcut Mapper */
+        .shortcut-mapper {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            width: 700px;
+            height: 500px;
+            display: none;
+            z-index: 1006;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .shortcut-mapper.active {
+            display: block;
+        }
+        
+        .shortcut-mapper-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .shortcut-mapper-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .shortcut-mapper-close {
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-secondary);
+        }
+        
+        .shortcut-mapper-content {
+            height: calc(100% - 60px);
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .shortcut-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .shortcut-table th,
+        .shortcut-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .shortcut-table th {
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+        
+        .shortcut-table td {
+            color: var(--text-secondary);
+        }
+        
+        .shortcut-key {
+            font-family: monospace;
+            background-color: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: var(--text-primary);
+        }
+        
+        /* File Explorer */
+        .file-explorer {
+            position: fixed;
+            top: 65px;
+            left: 0;
+            width: 250px;
+            height: calc(100% - 90px);
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: none;
+            z-index: 100;
+            overflow-y: auto;
+        }
+        
+        .file-explorer.active {
+            display: block;
+        }
+        
+        .file-explorer-header {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border);
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .file-explorer-item {
+            padding: 8px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            transition: background-color 0.2s;
+        }
+        
+        .file-explorer-item:hover {
+            background-color: var(--bg-tertiary);
+        }
+        
+        .file-explorer-item.active {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .file-explorer-item i {
+            width: 16px;
+        }
+        
+        .file-explorer-folder {
+            font-weight: bold;
+        }
+        
+        /* Terminal */
+        .terminal {
+            position: fixed;
+            bottom: 25px;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            display: none;
+            z-index: 100;
+        }
+        
+        .terminal.active {
+            display: block;
+        }
+        
+        .terminal-header {
+            padding: 5px 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .terminal-title {
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .terminal-close {
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .terminal-content {
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            height: calc(100% - 30px);
+            overflow-y: auto;
+        }
+        
+        .terminal-line {
+            margin-bottom: 2px;
+        }
+        
+        .terminal-input {
+            display: flex;
+            align-items: center;
+        }
+        
+        .terminal-prompt {
+            margin-right: 5px;
+            color: var(--accent);
+        }
+        
+        .terminal-command {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: inherit;
+            outline: none;
+            flex: 1;
+        }
     </style>
 </head>
 <body data-theme="dark">
@@ -974,11 +1189,14 @@
         <div class="menu-item" data-menu="plugins">
             Plugins <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
         </div>
+        <div class="menu-item" data-menu="run">
+            Run <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
+        </div>
         <div class="menu-item" data-menu="help">
             Help <i class="fas fa-caret-down" style="margin-left: 5px;"></i>
         </div>
     </div>
-
+    
     <!-- File Menu Dropdown -->
     <div class="menu-dropdown" id="file-menu">
         <div class="menu-dropdown-item" data-action="new">
@@ -1016,7 +1234,7 @@
             <i class="fas fa-sign-out-alt"></i> Exit
         </div>
     </div>
-
+    
     <!-- Edit Menu Dropdown -->
     <div class="menu-dropdown" id="edit-menu">
         <div class="menu-dropdown-item" data-action="undo">
@@ -1065,8 +1283,15 @@
         <div class="menu-dropdown-item" data-action="toggle-block-comment">
             <i class="fas fa-comment-slash"></i> Toggle Block Comment <span>Ctrl+Shift+/</span>
         </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="indent">
+            <i class="fas fa-indent"></i> Indent <span>Tab</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="unindent">
+            <i class="fas fa-outdent"></i> Unindent <span>Shift+Tab</span>
+        </div>
     </div>
-
+    
     <!-- Search Menu Dropdown -->
     <div class="menu-dropdown" id="search-menu">
         <div class="menu-dropdown-item" data-action="find">
@@ -1096,7 +1321,7 @@
             <i class="fas fa-arrow-up"></i> Find Previous <span>Shift+F3</span>
         </div>
     </div>
-
+    
     <!-- View Menu Dropdown -->
     <div class="menu-dropdown" id="view-menu">
         <div class="menu-dropdown-item" data-action="toggle-word-wrap">
@@ -1122,11 +1347,18 @@
         <div class="menu-dropdown-item" data-action="split-view">
             <i class="fas fa-columns"></i> Split View
         </div>
+        <div class="menu-dropdown-item" data-action="toggle-file-explorer">
+            <i class="fas fa-folder-tree"></i> File Explorer
+        </div>
+        <div class="menu-dropdown-item" data-action="toggle-terminal">
+            <i class="fas fa-terminal"></i> Terminal
+        </div>
+        <div class="menu-separator"></div>
         <div class="menu-dropdown-item" data-action="toggle-fullscreen">
             <i class="fas fa-expand"></i> Fullscreen <span>F11</span>
         </div>
     </div>
-
+    
     <!-- Encoding Menu Dropdown -->
     <div class="menu-dropdown" id="encoding-menu">
         <div class="menu-dropdown-item" data-action="convert-utf8">
@@ -1143,7 +1375,7 @@
             <i class="fas fa-cog"></i> Encoding Settings
         </div>
     </div>
-
+    
     <!-- Language Menu Dropdown -->
     <div class="menu-dropdown" id="language-menu">
         <div class="menu-dropdown-item" data-language="normal">
@@ -1205,7 +1437,7 @@
             <i class="fas fa-code"></i> YAML
         </div>
     </div>
-
+    
     <!-- Settings Menu Dropdown -->
     <div class="menu-dropdown" id="settings-menu">
         <div class="menu-dropdown-item" data-action="preferences">
@@ -1225,7 +1457,7 @@
             <i class="fas fa-file-export"></i> Export Settings
         </div>
     </div>
-
+    
     <!-- Macros Menu Dropdown -->
     <div class="menu-dropdown" id="macros-menu">
         <div class="menu-dropdown-item" data-action="start-recording">
@@ -1248,7 +1480,7 @@
             <i class="fas fa-edit"></i> Edit Macros
         </div>
     </div>
-
+    
     <!-- Plugins Menu Dropdown -->
     <div class="menu-dropdown" id="plugins-menu">
         <div class="menu-dropdown-item" data-action="plugin-admin">
@@ -1262,7 +1494,24 @@
             <i class="fas fa-cogs"></i> Plugin Manager
         </div>
     </div>
-
+    
+    <!-- Run Menu Dropdown -->
+    <div class="menu-dropdown" id="run-menu">
+        <div class="menu-dropdown-item" data-action="run">
+            <i class="fas fa-play"></i> Run <span>F5</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="compile">
+            <i class="fas fa-cog"></i> Compile <span>Ctrl+F7</span>
+        </div>
+        <div class="menu-dropdown-item" data-action="build">
+            <i class="fas fa-hammer"></i> Build <span>F7</span>
+        </div>
+        <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="run-in-browser">
+            <i class="fas fa-globe"></i> Run in Browser <span>Ctrl+Shift+B</span>
+        </div>
+    </div>
+    
     <!-- Help Menu Dropdown -->
     <div class="menu-dropdown" id="help-menu">
         <div class="menu-dropdown-item" data-action="help-contents">
@@ -1272,11 +1521,14 @@
             <i class="fas fa-list"></i> Command List
         </div>
         <div class="menu-separator"></div>
+        <div class="menu-dropdown-item" data-action="check-updates">
+            <i class="fas fa-sync"></i> Check for Updates
+        </div>
         <div class="menu-dropdown-item" data-action="about">
             <i class="fas fa-info-circle"></i> About
         </div>
     </div>
-
+    
     <!-- Toolbar -->
     <div class="toolbar">
         <button class="toolbar-btn" data-action="new" title="New File">
@@ -1329,27 +1581,36 @@
         <button class="toolbar-btn" data-action="toggle-fullscreen" title="Fullscreen">
             <i class="fas fa-expand"></i>
         </button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn" data-action="run" title="Run">
+            <i class="fas fa-play"></i>
+        </button>
+        <button class="toolbar-btn" data-action="toggle-terminal" title="Toggle Terminal">
+            <i class="fas fa-terminal"></i>
+        </button>
     </div>
-
+    
     <!-- Tab Bar -->
     <div class="tab-bar" id="tab-bar">
         <!-- Tabs will be dynamically added here -->
     </div>
-
+    
     <!-- Editor Container -->
     <div class="editor-container" id="editor-container">
-        <div class="line-numbers" id="line-numbers">1</div>
+        <div class="line-numbers" id="line-numbers">
+            <div class="line-number">1</div>
+        </div>
         <textarea class="text-editor" id="text-editor" spellcheck="false"></textarea>
     </div>
-
+    
     <!-- Find/Replace Panel -->
     <div class="find-replace-panel" id="find-replace-panel">
         <div class="find-replace-input">
             <label>Find:</label>
             <input type="text" id="find-input" placeholder="Search for...">
-            <button class="find-replace-btn" id="find-case-sensitive">Aa</button>
-            <button class="find-replace-btn" id="find-whole-word">W</button>
-            <button class="find-replace-btn" id="find-regex">.*</button>
+            <button class="find-replace-btn" id="find-case-sensitive" title="Case Sensitive">Aa</button>
+            <button class="find-replace-btn" id="find-whole-word" title="Whole Word">W</button>
+            <button class="find-replace-btn" id="find-regex" title="Regular Expression">.*</button>
         </div>
         <div class="find-replace-input">
             <label>Replace:</label>
@@ -1363,7 +1624,7 @@
             <button class="find-replace-btn" id="close-find">Close</button>
         </div>
     </div>
-
+    
     <!-- Status Bar -->
     <div class="status-bar">
         <div class="status-item">
@@ -1379,7 +1640,7 @@
             <span id="zoom-level">100%</span>
         </div>
     </div>
-
+    
     <!-- Go To Line Dialog -->
     <div class="dialog" id="goto-dialog">
         <div class="dialog-header">Go to Line</div>
@@ -1391,7 +1652,7 @@
             <button class="dialog-btn dialog-btn-primary" id="goto-ok">Go</button>
         </div>
     </div>
-
+    
     <!-- Settings Panel -->
     <div class="settings-panel" id="settings-panel">
         <div class="settings-header">
@@ -1527,7 +1788,7 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Context Menu -->
     <div class="context-menu" id="context-menu">
         <div class="context-menu-item" data-action="cut">
@@ -1551,7 +1812,7 @@
             <i class="fas fa-crosshairs"></i> Go to Line
         </div>
     </div>
-
+    
     <!-- Plugin Manager -->
     <div class="plugin-manager" id="plugin-manager">
         <div class="plugin-manager-header">
@@ -1564,7 +1825,7 @@
             <!-- Plugin items will be dynamically added here -->
         </div>
     </div>
-
+    
     <!-- Encoding Selector -->
     <div class="dialog" id="encoding-selector">
         <div class="dialog-header">Select Encoding</div>
@@ -1589,18 +1850,71 @@
             <button class="dialog-btn dialog-btn-primary" id="encoding-ok">OK</button>
         </div>
     </div>
-
+    
+    <!-- Shortcut Mapper -->
+    <div class="shortcut-mapper" id="shortcut-mapper">
+        <div class="shortcut-mapper-header">
+            <div class="shortcut-mapper-title">Shortcut Mapper</div>
+            <div class="shortcut-mapper-close" id="shortcut-mapper-close">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+        <div class="shortcut-mapper-content">
+            <table class="shortcut-table">
+                <thead>
+                    <tr>
+                        <th>Command</th>
+                        <th>Shortcut</th>
+                    </tr>
+                </thead>
+                <tbody id="shortcut-list">
+                    <!-- Shortcuts will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
     <!-- Minimap -->
     <div class="minimap" id="minimap">
         <div class="minimap-content" id="minimap-content"></div>
         <div class="minimap-viewport" id="minimap-viewport"></div>
     </div>
-
+    
     <!-- Macro Recording Indicator -->
     <div class="macro-indicator" id="macro-indicator">
         <i class="fas fa-circle" style="margin-right: 5px;"></i> Recording Macro
     </div>
-
+    
+    <!-- File Explorer -->
+    <div class="file-explorer" id="file-explorer">
+        <div class="file-explorer-header">
+            <i class="fas fa-folder-tree"></i> File Explorer
+        </div>
+        <div id="file-explorer-content">
+            <!-- File explorer items will be dynamically added here -->
+        </div>
+    </div>
+    
+    <!-- Terminal -->
+    <div class="terminal" id="terminal">
+        <div class="terminal-header">
+            <div class="terminal-title">
+                <i class="fas fa-terminal"></i> Terminal
+            </div>
+            <div class="terminal-close" id="terminal-close">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+        <div class="terminal-content" id="terminal-content">
+            <div class="terminal-line">Welcome to Notepad++ Terminal</div>
+            <div class="terminal-line">Type 'help' for available commands</div>
+            <div class="terminal-input">
+                <span class="terminal-prompt">$</span>
+                <input type="text" class="terminal-command" id="terminal-command" placeholder="Enter command...">
+            </div>
+        </div>
+    </div>
+    
     <!-- Drop Zone -->
     <div class="drop-zone" id="drop-zone">
         <div class="drop-zone-text">
@@ -1608,15 +1922,15 @@
             Drop files here to open
         </div>
     </div>
-
+    
     <!-- Loading Indicator -->
     <div class="loading" id="loading">
         <div class="loading-spinner"></div>
     </div>
-
+    
     <!-- Tooltip -->
     <div class="tooltip" id="tooltip"></div>
-
+    
     <!-- Notification -->
     <div class="notification" id="notification"></div>
 
@@ -1647,7 +1961,44 @@
             enableMacros: true,
             enableRegex: true
         };
-
+        
+        // Keyboard shortcuts mapping
+        const shortcuts = {
+            'new': { key: 'n', ctrl: true, meta: true },
+            'open': { key: 'o', ctrl: true, meta: true },
+            'save': { key: 's', ctrl: true, meta: true },
+            'save-as': { key: 's', ctrl: true, alt: true, meta: true },
+            'close': { key: 'w', ctrl: true, meta: true },
+            'undo': { key: 'z', ctrl: true, meta: true },
+            'redo': { key: 'y', ctrl: true, meta: true },
+            'cut': { key: 'x', ctrl: true, meta: true },
+            'copy': { key: 'c', ctrl: true, meta: true },
+            'paste': { key: 'v', ctrl: true, meta: true },
+            'select-all': { key: 'a', ctrl: true, meta: true },
+            'select-line': { key: 'l', ctrl: true, meta: true },
+            'duplicate-line': { key: 'd', ctrl: true, meta: true },
+            'find': { key: 'f', ctrl: true, meta: true },
+            'replace': { key: 'h', ctrl: true, meta: true },
+            'go-to-line': { key: 'g', ctrl: true, meta: true },
+            'go-to-bracket': { key: 'b', ctrl: true, meta: true },
+            'toggle-comment': { key: '/', ctrl: true, meta: true },
+            'toggle-block-comment': { key: '/', ctrl: true, shift: true, meta: true },
+            'zoom-in': { key: '=', ctrl: true, meta: true },
+            'zoom-out': { key: '-', ctrl: true, meta: true },
+            'reset-zoom': { key: '0', ctrl: true, meta: true },
+            'run': { key: 'F5' },
+            'compile': { key: 'F7', ctrl: true, meta: true },
+            'build': { key: 'F7' },
+            'help-contents': { key: 'F1' },
+            'next-result': { key: 'F3' },
+            'previous-result': { key: 'F3', shift: true },
+            'toggle-fullscreen': { key: 'F11' },
+            'move-line-up': { key: 'ArrowUp', alt: true },
+            'move-line-down': { key: 'ArrowDown', alt: true },
+            'indent': { key: 'Tab' },
+            'unindent': { key: 'Tab', shift: true }
+        };
+        
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             initializeEditor();
@@ -1655,8 +2006,42 @@
             loadSettings();
             createNewTab();
             updateUI();
+            
+            // Initialize with a welcome message
+            const welcomeText = `Welcome to Notepad++ Advanced - Web Edition!
+This is a powerful text editor inspired by Notepad++, built with HTML, CSS, and JavaScript.
+Features:
+• Multiple tabs support
+• Syntax highlighting for various languages
+• Find and replace with regex support
+• Macros recording and playback
+• Customizable themes and settings
+• Split view mode
+• Minimap
+• File Explorer
+• Terminal
+• And much more!
+Getting Started:
+1. Create a new file (Ctrl+N / Cmd+N)
+2. Open an existing file (Ctrl+O / Cmd+O)
+3. Choose a language from the Language menu
+4. Start typing!
+Keyboard Shortcuts:
+• Ctrl+N / Cmd+N - New file
+• Ctrl+O / Cmd+O - Open file
+• Ctrl+S / Cmd+S - Save file
+• Ctrl+F / Cmd+F - Find
+• Ctrl+H / Cmd+H - Replace
+• Ctrl+G / Cmd+G - Go to line
+• F11 - Fullscreen
+Enjoy coding!`;
+            
+            if (tabs.length === 1 && tabs[0].content === '') {
+                tabs[0].content = welcomeText;
+                loadTabContent(tabs[0]);
+            }
         });
-
+        
         // Initialize editor
         function initializeEditor() {
             const editor = document.getElementById('text-editor');
@@ -1683,8 +2068,12 @@
             if (settings.showMinimap) {
                 document.getElementById('minimap').classList.add('active');
             }
+            
+            // Initialize terminal
+            const terminalCommand = document.getElementById('terminal-command');
+            terminalCommand.addEventListener('keydown', handleTerminalCommand);
         }
-
+        
         // Initialize event listeners
         function initializeEventListeners() {
             // Menu bar
@@ -1791,6 +2180,12 @@
                 });
             });
             
+            // Shortcut mapper
+            document.getElementById('shortcut-mapper-close').addEventListener('click', closeShortcutMapper);
+            
+            // Terminal
+            document.getElementById('terminal-close').addEventListener('click', toggleTerminal);
+            
             // Close menus when clicking outside
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.menu-item') && !e.target.closest('.menu-dropdown')) {
@@ -1803,8 +2198,36 @@
             
             // Keyboard shortcuts
             document.addEventListener('keydown', handleGlobalKeydown);
+            
+            // Initialize find/replace buttons
+            document.getElementById('find-case-sensitive').addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+            
+            document.getElementById('find-whole-word').addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+            
+            document.getElementById('find-regex').addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+            
+            // Add tooltip functionality
+            document.querySelectorAll('[title]').forEach(element => {
+                element.addEventListener('mouseenter', function(e) {
+                    const tooltip = document.getElementById('tooltip');
+                    tooltip.textContent = this.title;
+                    tooltip.style.left = `${e.pageX + 10}px`;
+                    tooltip.style.top = `${e.pageY - 30}px`;
+                    tooltip.classList.add('active');
+                });
+                
+                element.addEventListener('mouseleave', function() {
+                    document.getElementById('tooltip').classList.remove('active');
+                });
+            });
         }
-
+        
         // Create new tab
         function createNewTab(fileName = null, content = '') {
             const tabId = Date.now();
@@ -1815,7 +2238,8 @@
                 language: 'normal',
                 encoding: settings.defaultEncoding,
                 modified: false,
-                path: null
+                path: null,
+                fileHandle: null
             };
             
             tabs.push(tab);
@@ -1833,7 +2257,7 @@
             
             tabElement.addEventListener('click', function(e) {
                 if (!e.target.classList.contains('tab-close')) {
-                    switchToTab(tabs.length - 1);
+                    switchToTab(tabs.findIndex(t => t.id === tabId));
                 }
             });
             
@@ -1850,7 +2274,7 @@
             
             return tab;
         }
-
+        
         // Switch to tab
         function switchToTab(index) {
             if (index >= 0 && index < tabs.length) {
@@ -1859,14 +2283,16 @@
                 loadTabContent(tabs[index]);
             }
         }
-
+        
         // Update active tab
         function updateActiveTab() {
             document.querySelectorAll('.tab').forEach((tab, index) => {
-                tab.classList.toggle('active', index === activeTabIndex);
+                const tabId = parseInt(tab.dataset.tabId);
+                const tabIndex = tabs.findIndex(t => t.id === tabId);
+                tab.classList.toggle('active', tabIndex === activeTabIndex);
             });
         }
-
+        
         // Load tab content
         function loadTabContent(tab) {
             const editor = document.getElementById('text-editor');
@@ -1876,7 +2302,7 @@
             updateStatusBar();
             applySyntaxHighlighting();
         }
-
+        
         // Close tab
         function closeTab(tabId) {
             const tabIndex = tabs.findIndex(tab => tab.id === tabId);
@@ -1910,26 +2336,36 @@
             updateActiveTab();
             loadTabContent(tabs[activeTabIndex]);
         }
-
+        
         // Update line numbers
         function updateLineNumbers() {
             const editor = document.getElementById('text-editor');
             const lineNumbers = document.getElementById('line-numbers');
             const lines = editor.value.split('\n').length;
             
-            let lineNumbersHTML = '';
+            // Clear existing line numbers
+            lineNumbers.innerHTML = '';
+            
+            // Create a document fragment for better performance
+            const fragment = document.createDocumentFragment();
+            
+            // Add each line number as a separate div
             for (let i = 1; i <= lines; i++) {
-                lineNumbersHTML += i + '\n';
+                const lineNumberDiv = document.createElement('div');
+                lineNumberDiv.className = 'line-number';
+                lineNumberDiv.textContent = i;
+                fragment.appendChild(lineNumberDiv);
             }
             
-            lineNumbers.textContent = lineNumbersHTML;
+            // Append all line numbers at once
+            lineNumbers.appendChild(fragment);
             
             // Update minimap
             if (settings.showMinimap) {
                 updateMinimap();
             }
         }
-
+        
         // Sync scroll between editor and line numbers
         function syncScroll() {
             const editor = document.getElementById('text-editor');
@@ -1941,7 +2377,7 @@
                 updateMinimapViewport();
             }
         }
-
+        
         // Update cursor position
         function updateCursorPosition() {
             const editor = document.getElementById('text-editor');
@@ -1953,7 +2389,7 @@
             
             document.getElementById('cursor-position').textContent = `Ln ${currentLine}, Col ${currentColumn}`;
         }
-
+        
         // Update status bar
         function updateStatusBar() {
             const tab = tabs[activeTabIndex];
@@ -1964,7 +2400,7 @@
             document.getElementById('line-ending').textContent = settings.lineEnding.toUpperCase();
             document.getElementById('zoom-level').textContent = `${Math.round(settings.fontSize / 14 * 100)}%`;
         }
-
+        
         // Handle menu actions
         function handleMenuAction(action) {
             switch (action) {
@@ -2003,13 +2439,13 @@
                     document.execCommand('redo');
                     break;
                 case 'cut':
-                    document.execCommand('cut');
+                    cutToClipboard();
                     break;
                 case 'copy':
-                    document.execCommand('copy');
+                    copyToClipboard();
                     break;
                 case 'paste':
-                    document.execCommand('paste');
+                    pasteFromClipboard();
                     break;
                 case 'delete':
                     const editor = document.getElementById('text-editor');
@@ -2078,6 +2514,12 @@
                     document.getElementById('minimap-checkbox').checked = settings.showMinimap;
                     toggleMinimap();
                     break;
+                case 'toggle-file-explorer':
+                    toggleFileExplorer();
+                    break;
+                case 'toggle-terminal':
+                    toggleTerminal();
+                    break;
                 case 'zoom-in':
                     settings.fontSize = Math.min(settings.fontSize + 2, 72);
                     document.getElementById('font-size-input').value = settings.fontSize;
@@ -2105,6 +2547,9 @@
                 case 'plugin-manager':
                     showPluginManager();
                     break;
+                case 'shortcut-mapper':
+                    showShortcutMapper();
+                    break;
                 case 'start-recording':
                     startMacroRecording();
                     break;
@@ -2114,6 +2559,18 @@
                 case 'playback':
                     playbackMacro();
                     break;
+                case 'run':
+                    runCode();
+                    break;
+                case 'compile':
+                    compileCode();
+                    break;
+                case 'build':
+                    buildCode();
+                    break;
+                case 'run-in-browser':
+                    runInBrowser();
+                    break;
                 case 'about':
                     showAbout();
                     break;
@@ -2121,7 +2578,7 @@
                     console.log('Unhandled action:', action);
             }
         }
-
+        
         // Toggle menu
         function toggleMenu(menuName) {
             const menu = document.getElementById(`${menuName}-menu`);
@@ -2139,14 +2596,14 @@
                 menu.style.left = `${rect.left}px`;
             }
         }
-
+        
         // Close all menus
         function closeAllMenus() {
             document.querySelectorAll('.menu-dropdown').forEach(menu => {
                 menu.classList.remove('active');
             });
         }
-
+        
         // Show/hide find/replace panel
         function showFindReplace(showReplace = false) {
             const panel = document.getElementById('find-replace-panel');
@@ -2160,12 +2617,12 @@
             
             document.getElementById('find-input').focus();
         }
-
+        
         // Close find/replace panel
         function closeFindReplace() {
             document.getElementById('find-replace-panel').classList.remove('active');
         }
-
+        
         // Find next occurrence
         function findNext() {
             const editor = document.getElementById('text-editor');
@@ -2214,7 +2671,7 @@
                 }
             }
         }
-
+        
         // Find previous occurrence
         function findPrevious() {
             const editor = document.getElementById('text-editor');
@@ -2272,7 +2729,7 @@
                 showNotification('No matches found');
             }
         }
-
+        
         // Replace
         function replace() {
             const editor = document.getElementById('text-editor');
@@ -2296,7 +2753,7 @@
                 findNext();
             }
         }
-
+        
         // Replace all
         function replaceAll() {
             const editor = document.getElementById('text-editor');
@@ -2333,7 +2790,7 @@
                 showNotification('No matches found');
             }
         }
-
+        
         // Show go to line dialog
         function showGoToDialog() {
             const dialog = document.getElementById('goto-dialog');
@@ -2346,12 +2803,12 @@
             dialog.classList.add('active');
             input.focus();
         }
-
+        
         // Close go to line dialog
         function closeGoToDialog() {
             document.getElementById('goto-dialog').classList.remove('active');
         }
-
+        
         // Go to line
         function goToLine() {
             const input = document.getElementById('goto-input');
@@ -2373,7 +2830,7 @@
                 closeGoToDialog();
             }
         }
-
+        
         // Select current line
         function selectCurrentLine() {
             const editor = document.getElementById('text-editor');
@@ -2396,7 +2853,7 @@
             editor.selectionStart = start;
             editor.selectionEnd = end;
         }
-
+        
         // Duplicate line
         function duplicateLine() {
             const editor = document.getElementById('text-editor');
@@ -2422,7 +2879,7 @@
             editor.value = newText;
             updateLineNumbers();
         }
-
+        
         // Delete line
         function deleteLine() {
             const editor = document.getElementById('text-editor');
@@ -2447,7 +2904,7 @@
             editor.value = newText;
             updateLineNumbers();
         }
-
+        
         // Move line
         function moveLine(direction) {
             const editor = document.getElementById('text-editor');
@@ -2482,7 +2939,7 @@
             editor.value = lines.join('\n');
             updateLineNumbers();
         }
-
+        
         // Toggle comment
         function toggleComment() {
             const editor = document.getElementById('text-editor');
@@ -2522,7 +2979,7 @@
             
             updateLineNumbers();
         }
-
+        
         // Toggle block comment
         function toggleBlockComment() {
             const editor = document.getElementById('text-editor');
@@ -2552,7 +3009,7 @@
                 editor.value = editor.value.substring(0, start) + commentedText + editor.value.substring(end);
             }
         }
-
+        
         // Go to matching bracket
         function goToMatchingBracket() {
             const editor = document.getElementById('text-editor');
@@ -2589,12 +3046,12 @@
                 }
             }
         }
-
+        
         // Apply theme
         function applyTheme() {
             document.body.dataset.theme = settings.theme;
         }
-
+        
         // Apply font settings
         function applyFontSettings() {
             const editor = document.getElementById('text-editor');
@@ -2608,20 +3065,20 @@
             
             updateStatusBar();
         }
-
+        
         // Apply word wrap
         function applyWordWrap() {
             const editor = document.getElementById('text-editor');
             editor.style.whiteSpace = settings.wordWrap ? 'pre-wrap' : 'pre';
             editor.style.wordWrap = settings.wordWrap ? 'break-word' : 'normal';
         }
-
+        
         // Toggle line numbers
         function toggleLineNumbers() {
             const lineNumbers = document.getElementById('line-numbers');
             lineNumbers.style.display = settings.showLineNumbers ? 'block' : 'none';
         }
-
+        
         // Toggle minimap
         function toggleMinimap() {
             const minimap = document.getElementById('minimap');
@@ -2632,7 +3089,7 @@
                 minimap.classList.remove('active');
             }
         }
-
+        
         // Update minimap
         function updateMinimap() {
             const editor = document.getElementById('text-editor');
@@ -2641,7 +3098,7 @@
             minimapContent.textContent = editor.value;
             updateMinimapViewport();
         }
-
+        
         // Update minimap viewport
         function updateMinimapViewport() {
             const editor = document.getElementById('text-editor');
@@ -2654,7 +3111,7 @@
             minimapViewport.style.top = `${scrollPercentage * 100}%`;
             minimapViewport.style.height = `${viewportHeight}%`;
         }
-
+        
         // Toggle split view
         function toggleSplitView() {
             const container = document.getElementById('editor-container');
@@ -2704,7 +3161,182 @@
             
             updateLineNumbers();
         }
-
+        
+        // Toggle file explorer
+        function toggleFileExplorer() {
+            const fileExplorer = document.getElementById('file-explorer');
+            fileExplorer.classList.toggle('active');
+            
+            if (fileExplorer.classList.contains('active')) {
+                populateFileExplorer();
+            }
+        }
+        
+        // Populate file explorer
+        function populateFileExplorer() {
+            const fileExplorerContent = document.getElementById('file-explorer-content');
+            fileExplorerContent.innerHTML = '';
+            
+            // Add some sample files and folders
+            const items = [
+                { name: 'src', type: 'folder', icon: 'fa-folder' },
+                { name: 'index.html', type: 'file', icon: 'fa-file-code' },
+                { name: 'styles.css', type: 'file', icon: 'fa-file-code' },
+                { name: 'script.js', type: 'file', icon: 'fa-file-code' },
+                { name: 'assets', type: 'folder', icon: 'fa-folder' },
+                { name: 'README.md', type: 'file', icon: 'fa-file-alt' }
+            ];
+            
+            items.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'file-explorer-item';
+                if (item.type === 'folder') {
+                    itemElement.classList.add('file-explorer-folder');
+                }
+                itemElement.innerHTML = `<i class="fas ${item.icon}"></i> ${item.name}`;
+                itemElement.addEventListener('click', function() {
+                    if (item.type === 'file') {
+                        openFileByName(item.name);
+                    }
+                });
+                fileExplorerContent.appendChild(itemElement);
+            });
+        }
+        
+        // Open file by name
+        function openFileByName(fileName) {
+            // In a real application, this would open the actual file
+            // For this demo, we'll create a new tab with the file name
+            const tab = createNewTab(fileName, `// Content of ${fileName}\n\n// This is a demo file`);
+            
+            // Detect language from file extension
+            const extension = fileName.split('.').pop().toLowerCase();
+            const languageMap = {
+                'html': 'html',
+                'css': 'css',
+                'js': 'javascript',
+                'json': 'json',
+                'xml': 'xml',
+                'py': 'python',
+                'java': 'java',
+                'c': 'c',
+                'cpp': 'cpp',
+                'h': 'cpp',
+                'cs': 'csharp',
+                'php': 'php',
+                'rb': 'ruby',
+                'go': 'go',
+                'rs': 'rust',
+                'sql': 'sql',
+                'md': 'markdown',
+                'yaml': 'yaml',
+                'yml': 'yaml'
+            };
+            
+            tab.language = languageMap[extension] || 'normal';
+            updateStatusBar();
+            applySyntaxHighlighting();
+        }
+        
+        // Toggle terminal
+        function toggleTerminal() {
+            const terminal = document.getElementById('terminal');
+            terminal.classList.toggle('active');
+            
+            if (terminal.classList.contains('active')) {
+                document.getElementById('terminal-command').focus();
+            }
+        }
+        
+        // Handle terminal command
+        function handleTerminalCommand(e) {
+            if (e.key === 'Enter') {
+                const commandInput = document.getElementById('terminal-command');
+                const command = commandInput.value.trim();
+                
+                if (command) {
+                    addTerminalLine(`$ ${command}`);
+                    
+                    // Process command
+                    processTerminalCommand(command);
+                    
+                    commandInput.value = '';
+                }
+            }
+        }
+        
+        // Add line to terminal
+        function addTerminalLine(text, className = '') {
+            const terminalContent = document.getElementById('terminal-content');
+            const line = document.createElement('div');
+            line.className = `terminal-line ${className}`;
+            line.textContent = text;
+            
+            // Insert before the input line
+            const inputLine = terminalContent.querySelector('.terminal-input');
+            terminalContent.insertBefore(line, inputLine);
+            
+            // Scroll to bottom
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+        }
+        
+        // Process terminal command
+        function processTerminalCommand(command) {
+            const parts = command.split(' ');
+            const cmd = parts[0];
+            
+            switch (cmd) {
+                case 'help':
+                    addTerminalLine('Available commands:');
+                    addTerminalLine('  help - Show this help message');
+                    addTerminalLine('  clear - Clear the terminal');
+                    addTerminalLine('  echo [text] - Echo text');
+                    addTerminalLine('  run - Run the current file');
+                    addTerminalLine('  compile - Compile the current file');
+                    addTerminalLine('  build - Build the project');
+                    addTerminalLine('  exit - Close the terminal');
+                    break;
+                case 'clear':
+                    const terminalContent = document.getElementById('terminal-content');
+                    terminalContent.innerHTML = `
+                        <div class="terminal-input">
+                            <span class="terminal-prompt">$</span>
+                            <input type="text" class="terminal-command" id="terminal-command" placeholder="Enter command...">
+                        </div>
+                    `;
+                    document.getElementById('terminal-command').addEventListener('keydown', handleTerminalCommand);
+                    break;
+                case 'echo':
+                    const text = parts.slice(1).join(' ');
+                    addTerminalLine(text);
+                    break;
+                case 'run':
+                    addTerminalLine('Running file...', 'terminal-success');
+                    setTimeout(() => {
+                        addTerminalLine('File executed successfully', 'terminal-success');
+                    }, 1000);
+                    break;
+                case 'compile':
+                    addTerminalLine('Compiling file...', 'terminal-info');
+                    setTimeout(() => {
+                        addTerminalLine('Compilation completed successfully', 'terminal-success');
+                    }, 1500);
+                    break;
+                case 'build':
+                    addTerminalLine('Building project...', 'terminal-info');
+                    setTimeout(() => {
+                        addTerminalLine('Build completed successfully', 'terminal-success');
+                    }, 2000);
+                    break;
+                case 'exit':
+                    toggleTerminal();
+                    break;
+                default:
+                    addTerminalLine(`Command not found: ${cmd}`, 'terminal-error');
+                    addTerminalLine('Type "help" for available commands');
+            }
+        }
+        
         // Toggle fullscreen
         function toggleFullscreen() {
             if (!document.fullscreenElement) {
@@ -2713,18 +3345,18 @@
                 document.exitFullscreen();
             }
         }
-
+        
         // Show settings
         function showSettings() {
             document.getElementById('settings-panel').classList.add('active');
         }
-
+        
         // Close settings
         function closeSettings() {
             document.getElementById('settings-panel').classList.remove('active');
             saveSettings();
         }
-
+        
         // Show plugin manager
         function showPluginManager() {
             const pluginManager = document.getElementById('plugin-manager');
@@ -2762,12 +3394,49 @@
             
             pluginManager.classList.add('active');
         }
-
+        
         // Close plugin manager
         function closePluginManager() {
             document.getElementById('plugin-manager').classList.remove('active');
         }
-
+        
+        // Show shortcut mapper
+        function showShortcutMapper() {
+            const shortcutMapper = document.getElementById('shortcut-mapper');
+            const shortcutList = document.getElementById('shortcut-list');
+            
+            shortcutList.innerHTML = '';
+            
+            // Add shortcuts to the list
+            Object.entries(shortcuts).forEach(([action, shortcut]) => {
+                const row = document.createElement('tr');
+                
+                const actionCell = document.createElement('td');
+                actionCell.textContent = action.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                
+                const shortcutCell = document.createElement('td');
+                let shortcutText = '';
+                if (shortcut.ctrl) shortcutText += 'Ctrl+';
+                if (shortcut.alt) shortcutText += 'Alt+';
+                if (shortcut.shift) shortcutText += 'Shift+';
+                if (shortcut.meta) shortcutText += 'Cmd+';
+                shortcutText += shortcut.key;
+                
+                shortcutCell.innerHTML = `<span class="shortcut-key">${shortcutText}</span>`;
+                
+                row.appendChild(actionCell);
+                row.appendChild(shortcutCell);
+                shortcutList.appendChild(row);
+            });
+            
+            shortcutMapper.classList.add('active');
+        }
+        
+        // Close shortcut mapper
+        function closeShortcutMapper() {
+            document.getElementById('shortcut-mapper').classList.remove('active');
+        }
+        
         // Start macro recording
         function startMacroRecording() {
             if (!settings.enableMacros) {
@@ -2780,7 +3449,7 @@
             document.getElementById('macro-indicator').classList.add('active');
             showNotification('Macro recording started');
         }
-
+        
         // Stop macro recording
         function stopMacroRecording() {
             if (!macroRecording) return;
@@ -2789,7 +3458,7 @@
             document.getElementById('macro-indicator').classList.remove('active');
             showNotification('Macro recording stopped');
         }
-
+        
         // Playback macro
         function playbackMacro() {
             if (macroActions.length === 0) {
@@ -2826,14 +3495,65 @@
                 delay += 50;
             });
         }
-
+        
+        // Run code
+        function runCode() {
+            const tab = tabs[activeTabIndex];
+            if (!tab) return;
+            
+            showNotification('Running code...');
+            
+            // In a real application, this would execute the code
+            // For this demo, we'll just show a notification
+            setTimeout(() => {
+                showNotification('Code executed successfully');
+            }, 1000);
+        }
+        
+        // Compile code
+        function compileCode() {
+            const tab = tabs[activeTabIndex];
+            if (!tab) return;
+            
+            showNotification('Compiling code...');
+            
+            // In a real application, this would compile the code
+            // For this demo, we'll just show a notification
+            setTimeout(() => {
+                showNotification('Compilation completed successfully');
+            }, 1500);
+        }
+        
+        // Build code
+        function buildCode() {
+            showNotification('Building project...');
+            
+            // In a real application, this would build the project
+            // For this demo, we'll just show a notification
+            setTimeout(() => {
+                showNotification('Build completed successfully');
+            }, 2000);
+        }
+        
+        // Run in browser
+        function runInBrowser() {
+            const tab = tabs[activeTabIndex];
+            if (!tab) return;
+            
+            // In a real application, this would open the file in a browser
+            // For this demo, we'll just show a notification
+            showNotification('Opening in browser...');
+            
+            setTimeout(() => {
+                showNotification('Opened in browser');
+            }, 1000);
+        }
+        
         // Show about dialog
         function showAbout() {
             const aboutText = `Notepad++ Advanced - Web Edition
 Version 1.0.0
-
 A powerful text editor for the web, inspired by Notepad++.
-
 Features:
 - Syntax highlighting for multiple languages
 - Multiple tabs and split view
@@ -2841,192 +3561,34 @@ Features:
 - Macros recording and playback
 - Customizable themes and settings
 - Plugin system
+- File Explorer
+- Terminal
 - And much more!
-
 Created with HTML, CSS, and JavaScript.`;
             
             alert(aboutText);
         }
-
+        
         // Handle keyboard shortcuts
         function handleGlobalKeydown(e) {
-            // Ctrl/Cmd key
-            const ctrlKey = e.ctrlKey || e.metaKey;
-            
-            // Prevent default for handled shortcuts
-            if (ctrlKey || e.altKey) {
-                switch (e.key) {
-                    case 'n':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('new');
-                        }
-                        break;
-                    case 'o':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('open');
-                        }
-                        break;
-                    case 's':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            if (e.altKey) {
-                                handleMenuAction('save-as');
-                            } else {
-                                handleMenuAction('save');
-                            }
-                        }
-                        break;
-                    case 'w':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('close');
-                        }
-                        break;
-                    case 'z':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('undo');
-                        }
-                        break;
-                    case 'y':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('redo');
-                        }
-                        break;
-                    case 'x':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('cut');
-                        }
-                        break;
-                    case 'c':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('copy');
-                        }
-                        break;
-                    case 'v':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('paste');
-                        }
-                        break;
-                    case 'a':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('select-all');
-                        }
-                        break;
-                    case 'l':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('select-line');
-                        }
-                        break;
-                    case 'd':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('duplicate-line');
-                        }
-                        break;
-                    case 'f':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            if (e.shiftKey) {
-                                handleMenuAction('find-in-files');
-                            } else {
-                                handleMenuAction('find');
-                            }
-                        }
-                        break;
-                    case 'h':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            if (e.shiftKey) {
-                                handleMenuAction('replace-in-files');
-                            } else {
-                                handleMenuAction('replace');
-                            }
-                        }
-                        break;
-                    case 'g':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('go-to-line');
-                        }
-                        break;
-                    case 'b':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('go-to-bracket');
-                        }
-                        break;
-                    case '/':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            if (e.shiftKey) {
-                                handleMenuAction('toggle-block-comment');
-                            } else {
-                                handleMenuAction('toggle-comment');
-                            }
-                        }
-                        break;
-                    case '=':
-                    case '+':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('zoom-in');
-                        }
-                        break;
-                    case '-':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('zoom-out');
-                        }
-                        break;
-                    case '0':
-                        if (ctrlKey) {
-                            e.preventDefault();
-                            handleMenuAction('reset-zoom');
-                        }
-                        break;
-                }
+            // Check if we're in a dialog or input field
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                // Let the input handle the key event
+                return;
             }
             
-            // Function keys
-            switch (e.key) {
-                case 'F1':
+            // Check for shortcuts
+            for (const [action, shortcut] of Object.entries(shortcuts)) {
+                if (
+                    e.key === shortcut.key &&
+                    !!e.ctrlKey === !!shortcut.ctrl &&
+                    !!e.altKey === !!shortcut.alt &&
+                    !!e.shiftKey === !!shortcut.shift &&
+                    !!e.metaKey === !!shortcut.meta
+                ) {
                     e.preventDefault();
-                    handleMenuAction('help-contents');
-                    break;
-                case 'F3':
-                    e.preventDefault();
-                    if (e.shiftKey) {
-                        handleMenuAction('previous-result');
-                    } else {
-                        handleMenuAction('next-result');
-                    }
-                    break;
-                case 'F11':
-                    e.preventDefault();
-                    handleMenuAction('toggle-fullscreen');
-                    break;
-            }
-            
-            // Arrow keys with Alt
-            if (e.altKey) {
-                switch (e.key) {
-                    case 'ArrowUp':
-                        e.preventDefault();
-                        handleMenuAction('move-line-up');
-                        break;
-                    case 'ArrowDown':
-                        e.preventDefault();
-                        handleMenuAction('move-line-down');
-                        break;
+                    handleMenuAction(action);
+                    return;
                 }
             }
             
@@ -3060,7 +3622,7 @@ Created with HTML, CSS, and JavaScript.`;
                 }
             }
         }
-
+        
         // Handle key down in editor
         function handleKeyDown(e) {
             const editor = document.getElementById('text-editor');
@@ -3111,12 +3673,12 @@ Created with HTML, CSS, and JavaScript.`;
                 }
             }
         }
-
+        
         // Handle key up in editor
         function handleKeyUp(e) {
             applySyntaxHighlighting();
         }
-
+        
         // Handle mouse down in editor
         function handleMouseDown(e) {
             // Handle minimap click
@@ -3130,12 +3692,12 @@ Created with HTML, CSS, and JavaScript.`;
                 editor.scrollTop = percentage * (editor.scrollHeight - editor.clientHeight);
             }
         }
-
+        
         // Handle mouse up in editor
         function handleMouseUp(e) {
             updateCursorPosition();
         }
-
+        
         // Handle context menu
         function handleContextMenu(e) {
             e.preventDefault();
@@ -3145,18 +3707,18 @@ Created with HTML, CSS, and JavaScript.`;
             contextMenu.style.top = `${e.pageY}px`;
             contextMenu.classList.add('active');
         }
-
+        
         // Close context menu
         function closeContextMenu() {
             document.getElementById('context-menu').classList.remove('active');
         }
-
+        
         // Handle drag over
         function handleDragOver(e) {
             e.preventDefault();
             document.getElementById('drop-zone').classList.add('active');
         }
-
+        
         // Handle drop
         function handleDrop(e) {
             e.preventDefault();
@@ -3173,7 +3735,7 @@ Created with HTML, CSS, and JavaScript.`;
                 }
             }
         }
-
+        
         // Open file
         function openFile(file = null) {
             if (file) {
@@ -3228,51 +3790,165 @@ Created with HTML, CSS, and JavaScript.`;
                 input.click();
             }
         }
-
+        
         // Save file
-        function saveFile() {
+        async function saveFile() {
             const tab = tabs[activeTabIndex];
             if (!tab) return;
             
-            if (tab.path) {
-                // In a real application, this would save to the file system
-                showNotification(`File "${tab.name}" saved`);
-                tab.modified = false;
+            if (tab.fileHandle) {
+                // File has been saved before, use the existing handle
+                try {
+                    const writable = await tab.fileHandle.createWritable();
+                    await writable.write(tab.content);
+                    await writable.close();
+                    tab.modified = false;
+                    showNotification(`File "${tab.name}" saved`);
+                } catch (err) {
+                    console.error('Error saving file:', err);
+                    showNotification('Error saving file');
+                }
             } else {
+                // New file, ask where to save
                 saveFileAs();
             }
         }
-
+        
         // Save file as
-        function saveFileAs() {
+        async function saveFileAs() {
             const tab = tabs[activeTabIndex];
             if (!tab) return;
             
-            const fileName = prompt('Enter file name:', tab.name);
-            if (fileName) {
-                tab.name = fileName;
-                tab.path = fileName;
-                tab.modified = false;
-                
-                // Update tab name
-                const tabElement = document.querySelector(`[data-tab-id="${tab.id}"] .tab-name`);
-                if (tabElement) {
-                    tabElement.textContent = fileName;
+            try {
+                // Check if File System Access API is available
+                if ('showSaveFilePicker' in window) {
+                    // Use File System Access API
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName: tab.name,
+                        types: [
+                            {
+                                description: 'Text Files',
+                                accept: {
+                                    'text/plain': ['.txt'],
+                                },
+                            },
+                            {
+                                description: 'HTML Files',
+                                accept: {
+                                    'text/html': ['.html', '.htm'],
+                                },
+                            },
+                            {
+                                description: 'CSS Files',
+                                accept: {
+                                    'text/css': ['.css'],
+                                },
+                            },
+                            {
+                                description: 'JavaScript Files',
+                                accept: {
+                                    'text/javascript': ['.js'],
+                                },
+                            },
+                            {
+                                description: 'JSON Files',
+                                accept: {
+                                    'application/json': ['.json'],
+                                },
+                            },
+                            {
+                                description: 'All Files',
+                                accept: {
+                                    '*/*': ['.*'],
+                                },
+                            },
+                        ],
+                    });
+                    
+                    // Write to the file
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(tab.content);
+                    await writable.close();
+                    
+                    // Update tab information
+                    tab.fileHandle = fileHandle;
+                    tab.name = fileHandle.name;
+                    tab.path = fileHandle.name;
+                    tab.modified = false;
+                    
+                    // Update tab name in UI
+                    const tabElement = document.querySelector(`[data-tab-id="${tab.id}"] .tab-name`);
+                    if (tabElement) {
+                        tabElement.textContent = tab.name;
+                    }
+                    
+                    showNotification(`File saved as "${tab.name}"`);
+                } else {
+                    // Fallback for browsers that don't support File System Access API
+                    const fileName = prompt('Enter file name:', tab.name);
+                    if (fileName) {
+                        // Create a blob with the content
+                        const blob = new Blob([tab.content], { type: 'text/plain' });
+                        const url = URL.createObjectURL(blob);
+                        
+                        // Create a temporary link to download the file
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        
+                        // Update tab information
+                        tab.name = fileName;
+                        tab.path = fileName;
+                        tab.modified = false;
+                        
+                        // Update tab name in UI
+                        const tabElement = document.querySelector(`[data-tab-id="${tab.id}"] .tab-name`);
+                        if (tabElement) {
+                            tabElement.textContent = tab.name;
+                        }
+                        
+                        showNotification(`File saved as "${fileName}"`);
+                    }
                 }
-                
-                showNotification(`File saved as "${fileName}"`);
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    console.error('Error saving file:', err);
+                    showNotification('Error saving file');
+                }
             }
         }
-
+        
         // Save all files
-        function saveAllFiles() {
+        async function saveAllFiles() {
             let savedCount = 0;
-            tabs.forEach(tab => {
+            
+            for (const tab of tabs) {
                 if (tab.modified) {
-                    tab.modified = false;
-                    savedCount++;
+                    try {
+                        if (tab.fileHandle) {
+                            const writable = await tab.fileHandle.createWritable();
+                            await writable.write(tab.content);
+                            await writable.close();
+                            tab.modified = false;
+                            savedCount++;
+                        } else {
+                            // For new files, we need to ask where to save each one
+                            // This is a simplified version - in a real app you might want to batch these
+                            const activeTabIndexBackup = activeTabIndex;
+                            activeTabIndex = tabs.indexOf(tab);
+                            await saveFileAs();
+                            activeTabIndex = activeTabIndexBackup;
+                            savedCount++;
+                        }
+                    } catch (err) {
+                        console.error('Error saving file:', err);
+                    }
                 }
-            });
+            }
             
             if (savedCount > 0) {
                 showNotification(`${savedCount} file(s) saved`);
@@ -3280,7 +3956,7 @@ Created with HTML, CSS, and JavaScript.`;
                 showNotification('No files to save');
             }
         }
-
+        
         // Close all tabs
         function closeAllTabs() {
             if (confirm('Close all tabs? Unsaved changes will be lost.')) {
@@ -3290,7 +3966,7 @@ Created with HTML, CSS, and JavaScript.`;
                 createNewTab();
             }
         }
-
+        
         // Set language
         function setLanguage(language) {
             const tab = tabs[activeTabIndex];
@@ -3300,7 +3976,7 @@ Created with HTML, CSS, and JavaScript.`;
                 applySyntaxHighlighting();
             }
         }
-
+        
         // Get language name
         function getLanguageName(language) {
             const languageNames = {
@@ -3326,7 +4002,7 @@ Created with HTML, CSS, and JavaScript.`;
             
             return languageNames[language] || 'Normal Text';
         }
-
+        
         // Apply syntax highlighting
         function applySyntaxHighlighting() {
             const editor = document.getElementById('text-editor');
@@ -3367,7 +4043,7 @@ Created with HTML, CSS, and JavaScript.`;
             // with innerHTML to display the highlighted text while maintaining the
             // ability to edit. For this demo, we'll keep it simple.
         }
-
+        
         // HTML syntax highlighting
         function highlightHTML(text) {
             // Comments
@@ -3381,7 +4057,7 @@ Created with HTML, CSS, and JavaScript.`;
             
             return text;
         }
-
+        
         // CSS syntax highlighting
         function highlightCSS(text) {
             // Comments
@@ -3393,7 +4069,7 @@ Created with HTML, CSS, and JavaScript.`;
             
             return text;
         }
-
+        
         // JavaScript syntax highlighting
         function highlightJavaScript(text) {
             // Comments
@@ -3415,7 +4091,7 @@ Created with HTML, CSS, and JavaScript.`;
             
             return text;
         }
-
+        
         // JSON syntax highlighting
         function highlightJSON(text) {
             try {
@@ -3425,7 +4101,7 @@ Created with HTML, CSS, and JavaScript.`;
                 return text;
             }
         }
-
+        
         // Python syntax highlighting
         function highlightPython(text) {
             // Comments
@@ -3446,7 +4122,7 @@ Created with HTML, CSS, and JavaScript.`;
             
             return text;
         }
-
+        
         // C-like syntax highlighting
         function highlightCLike(text) {
             // Comments
@@ -3468,17 +4144,17 @@ Created with HTML, CSS, and JavaScript.`;
             
             return text;
         }
-
+        
         // Show encoding selector
         function showEncodingSelector() {
             document.getElementById('encoding-selector').classList.add('active');
         }
-
+        
         // Close encoding selector
         function closeEncodingSelector() {
             document.getElementById('encoding-selector').classList.remove('active');
         }
-
+        
         // Apply encoding
         function applyEncoding() {
             const selectedEncoding = document.querySelector('.encoding-item.selected');
@@ -3493,7 +4169,90 @@ Created with HTML, CSS, and JavaScript.`;
             }
             closeEncodingSelector();
         }
-
+        
+        // Copy to clipboard
+        async function copyToClipboard() {
+            const editor = document.getElementById('text-editor');
+            const selectedText = editor.value.substring(editor.selectionStart, editor.selectionEnd);
+            
+            if (selectedText) {
+                try {
+                    await navigator.clipboard.writeText(selectedText);
+                    showNotification('Text copied to clipboard');
+                } catch (err) {
+                    // Fallback to execCommand
+                    try {
+                        document.execCommand('copy');
+                        showNotification('Text copied to clipboard');
+                    } catch (err2) {
+                        showNotification('Copy not supported in this browser');
+                    }
+                }
+            }
+        }
+        
+        // Cut to clipboard
+        async function cutToClipboard() {
+            const editor = document.getElementById('text-editor');
+            const selectedText = editor.value.substring(editor.selectionStart, editor.selectionEnd);
+            
+            if (selectedText) {
+                try {
+                    await navigator.clipboard.writeText(selectedText);
+                    
+                    // Remove the selected text
+                    const start = editor.selectionStart;
+                    const end = editor.selectionEnd;
+                    editor.value = editor.value.substring(0, start) + editor.value.substring(end);
+                    
+                    // Move cursor to the start position
+                    editor.selectionStart = start;
+                    editor.selectionEnd = start;
+                    
+                    updateLineNumbers();
+                    editor.focus();
+                    showNotification('Text cut to clipboard');
+                } catch (err) {
+                    // Fallback to execCommand
+                    try {
+                        document.execCommand('cut');
+                        showNotification('Text cut to clipboard');
+                    } catch (err2) {
+                        showNotification('Cut not supported in this browser');
+                    }
+                }
+            }
+        }
+        
+        // Paste from clipboard
+        async function pasteFromClipboard() {
+            const editor = document.getElementById('text-editor');
+            
+            try {
+                // Try using the Clipboard API first
+                const text = await navigator.clipboard.readText();
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                
+                // Insert the text at the cursor position
+                editor.value = editor.value.substring(0, start) + text + editor.value.substring(end);
+                
+                // Move cursor to the end of the pasted text
+                editor.selectionStart = start + text.length;
+                editor.selectionEnd = start + text.length;
+                
+                updateLineNumbers();
+                editor.focus();
+            } catch (err) {
+                // Fallback to execCommand if Clipboard API fails
+                try {
+                    document.execCommand('paste');
+                } catch (err2) {
+                    showNotification('Paste not supported in this browser');
+                }
+            }
+        }
+        
         // Show notification
         function showNotification(message) {
             const notification = document.getElementById('notification');
@@ -3504,7 +4263,7 @@ Created with HTML, CSS, and JavaScript.`;
                 notification.classList.remove('active');
             }, 3000);
         }
-
+        
         // Load settings
         function loadSettings() {
             const savedSettings = localStorage.getItem('notepadpp-settings');
@@ -3538,19 +4297,19 @@ Created with HTML, CSS, and JavaScript.`;
                 toggleMinimap();
             }
         }
-
+        
         // Save settings
         function saveSettings() {
             localStorage.setItem('notepadpp-settings', JSON.stringify(settings));
         }
-
+        
         // Update UI
         function updateUI() {
             updateLineNumbers();
             updateCursorPosition();
             updateStatusBar();
         }
-
+        
         // Auto-save functionality
         setInterval(() => {
             if (settings.autoSave && tabs.length > 0) {
@@ -3560,418 +4319,6 @@ Created with HTML, CSS, and JavaScript.`;
                 }
             }
         }, settings.autoSaveInterval * 1000);
-
-        // Initialize find/replace buttons
-        document.getElementById('find-case-sensitive').addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
-
-        document.getElementById('find-whole-word').addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
-
-        document.getElementById('find-regex').addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
-
-        // Add tooltip functionality
-        document.querySelectorAll('[title]').forEach(element => {
-            element.addEventListener('mouseenter', function(e) {
-                const tooltip = document.getElementById('tooltip');
-                tooltip.textContent = this.title;
-                tooltip.style.left = `${e.pageX + 10}px`;
-                tooltip.style.top = `${e.pageY - 30}px`;
-                tooltip.classList.add('active');
-            });
-            
-            element.addEventListener('mouseleave', function() {
-                document.getElementById('tooltip').classList.remove('active');
-            });
-        });
-
-        // Initialize with a welcome message
-        window.addEventListener('load', () => {
-            const welcomeText = `Welcome to Notepad++ Advanced - Web Edition!
-
-This is a powerful text editor inspired by Notepad++, built with HTML, CSS, and JavaScript.
-
-Features:
-• Multiple tabs support
-• Syntax highlighting for various languages
-• Find and replace with regex support
-• Macros recording and playback
-• Customizable themes and settings
-• Split view mode
-• Minimap
-• And much more!
-
-Getting Started:
-1. Create a new file (Ctrl+N)
-2. Open an existing file (Ctrl+O)
-3. Choose a language from the Language menu
-4. Start typing!
-
-Keyboard Shortcuts:
-• Ctrl+N - New file
-• Ctrl+O - Open file
-• Ctrl+S - Save file
-• Ctrl+F - Find
-• Ctrl+H - Replace
-• Ctrl+G - Go to line
-• F11 - Fullscreen
-
-Enjoy coding!`;
-            
-            if (tabs.length === 1 && tabs[0].content === '') {
-                tabs[0].content = welcomeText;
-                loadTabContent(tabs[0]);
-            }
-        });
-// Update line numbers
-function updateLineNumbers() {
-    const editor = document.getElementById('text-editor');
-    const lineNumbers = document.getElementById('line-numbers');
-    const lines = editor.value.split('\n').length;
-    
-    // Clear existing line numbers
-    lineNumbers.innerHTML = '';
-    
-    // Create a document fragment for better performance
-    const fragment = document.createDocumentFragment();
-    
-    // Add each line number as a separate div
-    for (let i = 1; i <= lines; i++) {
-        const lineNumberDiv = document.createElement('div');
-        lineNumberDiv.textContent = i;
-        fragment.appendChild(lineNumberDiv);
-    }
-    
-    // Append all line numbers at once
-    lineNumbers.appendChild(fragment);
-    
-    // Update minimap
-    if (settings.showMinimap) {
-        updateMinimap();
-    }
-}
-// Save file
-async function saveFile() {
-    const tab = tabs[activeTabIndex];
-    if (!tab) return;
-    
-    if (tab.fileHandle) {
-        // File has been saved before, use the existing handle
-        try {
-            const writable = await tab.fileHandle.createWritable();
-            await writable.write(tab.content);
-            await writable.close();
-            tab.modified = false;
-            showNotification(`File "${tab.name}" saved`);
-        } catch (err) {
-            console.error('Error saving file:', err);
-            showNotification('Error saving file');
-        }
-    } else {
-        // New file, ask where to save
-        saveFileAs();
-    }
-}
-
-// Save file as
-async function saveFileAs() {
-    const tab = tabs[activeTabIndex];
-    if (!tab) return;
-    
-    try {
-        // Check if File System Access API is available
-        if ('showSaveFilePicker' in window) {
-            // Use File System Access API
-            const fileHandle = await window.showSaveFilePicker({
-                suggestedName: tab.name,
-                types: [
-                    {
-                        description: 'Text Files',
-                        accept: {
-                            'text/plain': ['.txt'],
-                        },
-                    },
-                    {
-                        description: 'HTML Files',
-                        accept: {
-                            'text/html': ['.html', '.htm'],
-                        },
-                    },
-                    {
-                        description: 'CSS Files',
-                        accept: {
-                            'text/css': ['.css'],
-                        },
-                    },
-                    {
-                        description: 'JavaScript Files',
-                        accept: {
-                            'text/javascript': ['.js'],
-                        },
-                    },
-                    {
-                        description: 'JSON Files',
-                        accept: {
-                            'application/json': ['.json'],
-                        },
-                    },
-                    {
-                        description: 'All Files',
-                        accept: {
-                            '*/*': ['.*'],
-                        },
-                    },
-                ],
-            });
-            
-            // Write to the file
-            const writable = await fileHandle.createWritable();
-            await writable.write(tab.content);
-            await writable.close();
-            
-            // Update tab information
-            tab.fileHandle = fileHandle;
-            tab.name = fileHandle.name;
-            tab.path = fileHandle.name;
-            tab.modified = false;
-            
-            // Update tab name in UI
-            const tabElement = document.querySelector(`[data-tab-id="${tab.id}"] .tab-name`);
-            if (tabElement) {
-                tabElement.textContent = tab.name;
-            }
-            
-            showNotification(`File saved as "${tab.name}"`);
-        } else {
-            // Fallback for browsers that don't support File System Access API
-            const fileName = prompt('Enter file name:', tab.name);
-            if (fileName) {
-                // Create a blob with the content
-                const blob = new Blob([tab.content], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                
-                // Create a temporary link to download the file
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = fileName;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                // Update tab information
-                tab.name = fileName;
-                tab.path = fileName;
-                tab.modified = false;
-                
-                // Update tab name in UI
-                const tabElement = document.querySelector(`[data-tab-id="${tab.id}"] .tab-name`);
-                if (tabElement) {
-                    tabElement.textContent = tab.name;
-                }
-                
-                showNotification(`File saved as "${fileName}"`);
-            }
-        }
-    } catch (err) {
-        if (err.name !== 'AbortError') {
-            console.error('Error saving file:', err);
-            showNotification('Error saving file');
-        }
-    }
-}
-
-// Save all files
-async function saveAllFiles() {
-    let savedCount = 0;
-    
-    for (const tab of tabs) {
-        if (tab.modified) {
-            try {
-                if (tab.fileHandle) {
-                    const writable = await tab.fileHandle.createWritable();
-                    await writable.write(tab.content);
-                    await writable.close();
-                    tab.modified = false;
-                    savedCount++;
-                } else {
-                    // For new files, we need to ask where to save each one
-                    // This is a simplified version - in a real app you might want to batch these
-                    const activeTabIndexBackup = activeTabIndex;
-                    activeTabIndex = tabs.indexOf(tab);
-                    await saveFileAs();
-                    activeTabIndex = activeTabIndexBackup;
-                    savedCount++;
-                }
-            } catch (err) {
-                console.error('Error saving file:', err);
-            }
-        }
-    }
-    
-    if (savedCount > 0) {
-        showNotification(`${savedCount} file(s) saved`);
-    } else {
-        showNotification('No files to save');
-    }
-}
-
-// Update createNewTab to include fileHandle
-function createNewTab(fileName = null, content = '') {
-    const tabId = Date.now();
-    const tab = {
-        id: tabId,
-        name: fileName || `Untitled-${tabs.length + 1}`,
-        content: content,
-        language: 'normal',
-        encoding: settings.defaultEncoding,
-        modified: false,
-        path: null,
-        fileHandle: null // Add fileHandle property
-    };
-    
-    // ... rest of the function remains the same
-}
-
-// Update openFile to set fileHandle when using File System Access API
-async function openFile(file = null) {
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            const content = e.target.result;
-            const tab = createNewTab(file.name, content);
-            
-            // Detect language from file extension
-            const extension = file.name.split('.').pop().toLowerCase();
-            const languageMap = {
-                'html': 'html',
-                'htm': 'html',
-                'css': 'css',
-                'js': 'javascript',
-                'json': 'json',
-                'xml': 'xml',
-                'py': 'python',
-                'java': 'java',
-                'c': 'c',
-                'cpp': 'cpp',
-                'h': 'cpp',
-                'cs': 'csharp',
-                'php': 'php',
-                'rb': 'ruby',
-                'go': 'go',
-                'rs': 'rust',
-                'sql': 'sql',
-                'md': 'markdown',
-                'yaml': 'yaml',
-                'yml': 'yaml'
-            };
-            
-            tab.language = languageMap[extension] || 'normal';
-            tab.path = file.name;
-            
-            // Try to get a file handle if File System Access API is available
-            if ('showOpenFilePicker' in window) {
-                try {
-                    const [fileHandle] = await window.showOpenFilePicker({
-                        multiple: false,
-                        types: [
-                            {
-                                description: 'Text Files',
-                                accept: {
-                                    'text/plain': ['.txt'],
-                                },
-                            },
-                            // Add other types as needed
-                        ],
-                    });
-                    tab.fileHandle = fileHandle;
-                } catch (err) {
-                    // User cancelled or error, continue without file handle
-                    console.log('Could not get file handle:', err);
-                }
-            }
-            
-            updateStatusBar();
-            applySyntaxHighlighting();
-        };
-        reader.readAsText(file);
-    } else {
-        // Create file input for file selection
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.txt,.js,.html,.css,.json,.xml,.py,.java,.cpp,.c,.cs,.php,.rb,.go,.rs,.sql,.md,.yaml,.yml';
-        input.onchange = async function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                // Try to get a file handle if File System Access API is available
-                let fileHandle = null;
-                if ('showOpenFilePicker' in window) {
-                    try {
-                        [fileHandle] = await window.showOpenFilePicker({
-                            multiple: false,
-                            types: [
-                                {
-                                    description: 'Text Files',
-                                    accept: {
-                                        'text/plain': ['.txt'],
-                                    },
-                                },
-                                // Add other types as needed
-                            ],
-                        });
-                    } catch (err) {
-                        // User cancelled or error, continue without file handle
-                        console.log('Could not get file handle:', err);
-                    }
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const content = e.target.result;
-                    const tab = createNewTab(file.name, content);
-                    
-                    // Detect language from file extension
-                    const extension = file.name.split('.').pop().toLowerCase();
-                    const languageMap = {
-                        'html': 'html',
-                        'htm': 'html',
-                        'css': 'css',
-                        'js': 'javascript',
-                        'json': 'json',
-                        'xml': 'xml',
-                        'py': 'python',
-                        'java': 'java',
-                        'c': 'c',
-                        'cpp': 'cpp',
-                        'h': 'cpp',
-                        'cs': 'csharp',
-                        'php': 'php',
-                        'rb': 'ruby',
-                        'go': 'go',
-                        'rs': 'rust',
-                        'sql': 'sql',
-                        'md': 'markdown',
-                        'yaml': 'yaml',
-                        'yml': 'yaml'
-                    };
-                    
-                    tab.language = languageMap[extension] || 'normal';
-                    tab.path = file.name;
-                    tab.fileHandle = fileHandle;
-                    
-                    updateStatusBar();
-                    applySyntaxHighlighting();
-                };
-                reader.readAsText(file);
-            }
-        };
-        input.click();
-    }
-}
     </script>
 </body>
 </html>
